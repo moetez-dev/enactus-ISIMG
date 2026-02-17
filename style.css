@@ -1,0 +1,65 @@
+:root {
+    --enactus-yellow: #FFC222;
+    --enactus-black: #111111;
+}
+
+body {
+    font-family: 'Source Sans 3', sans-serif;
+}
+
+.font-heading {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.bg-enactus-yellow { background-color: var(--enactus-yellow); }
+.text-enactus-yellow { color: var(--enactus-yellow); }
+
+.glass-nav {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(7, 7, 7, 0.855);
+}
+
+.btn-primary {
+    background-color: var(--enactus-yellow);
+    color: black;
+    font-weight: 700;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 194, 34, 0.4);
+}
+
+.project-card {
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid #f0f0f0;
+}
+.project-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--enactus-yellow);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: white;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--enactus-yellow);
+    border-radius: 5px;
+}
