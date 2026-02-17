@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Enactus ISIMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-100" data-aos="zoom-in">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-black uppercase tracking-tighter">Member <span class="text-enactus-yellow">Login</span></h2>
+            <p class="text-gray-400 text-sm font-bold uppercase tracking-widest mt-2">Access your workspace</p>
+        </div>
+        <form id="loginForm" class="space-y-6">
+            <input type="email" id="loginEmail" placeholder="Email Address" class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-black outline-none transition-all" required>
+            <input type="password" id="loginPassword" placeholder="Password" class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-black outline-none transition-all" required>
+            <button type="submit" class="w-full py-4 bg-black text-white font-bold rounded-2xl hover:bg-enactus-yellow hover:text-black transition-all uppercase tracking-widest shadow-lg">Enter Space</button>
+        </form>
+        <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 text-red-500 rounded-xl text-sm font-bold text-center"></div>
+        <p class="text-center mt-6 text-xs font-bold text-gray-400 uppercase tracking-widest">
+            Don't have an account? <a href="index.html#contact" class="text-black underline">Join Us</a>
+        </p>
+    </div>
+</body>
+</html>
