@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enactus ISIMG | Entrepreneurial Action</title>
     
+    <!-- CSS Frameworks & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -13,17 +14,18 @@
     <style>
         :root { --enactus-yellow: #FFC222; }
         html { scroll-behavior: smooth; }
-        body { font-family: 'Source Sans 3', sans-serif; }
+        body { font-family: 'Source Sans 3', sans-serif; overflow-x: hidden; }
         .font-heading { font-family: 'Montserrat', sans-serif; }
         
-        /* Navbar الأصلية */
+        /* Navbar Style */
         .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
+
+        /* Buttons */
         .btn-primary {
             background-color: var(--enactus-yellow);
             color: black;
@@ -33,29 +35,40 @@
         }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 194, 34, 0.4); }
 
-        .project-card {
-            border-radius: 20px;
-            overflow: hidden;
-            background: white;
-            transition: all 0.4s ease;
-            border: 1px solid #f0f0f0;
+        /* Team Interactivity */
+        .member-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
         }
-        .project-card:hover { transform: translateY(-12px); border-color: var(--enactus-yellow); }
+        .member-card:hover { transform: scale(1.08); }
+        
+        /* Modal Popup */
+        #memberModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
 
-        /* أخفاء الأعضاء في البداية */
-        #extra-members { display: none; }
+        /* Stats Card Hover */
+        .stat-card:hover { background-color: var(--enactus-yellow); color: black !important; }
+        .stat-card:hover p { color: black !important; }
     </style>
 </head>
 <body class="bg-white">
 
-    <!-- 1. Navigation (Original Style) -->
-    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <!-- 1. Navigation (Original Fixed Style) -->
+    <nav class="fixed w-full z-50 glass-nav py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="w-10 h-10 bg-enactus-yellow rounded-lg flex items-center justify-center font-bold text-black text-xl">
                     <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="logo" class="rounded-lg">
                 </div>
-                <span class="font-heading text-xl tracking-tighter uppercase font-bold">ENACTUS <span class="text-yellow-400">ISIMG</span></span>
+                <span class="font-heading text-xl tracking-tighter uppercase font-bold">ENACTUS <span class="text-enactus-yellow">ISIMG</span></span>
             </div>
             <div class="hidden md:flex items-center space-x-10 font-semibold text-sm uppercase tracking-widest">
                 <a href="#about" class="hover:text-enactus-yellow transition">About</a>
@@ -67,153 +80,240 @@
         </div>
     </nav>
 
-    <!-- 2. Hero Section (Original Style) -->
-    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <!-- 2. Hero Section -->
+    <section class="relative min-h-screen flex items-center pt-20">
         <div class="absolute right-0 top-0 w-1/3 h-full bg-enactus-yellow opacity-5 hidden lg:block"></div>
         <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div data-aos="fade-right" data-aos-duration="1200">
-                <div class="inline-block px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-bold mb-6">• ISIMG Chapter</div>
-                <h1 class="text-6xl lg:text-8xl font-extrabold leading-none mb-6 font-heading uppercase tracking-tighter">Impact<br><span class="text-enactus-yellow">Through</span><br>Action.</h1>
-                <p class="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">We empower students at ISIMG to become entrepreneurial leaders who use innovation to solve the world's toughest challenges.</p>
+            <div data-aos="fade-right">
+                <div class="inline-block px-4 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-bold mb-6 tracking-widest uppercase">Chapter ISIMG 2025</div>
+                <h1 class="text-6xl lg:text-8xl font-black font-heading leading-none mb-6 uppercase tracking-tighter">Impact<br><span class="text-enactus-yellow">Through</span><br>Action.</h1>
+                <p class="text-xl text-gray-500 mb-10 max-w-lg leading-relaxed">Empowering students to solve the world's toughest challenges through entrepreneurial action.</p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="#projects" class="btn-primary text-lg px-8 py-4">See Our Projects</a>
-                    <a href="#about" class="px-8 py-4 border-2 border-black rounded-full font-bold hover:bg-black hover:text-white transition">Our Story</a>
+                    <a href="#projects" class="btn-primary text-lg px-8 py-4">Explore Work</a>
+                    <a href="#contact" class="px-8 py-4 border-2 border-black rounded-full font-bold hover:bg-black hover:text-white transition uppercase text-sm">Join Our Mission</a>
                 </div>
             </div>
-            <div class="relative" data-aos="fade-left" data-aos-duration="1200">
-                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg" alt="Students" class="rounded-[40px] shadow-2xl">
+            <div data-aos="zoom-in">
+                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg" alt="Hero" class="rounded-[40px] shadow-2xl">
             </div>
         </div>
     </section>
 
-    <!-- 3. About Section (Original Style) -->
-    <section id="about" class="py-32 bg-white relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="mb-20">
-                <h2 class="text-5xl lg:text-7xl font-extrabold font-heading mb-8 tracking-tighter uppercase">Driven by <span class="text-enactus-yellow">Action.</span></h2>
-                <p class="max-w-2xl text-gray-500 text-xl">Enactus ISIMG is a premier incubator for social entrepreneurs in Gabès.</p>
-            </div>
-            <div class="grid lg:grid-cols-12 gap-6">
-                <!-- Limitl'ESS Card -->
-                <div class="lg:col-span-5 bg-enactus-yellow p-12 rounded-[2.5rem] shadow-xl shadow-yellow-400/20" data-aos="zoom-in">
-                    <i data-lucide="trophy" class="w-12 h-12 mb-6"></i>
-                    <h3 class="text-4xl font-black mb-4">Limitl'ESS <br>National Champion</h3>
-                    <p class="font-bold">🥇 2025 Winners</p>
-                </div>
-                <!-- Mission/Vision Grid -->
-                <div class="lg:col-span-7 grid md:grid-cols-2 gap-6">
-                    <div class="bg-gray-50 p-10 rounded-[2.5rem] border border-gray-100">
-                        <h4 class="text-2xl font-bold mb-4 font-heading">Our Mission</h4>
-                        <p class="text-gray-500 text-sm">Developing entrepreneurial leaders through innovation.</p>
+    <!-- 3. About Section (Original + Interactive Stats) -->
+    <section id="about" class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-12 gap-10 items-start">
+                <div class="lg:col-span-5" data-aos="fade-right">
+                    <h2 class="text-5xl lg:text-7xl font-black font-heading uppercase mb-8 leading-none">Driven by <span class="text-enactus-yellow">Impact.</span></h2>
+                    <p class="text-xl text-gray-500 mb-10">We believe in business as a force for good. At ISIMG Gabès, we create projects that change lives.</p>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="stat-card p-6 bg-gray-50 rounded-3xl transition-all duration-300">
+                            <h4 class="text-3xl font-black font-heading">02</h4>
+                            <p class="text-xs font-bold uppercase tracking-widest opacity-60">Active Projects</p>
+                        </div>
+                        <div class="stat-card p-6 bg-gray-50 rounded-3xl transition-all duration-300">
+                            <h4 class="text-3xl font-black font-heading">22</h4>
+                            <p class="text-xs font-bold uppercase tracking-widest opacity-60">Dreamers</p>
+                        </div>
                     </div>
-                    <div class="bg-black text-white p-10 rounded-[2.5rem]">
-                        <h4 class="text-2xl font-bold mb-4 font-heading">Our Vision</h4>
-                        <p class="text-gray-400 text-sm">Leading social impact in Tunisia.</p>
+                </div>
+
+                <div class="lg:col-span-7" data-aos="fade-left">
+                    <div class="bg-enactus-yellow p-12 rounded-[3rem] shadow-2xl shadow-yellow-400/20 relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <i data-lucide="trophy" class="w-16 h-16 text-black mb-8"></i>
+                            <h3 class="text-4xl font-black font-heading mb-4 text-black uppercase">Limitl'ESS <br>National Champion</h3>
+                            <p class="text-black/70 font-bold uppercase tracking-widest text-sm mb-6">Winner of 2025 Competition</p>
+                            <div class="h-1 w-20 bg-black"></div>
+                        </div>
+                        <i data-lucide="award" class="absolute -right-10 -bottom-10 w-64 h-64 text-black/5 -rotate-12 transition-transform group-hover:rotate-0 duration-700"></i>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 4. Team Section (Leadership + Show More Members) -->
-    <section id="team" class="py-24 bg-black text-white">
+    <!-- 4. Projects Section (Original Display) -->
+    <section id="projects" class="py-32 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-20">
-                <h2 class="text-5xl font-extrabold mb-4 font-heading uppercase tracking-tighter">The Leadership</h2>
-                <p class="text-enactus-yellow font-bold uppercase tracking-widest text-sm">Driving Change at ISIMG</p>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Our Innovation</h2>
+                <p class="text-gray-400 font-bold uppercase tracking-[0.3em] text-xs mt-4">Where technology meets humanity</p>
             </div>
-            
-            <!-- Leadership Grid (10 People) -->
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-10">
-                <div class="text-center" data-aos="fade-up">
-                    <img src="enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg" class="aspect-square object-cover rounded-2xl mb-4 hover:scale-105 transition shadow-lg">
-                    <h4 class="font-bold">Ghofran Chergui</h4>
-                    <p class="text-enactus-yellow text-[10px] font-bold uppercase tracking-widest mt-1">President</p>
-                </div>
-                <div class="text-center" data-aos="fade-up" data-aos-delay="100">
-                    <img src="enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg" class="aspect-square object-cover rounded-2xl mb-4 hover:scale-105 transition">
-                    <h4 class="font-bold">Azmi Ben Hassine</h4>
-                    <p class="text-enactus-yellow text-[10px] font-bold uppercase tracking-widest mt-1">Vice President</p>
-                </div>
-                <!-- أضف بقية الـ 10 هنا بنفس الطريقة -->
-                <!-- ... -->
-            </div>
-
-            <!-- الزر والأيقونة لعرض بقية الأعضاء -->
-            <div class="mt-20 text-center">
-                <button onclick="toggleMembers()" class="group flex flex-col items-center gap-4 mx-auto focus:outline-none">
-                    <span class="text-xs font-bold uppercase tracking-[0.3em] text-gray-500 group-hover:text-enactus-yellow transition">See All Family</span>
-                    <div class="w-12 h-12 rounded-full border border-gray-700 flex items-center justify-center group-hover:border-enactus-yellow group-hover:bg-enactus-yellow group-hover:text-black transition-all">
-                        <i data-lucide="users" id="toggleIcon"></i>
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Fytrlance -->
+                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 group">
+                    <div class="h-80 overflow-hidden">
+                        <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                </button>
-            </div>
-
-            <!-- Extra Members Grid (12 People - Hidden by default) -->
-            <div id="extra-members" class="mt-16 grid grid-cols-3 md:grid-cols-6 gap-6 pt-10 border-t border-gray-800">
-                <!-- مثال لعضو عادي -->
-                <div class="text-center">
-                    <img src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg" class="aspect-square object-cover rounded-xl mb-2 opacity-70">
-                    <p class="text-[10px] font-bold uppercase">Active Member</p>
+                    <div class="p-10">
+                        <span class="text-enactus-yellow font-black uppercase text-[10px] tracking-widest">Tech/Freelance</span>
+                        <h3 class="text-3xl font-black font-heading mt-2">Fytrlance</h3>
+                        <p class="text-gray-500 mt-4 mb-8">A modern platform designed to empower freelancers with intuitive tools and seamless connections.</p>
+                        <a href="#" class="font-bold flex items-center gap-2 text-xs uppercase tracking-widest hover:text-enactus-yellow transition">Details <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
                 </div>
-                <!-- كرر لـ 12 عضو -->
+                <!-- Bioverto -->
+                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 group">
+                    <div class="h-80 overflow-hidden">
+                        <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="p-10">
+                        <span class="text-enactus-yellow font-black uppercase text-[10px] tracking-widest">Sustainable/Eco</span>
+                        <h3 class="text-3xl font-black font-heading mt-2">Bioverto</h3>
+                        <p class="text-gray-500 mt-4 mb-8">Innovation in organic products, promoting a healthy lifestyle while protecting our environment.</p>
+                        <a href="#" class="font-bold flex items-center gap-2 text-xs uppercase tracking-widest hover:text-enactus-yellow transition">Details <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 5. Contact Section (Original Yellow/White Style) -->
-    <section id="contact" class="py-24 bg-white">
+    <!-- 5. TEAM SECTION (Leadership 10 + Members 12) -->
+    <section id="team" class="py-32 bg-black text-white">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="bg-enactus-yellow rounded-[50px] p-12 lg:p-20 flex flex-col lg:flex-row items-start gap-12 shadow-2xl">
+            <div class="text-center mb-24">
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">The Leadership</h2>
+                <div class="w-20 h-2 bg-enactus-yellow mx-auto mt-6"></div>
+            </div>
+
+            <!-- Leadership (10 Members) -->
+            <div id="leadershipGrid" class="grid grid-cols-2 md:grid-cols-5 gap-10 mb-32">
+                <!-- JS will fill this -->
+            </div>
+
+            <div class="text-center mb-20">
+                <h3 class="text-2xl font-black font-heading uppercase tracking-widest text-gray-500">Active Community</h3>
+            </div>
+
+            <!-- Active Members (12 Members) -->
+            <div id="membersGrid" class="grid grid-cols-3 md:grid-cols-6 gap-6">
+                <!-- JS will fill this -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. CONTACT SECTION (Yellow Form) -->
+    <section id="contact" class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="bg-enactus-yellow rounded-[4rem] p-12 lg:p-20 flex flex-col lg:flex-row gap-16 shadow-2xl">
                 <div class="lg:w-1/3">
-                    <h2 class="text-5xl lg:text-7xl font-extrabold text-black font-heading uppercase tracking-tighter leading-none">Join the <br><span class="underline">Impact.</span></h2>
-                    <p class="text-black text-xl font-semibold mt-8 opacity-80">Tell us why you want to join and what you can bring to the team.</p>
+                    <h2 class="text-7xl font-black font-heading uppercase leading-none mb-8 tracking-tighter">Join<br>Us.</h2>
+                    <p class="text-xl font-bold mb-10 text-black">We don't build projects, we build leaders. Start your Enactus journey today.</p>
+                    <div class="flex items-center gap-4 text-sm font-bold"><i data-lucide="mail"></i> enactus.isimg@gmail.com</div>
                 </div>
-                <div class="lg:w-2/3 w-full bg-white p-10 rounded-[2.5rem] shadow-xl">
+                
+                <div class="lg:w-2/3 w-full bg-white p-12 rounded-[3rem] shadow-xl">
                     <form id="registrationForm" class="space-y-6">
                         <div class="grid md:grid-cols-2 gap-6">
-                            <input type="text" id="regName" placeholder="Full Name" class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-black outline-none" required>
-                            <input type="email" id="regEmail" placeholder="Email Address" class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-black outline-none" required>
+                            <input type="text" id="regName" placeholder="Full Name" class="p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-enactus-yellow transition-all" required>
+                            <input type="email" id="regEmail" placeholder="Email Address" class="p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-enactus-yellow transition-all" required>
                         </div>
-                        <input type="password" id="regPassword" placeholder="Password (for portal)" class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-black outline-none" required>
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Department</label>
+                        <input type="password" id="regPassword" placeholder="Create Portal Password" class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-enactus-yellow transition-all" required>
+                        
+                        <div class="space-y-4">
+                            <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Department of Interest</label>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                <label><input type="radio" name="dept" value="Projects" class="hidden peer" checked><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer">Projects</div></label>
-                                <label><input type="radio" name="dept" value="Media" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer">Media</div></label>
-                                <label><input type="radio" name="dept" value="HR" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer">HR</div></label>
-                                <label><input type="radio" name="dept" value="Marketing" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer">Marketing</div></label>
+                                <label><input type="radio" name="dept" value="Projects" class="hidden peer" checked><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer transition-all">Projects</div></label>
+                                <label><input type="radio" name="dept" value="Media" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer transition-all">Media</div></label>
+                                <label><input type="radio" name="dept" value="HR" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer transition-all">HR</div></label>
+                                <label><input type="radio" name="dept" value="Marketing" class="hidden peer"><div class="text-center p-3 rounded-xl bg-gray-50 peer-checked:bg-black peer-checked:text-white font-bold text-xs cursor-pointer transition-all">Marketing</div></label>
                             </div>
                         </div>
-                        <textarea id="regMotivation" placeholder="Your Motivation & Opinion..." class="w-full px-6 py-4 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-black h-32 resize-none" required></textarea>
-                        <button type="submit" class="w-full py-5 bg-black text-white font-bold rounded-2xl hover:bg-enactus-yellow hover:text-black transition-all uppercase tracking-widest text-xs">Submit Application</button>
+
+                        <textarea id="regMotivation" placeholder="Why do you want to join? (Opinion & Motivation)" class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-enactus-yellow h-32 resize-none" required></textarea>
+                        
+                        <button type="submit" class="w-full py-5 bg-enactus-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all uppercase tracking-widest shadow-xl">Submit Application</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Scripts -->
+    <!-- 7. MEMBER POPUP (Modal) -->
+    <div id="memberModal" onclick="closeModal()">
+        <div class="bg-white w-full max-w-md rounded-[3rem] p-10 text-center relative mx-6" onclick="event.stopPropagation()">
+            <img id="modalImg" class="w-40 h-40 object-cover rounded-3xl mx-auto mb-6 border-4 border-enactus-yellow shadow-xl shadow-yellow-400/20">
+            <h3 id="modalName" class="text-3xl font-black font-heading uppercase mb-2">Name</h3>
+            <p id="modalRole" class="text-enactus-yellow font-bold uppercase tracking-widest text-xs mb-8">Role</p>
+            
+            <div class="flex justify-center gap-4 mb-8">
+                <a id="modalFB" href="#" target="_blank" class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all"><i data-lucide="facebook"></i></a>
+                <a id="modalIG" href="#" target="_blank" class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all"><i data-lucide="instagram"></i></a>
+            </div>
+            
+            <button onclick="closeModal()" class="text-gray-400 font-bold uppercase text-[10px] tracking-widest hover:text-black">Close Profile</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init();
         lucide.createIcons();
 
-        // فك وإخفاء الأعضاء
-        function toggleMembers() {
-            const extra = document.getElementById('extra-members');
-            const icon = document.getElementById('toggleIcon');
-            if (extra.style.display === "grid") {
-                extra.style.display = "none";
-                icon.setAttribute('data-lucide', 'users');
-            } else {
-                extra.style.display = "grid";
-                icon.setAttribute('data-lucide', 'chevron-up');
-            }
+        // 1. Team Data (22 members)
+        const leadership = [
+            { name: "Ghofran Chergui", role: "President", img: "enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg", fb: "#", ig: "#" },
+            { name: "Azmi Ben Hassine", role: "Vice President", img: "enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg", fb: "#", ig: "#" },
+            { name: "Naceur Zidi", role: "Media Coordinator", img: "enactuss/9bd9521e-5ddf-413f-86f5-919e3a823d7d.jpg", fb: "#", ig: "#" },
+            { name: "Jihen Hamdi", role: "HR Manager", img: "enactuss/276d56ca-8b5d-4f8d-b8c9-dab7edaf6997.jpg", fb: "#", ig: "#" },
+            { name: "Hela Lakhdhar", role: "Project Manager", img: "enactuss/34f1e12e-5d8e-48a7-9a3f-b013ad32380f.jpg", fb: "#", ig: "#" },
+            { name: "Moetez Maraach", role: "Media Board", img: "enactuss/78151529-6349-4654-84ec-3240848135d5.jpg", fb: "#", ig: "#" },
+            { name: "Mohamed Amin", role: "Graphic Design", img: "enactuss/78762702-a127-4b64-aba9-c74281e5ac52.jpg", fb: "#", ig: "#" },
+            { name: "Dhia Ben Salha", role: "Marketing", img: "enactuss/c64e3754-0679-4d72-8dc5-1a8e02362da0.jpg", fb: "#", ig: "#" },
+            { name: "Leader 9", role: "Head of Dept", img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg", fb: "#", ig: "#" },
+            { name: "Leader 10", role: "Operations", img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg", fb: "#", ig: "#" }
+        ];
+
+        const members = Array(12).fill({
+            name: "Active Member",
+            role: "Dreamer",
+            img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg",
+            fb: "#",
+            ig: "#"
+        });
+
+        // 2. Load Team Grid
+        function populateTeam(data, gridId, sizeClass) {
+            const grid = document.getElementById(gridId);
+            data.forEach(m => {
+                const div = document.createElement('div');
+                div.className = `member-card text-center`;
+                div.onclick = () => showMember(m);
+                div.innerHTML = `
+                    <div class="relative overflow-hidden rounded-[2.5rem] mb-4 border-2 border-transparent hover:border-enactus-yellow transition-all">
+                        <img src="${m.img}" class="w-full aspect-square object-cover">
+                    </div>
+                    <p class="text-[10px] font-black uppercase tracking-widest truncate px-2">${m.name}</p>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        populateTeam(leadership, 'leadershipGrid');
+        populateTeam(members, 'membersGrid');
+
+        // 3. Member Modal Functions
+        function showMember(member) {
+            document.getElementById('modalName').innerText = member.name;
+            document.getElementById('modalRole').innerText = member.role;
+            document.getElementById('modalImg').src = member.img;
+            document.getElementById('modalFB').href = member.fb;
+            document.getElementById('modalIG').href = member.ig;
+            document.getElementById('memberModal').style.display = 'flex';
             lucide.createIcons();
         }
 
-        // ... كود Firebase Registration ...
+        function closeModal() {
+            document.getElementById('memberModal').style.display = 'none';
+        }
+
+        // 4. Firebase Config Placeholder
+        // const firebaseConfig = { ... };
+        // firebase.initializeApp(firebaseConfig);
     </script>
 </body>
 </html>
