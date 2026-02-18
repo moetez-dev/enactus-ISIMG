@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Dashboard | Enactus ISIMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-white">
+    <nav class="p-6 flex justify-between items-center border-b">
+        <span class="font-black text-xl font-heading uppercase tracking-tighter">MEMBER <span class="text-enactus-yellow">SPACE</span></span>
+        <button onclick="auth.signOut().then(() => window.location.href='login.html')" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold text-xs uppercase">Logout</button>
+    </nav>
+    <div class="max-w-6xl mx-auto p-10">
+        <h1 class="text-5xl font-black mb-10">Welcome, Member!</h1>
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Resources Card -->
+            <div class="bg-gray-50 p-8 rounded-[2rem] border-2 border-transparent hover:border-enactus-yellow transition-all">
+                <div class="w-12 h-12 bg-enactus-yellow rounded-xl mb-6 flex items-center justify-center font-bold">📂</div>
+                <h3 class="text-xl font-bold mb-2">Internal Resources</h3>
+                <p class="text-gray-500 text-sm mb-4">Access branding kits, templates, and guides.</p>
+                <a href="#" class="text-black font-black text-xs uppercase underline">Access Drive</a>
+            </div>
+            <!-- More cards... -->
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
