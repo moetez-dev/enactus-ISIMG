@@ -1,0 +1,49 @@
+<!-- bureau-space.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bureau Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50">
+    <nav class="p-6 bg-black text-white flex justify-between items-center">
+        <span class="font-black text-yellow-400">BUREAU PANEL</span>
+        <button onclick="auth.signOut().then(()=>window.location.href='login.html')">Logout</button>
+    </nav>
+    <div class="p-10">
+        <h2 class="text-2xl font-bold mb-6">Pending Members</h2>
+        <div id="list" class="grid gap-4"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // جلب الطلبات المنتظرة فقط
+        db.collection("users").where("status", "==", "pending").onSnapshot(snap => {
+            const list = document.getElementById('list');
+            list.innerHTML = "";
+            snap.forEach(doc => {
+                const u = doc.data();
+                list.innerHTML += `
+                    <div class="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="font-bold">${u.fullName} (${u.department})</p>
+                            <p class="text-xs text-gray-400">${u.email}</p>
+                        </div>
+                        <button onclick="approve('${doc.id}')" class="bg-green-500 text-white px-4 py-2 rounded-xl font-bold">Approve</button>
+                    </div>
+                `;
+            });
+        });
+
+        async function approve(id) {
+            await db.collection("users").doc(id).update({ status: "approved" });
+            alert("Member Approved!");
+        }
+    </script>
+</body>
+</html>

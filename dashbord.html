@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Space | Enactus ISIMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body class="bg-white">
+    <!-- Navbar بسيطة للداشبورد -->
+    <nav class="p-6 flex justify-between items-center border-b">
+        <span class="font-black text-xl uppercase tracking-tighter">ENACTUS <span class="text-yellow-400">ISIMG</span></span>
+        <button onclick="logout()" class="text-xs font-bold uppercase tracking-widest px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">Logout</button>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <h1 class="text-4xl font-black mb-8">Welcome back, <span id="userName" class="text-enactus-yellow">Member</span>!</h1>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- كروت الداشبورد -->
+            <div class="bg-gray-50 p-8 rounded-[2rem] border border-gray-100">
+                <h3 class="text-xl font-bold mb-4">Drive Resources</h3>
+                <p class="text-gray-500 text-sm mb-6">Access logos, templates, and project documents.</p>
+                <a href="#" class="inline-block font-bold text-xs uppercase tracking-widest underline">Open Folder</a>
+            </div>
+            <!-- أضف المزيد من الكروت هنا -->
+        </div>
+    </main>
+</body>
+</html>

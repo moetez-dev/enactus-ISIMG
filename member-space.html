@@ -1,0 +1,30 @@
+<!-- member-space.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Space</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-white">
+    <nav class="p-6 border-b flex justify-between items-center">
+        <span class="font-black">ENACTUS ISIMG</span>
+        <button onclick="auth.signOut().then(()=>window.location.href='login.html')" class="text-red-500 font-bold">Logout</button>
+    </nav>
+    <div class="p-10 max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl font-black mb-4">Welcome to Member Space</h1>
+        <p class="text-gray-500">Only approved members can see this.</p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        auth.onAuthStateChanged(user => {
+            if(!user) window.location.href = "login.html";
+        });
+    </script>
+</body>
+</html>
