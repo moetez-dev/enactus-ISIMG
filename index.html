@@ -439,5 +439,70 @@
             if(list.style.display === "grid") list.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
+    <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script>
+    // 1. مفتاح الربط (خذه من Firebase Console)
+    const firebaseConfig = {
+        apiKey: "AIzaSy...", 
+        authDomain: "enactus-isimg.firebaseapp.com",
+        projectId: "enactus-isimg",
+        storageBucket: "enactus-isimg.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:1234567:web:abc123"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // 2. قراءة الفورم عند الضغط على الزر
+    const regForm = document.getElementById('registrationForm');
+
+    regForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // يمنع الصفحة باش ما تعملش Refresh
+
+        // جبدان المعلومات من الخانات (Input fields)
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const fullName = document.getElementById('regName').value;
+        const phone = document.getElementById('regPhone').value;
+        const level = document.getElementById('regLevel').value;
+        const motivation = document.getElementById('regMotivation').value;
+        const department = document.querySelector('input[name="dept"]:checked').value;
+
+        try {
+            // أ- صنع حساب للعضو (Authentication)
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // ب- تخزين بقية المعلومات في قاعدة البيانات (Firestore)
+            await db.collection("users").doc(user.uid).set({
+                uid: user.uid,
+                fullName: fullName,
+                email: email,
+                phone: phone,
+                level: level,
+                department: department,
+                motivation: motivation,
+                status: "pending", // الحالة ديما تبدأ "ينتظر"
+                role: "member",    // الرتبة ديما تبدأ "عضو"
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // نجاح العملية
+            alert("Application Sent Successfully! Wait for board approval.");
+            regForm.reset(); // تفريغ الفورم
+            window.location.href = "login.html"; // هزّو لصفحة الـ Login
+
+        } catch (error) {
+            // لو فما غلطة (مثلا الإيميل مسجل قبل)
+            alert("Error: " + error.message);
+        }
+    });
+</script>
 </body>
 </html>
