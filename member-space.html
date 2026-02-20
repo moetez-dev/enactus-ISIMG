@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Space | Enactus ISIMG</title>
+    <title>Member Portal | Enactus ISIMG</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="member-body">
@@ -14,22 +14,25 @@
     <nav class="member-nav">
         <div class="nav-container">
             <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
-            <button id="logoutBtn" class="logout-btn">Logout</button>
+            <div class="nav-right">
+                <span id="userMailDisplay" class="user-mail"></span>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
         </div>
     </nav>
-<div id="adminPanel" class="hidden container mt-10">
-    <h2 class="section-title">Admin: Pending Applications</h2>
-    <div id="pendingList" class="grid gap-4 mt-6"></div>
-</div>
-    <main class="member-main">
-        <div class="welcome-card" data-aos="fade-up">
-            <h1 class="welcome-title">Welcome to <br><span class="highlight">Member Space</span></h1>
-            <p class="welcome-desc">Only approved members can see this portal. More features coming soon.</p>
-            
-            <div class="user-status-box">
-                <span class="status-dot"></span>
-                <span id="userStatusText">Verifying Session...</span>
+
+    <section id="adminPanel" class="hidden container">
+        <div class="admin-header">
+            <h2 class="admin-title">Recruitment Dashboard</h2>
+            <p>Review applications and manage member status.</p>
+        </div>
+        <div id="pendingList" class="admin-grid">
             </div>
+    </section>
+
+    <main id="memberMain" class="member-main">
+        <div id="statusContent" class="welcome-card">
+            <div class="loader">Loading your workspace...</div>
         </div>
     </main>
 
