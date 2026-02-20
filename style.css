@@ -1,212 +1,185 @@
+/* 1. Global Setup */
 :root {
-    --enactus-yellow: #FFC222;
-    --enactus-black: #111111;
+    --yellow: #FFC222;
+    --black: #111111;
+    --gray-bg: #fafafa;
+    --white: #ffffff;
+    --gray-text: #6b7280;
 }
 
-body {
-    font-family: 'Source Sans 3', sans-serif;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body.site-body { 
+    font-family: 'Source Sans 3', sans-serif; 
+    background-color: var(--white);
+    overflow-x: hidden;
 }
 
-.font-heading {
-    font-family: 'Montserrat', sans-serif;
+/* 2. Navigation */
+.main-nav {
+    position: fixed; width: 100%; z-index: 1000;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.nav-container {
+    max-width: 1280px; margin: 0 auto;
+    padding: 1.25rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo-wrapper { display: flex; align-items: center; gap: 0.75rem; }
+.logo-box { 
+    width: 40px; height: 40px; background: var(--yellow); 
+    border-radius: 8px; overflow: hidden;
+}
+.logo-box img { width: 100%; height: 100%; object-fit: cover; }
+.logo-text { font-family: 'Montserrat'; font-weight: 800; font-size: 1.25rem; }
+.highlight { color: var(--yellow); }
+
+.nav-links { display: none; }
+@media (min-width: 768px) {
+    .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+}
+.nav-link { 
+    text-transform: uppercase; font-size: 0.85rem; font-weight: 600; 
+    color: var(--black); text-decoration: none; transition: 0.3s;
+}
+.nav-link:hover { color: var(--yellow); }
+.nav-portal { color: var(--yellow); font-weight: 900; text-decoration: underline; }
+.nav-cta {
+    background: var(--black); color: var(--white);
+    padding: 0.6rem 1.5rem; border-radius: 50px;
+    text-decoration: none; font-size: 0.85rem; transition: 0.3s;
+}
+.nav-cta:hover { background: var(--yellow); color: var(--black); }
+
+/* 3. Hero Section */
+.hero-section {
+    min-height: 100vh; display: flex; align-items: center;
+    padding-top: 80px; background: var(--gray-bg); position: relative;
+}
+.hero-bg-glow {
+    position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px; background: var(--yellow);
+    opacity: 0.1; filter: blur(120px); border-radius: 50%;
+}
+.hero-container {
+    max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+    display: grid; gap: 4rem;
+}
+@media (min-width: 1024px) { .hero-container { grid-template-columns: 1fr 1fr; } }
+
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    padding: 0.4rem 1rem; background: var(--white);
+    border: 1px solid #eee; border-radius: 50px; margin-bottom: 2rem;
+}
+.pulse-dot { width: 8px; height: 8px; background: var(--yellow); border-radius: 50%; animation: pulse 2s infinite; }
+.badge-text { font-size: 10px; font-weight: 900; text-transform: uppercase; color: var(--gray-text); letter-spacing: 0.1em; }
+
+.hero-title {
+    font-family: 'Montserrat'; font-size: 4.5rem; font-weight: 900;
+    line-height: 0.9; text-transform: uppercase; margin-bottom: 2rem;
+}
+.outline-text { color: transparent; -webkit-text-stroke: 1px var(--yellow); }
+.hero-description { color: var(--gray-text); font-size: 1.15rem; max-width: 400px; margin-bottom: 3rem; }
+
+.hero-btns { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.btn-primary { 
+    background: var(--yellow); color: var(--black); padding: 1rem 2rem;
+    border-radius: 50px; font-weight: 800; text-decoration: none;
+    display: flex; align-items: center; gap: 0.5rem; transition: 0.3s;
+}
+.btn-secondary {
+    border: 2px solid #ddd; padding: 1rem 2rem; border-radius: 50px;
+    font-weight: 800; text-decoration: none; transition: 0.3s;
 }
 
-.bg-enactus-yellow { background-color: var(--enactus-yellow); }
-.text-enactus-yellow { color: var(--enactus-yellow); }
+.hero-visual { position: relative; }
+.hero-img-card {
+    border-radius: 60px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+    transform: rotate(-2deg); transition: 0.5s;
+}
+.hero-img-card:hover { transform: rotate(0); }
+.hero-img-card img { width: 100%; display: block; }
 
+.floating-stat {
+    position: absolute; bottom: -30px; left: -30px;
+    background: var(--white); padding: 2rem; border-radius: 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 1rem;
+}
+.stat-number { font-size: 3rem; font-weight: 900; color: var(--yellow); }
+.stat-divider { width: 1px; height: 40px; background: #eee; }
+.stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
 
+/* 4. Sections Styling */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+.about-section, .projects-section, .team-section { padding: 8rem 0; }
 
-/* تحسين روابط القائمة */
-.nav-item-link {
-    position: relative;
-    color: #111;
-    transition: all 0.3s ease;
-}
+.section-header { display: flex; flex-direction: column; gap: 2.5rem; margin-bottom: 5rem; }
+@media (min-width: 1024px) { .section-header { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
+.main-title { font-family: 'Montserrat'; font-size: 4rem; font-weight: 900; line-height: 1; text-transform: uppercase; }
 
-.nav-item-link::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--enactus-yellow);
-    transition: width 0.3s ease;
-}
+.bento-grid { display: grid; gap: 1.5rem; grid-template-rows: repeat(2, 320px); }
+@media (min-width: 1024px) { .bento-grid { grid-template-columns: repeat(12, 1fr); } }
+.lg-col-7 { grid-column: span 7; }
+.lg-col-5 { grid-column: span 5; }
 
-.nav-item-link:hover::after {
-    width: 100%;
-}
+.bento-card { border-radius: 3.5rem; padding: 3rem; position: relative; overflow: hidden; display: flex; }
+.card-black { background: var(--black); color: var(--white); }
+.card-light { background: var(--gray-bg); border: 1px solid #eee; }
 
-.nav-item-link:hover {
-    color: var(--enactus-yellow);
+/* 5. Projects Styling */
+.projects-grid { display: grid; gap: 4rem; }
+@media (min-width: 768px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
+.project-card { cursor: pointer; }
+.project-inner {
+    border-radius: 3rem; overflow: hidden; position: relative; height: 500px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
 }
+.project-inner img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+.project-card:hover img { transform: scale(1.05); }
+.project-info {
+    position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 3rem;
+}
+.proj-category { background: var(--yellow); padding: 0.2rem 1rem; border-radius: 50px; font-size: 10px; font-weight: 900; margin-bottom: 1rem; display: inline-block; width: fit-content; }
+.proj-name { font-family: 'Montserrat'; color: var(--white); font-size: 2.5rem; font-weight: 900; text-transform: uppercase; }
 
-/* زر Join Us بستايل Pill */
-.btn-primary-pill {
-    background-color: var(--enactus-yellow);
-    color: black;
-    padding: 10px 24px;
-    border-radius: 50px;
-    font-weight: 800;
-    font-size: 11px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(255, 194, 34, 0.2);
-}
+/* 6. Form Styling */
+.contact-section { background: var(--yellow); padding: 8rem 0; }
+.contact-flex { display: flex; flex-direction: column; gap: 5rem; }
+@media (min-width: 1024px) { .contact-flex { flex-direction: row; } .contact-info { width: 33%; } .contact-form-wrapper { width: 66%; } }
+.contact-title { font-family: 'Montserrat'; font-size: 4.5rem; font-weight: 900; line-height: 0.9; text-transform: uppercase; margin-bottom: 2rem; }
 
-.btn-primary-pill:hover {
-    transform: scale(1.05) translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 194, 34, 0.4);
+.app-form { background: var(--white); padding: 4rem; border-radius: 4rem; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
+.form-row { display: grid; gap: 2rem; margin-bottom: 2rem; }
+@media (min-width: 768px) { .form-row { grid-template-columns: 1fr 1fr; } }
+.field-group { margin-bottom: 2rem; }
+.field-group label { display: block; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #999; margin-bottom: 0.5rem; padding-left: 1rem; }
+.field-group input, .field-group textarea {
+    width: 100%; padding: 1.25rem; background: #f9f9f9; border: none; border-radius: 1.5rem; outline: none; transition: 0.3s;
 }
+.field-group input:focus { background: #f0f0f0; box-shadow: 0 0 0 4px rgba(255, 194, 34, 0.1); }
+.dept-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+@media (min-width: 768px) { .dept-selector { grid-template-columns: repeat(4, 1fr); } }
 
-/* تأثير عند تحريك الصفحة (اختياري عبر JS) */
-.nav-scrolled {
-    width: 80% !important;
-    top: 10px !important;
+.radio-box input { display: none; }
+.radio-box span {
+    display: block; padding: 1rem; background: #f9f9f9; border-radius: 1rem;
+    text-align: center; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s;
 }
-
-.btn-primary {
-    background-color: var(--enactus-yellow);
-    color: black;
-    font-weight: 700;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.radio-box input:checked + span { background: var(--black); color: var(--white); }
+.form-submit {
+    width: 100%; padding: 1.5rem; background: var(--yellow); border: none; border-radius: 1.5rem;
+    font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s;
 }
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(255, 194, 34, 0.4);
-}
-
-.project-card {
-    border-radius: 20px;
-    overflow: hidden;
-    background: white;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid #f0f0f0;
-}
-.project-card:hover {
-    transform: translateY(-12px);
-    border-color: var(--enactus-yellow);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-::-webkit-scrollbar {
-    width: 10px;
-}
-::-webkit-scrollbar-track {
-    background: white;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--enactus-yellow);
-    border-radius: 5px;
-}
-/* في ملف style.css تأكد من حذف أي كود فيه grayscale */
-
-/* هذا الكود يضمن أن الصور ملونة دائماً */
-img {
-    filter: none !important;
-    -webkit-filter: grayscale(0) !important;
-}
-
-.team-img-container img:hover {
-    transform: scale(1.1);
-}
-/* Glassmorphism for Nav */
-
-
-/* Typography Improvements */
-.outline-text {
-    -webkit-text-stroke: 1.5px var(--yellow);
-    color: white;
-}
-
-/* Nav Hover Effect */
-.nav-link {
-    position: relative;
-    transition: color 0.3s ease;
-}
-.nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: var(--yellow);
-    transition: width 0.3s ease;
-}
-.nav-link:hover::after {
-    width: 100%;
-}
-
-/* Modern Buttons */
-.btn-hero-primary {
-    background-color: #000;
-    color: #fff;
-    padding: 1.25rem 2.5rem;
-    border-radius: 9999px;
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.btn-hero-primary:hover {
-    background-color: var(--yellow);
-    color: #000;
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(255, 194, 34, 0.3);
-}
-
-.btn-hero-secondary {
-    background-color: var(--yellow);
-    color: #000;
-    padding: 1.25rem 2.5rem;
-    border-radius: 9999px;
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    transition: all 0.4s ease;
-    box-shadow: 0 10px 30px rgba(255, 194, 34, 0.2);
-}
-.btn-hero-secondary:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 40px rgba(255, 194, 34, 0.4);
-}
-
-.btn-join-pill {
-    background: #000;
-    color: #fff;
-    padding: 0.6rem 1.5rem;
-    border-radius: 9999px;
-    font-weight: 800;
-    transition: all 0.3s ease;
-}
-.btn-join-pill:hover {
-    background: var(--yellow);
-    color: #000;
-}
+.form-submit:hover { background: var(--black); color: var(--white); }
 
 /* Animations */
-@keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
 }
-.animate-blob {
-    animation: blob 7s infinite;
-}
-/* Navbar Base */
-
- 
+.hidden { display: none; }
