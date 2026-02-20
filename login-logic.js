@@ -44,3 +44,30 @@ document.getElementById('forgotPassword').addEventListener('click', (e) => {
         .then(() => alert("Reset link sent! Check your inbox."))
         .catch(err => alert(err.message));
 });
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+    } else {
+        // Njibou el data mta3 el user mel Firestore
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        const userData = userDoc.data();
+
+        if (userData.status === "pending") {
+            // Kenou pending, nbadlou l-content mta3 l-page
+            document.querySelector('.member-main').innerHTML = `
+                <div class="welcome-card" style="border-top: 5px solid var(--yellow);">
+                    <h1 class="welcome-title">Application <br><span class="highlight">Pending</span></h1>
+                    <p class="welcome-desc">Your account is created but needs approval. <br> 
+                    Our HR team will contact you soon for an <strong>interview</strong>.</p>
+                    <div class="user-status-box" style="background: #fffbeb;">
+                        <span class="status-dot" style="background: #f59e0b;"></span>
+                        <span>Status: Waiting for Interview</span>
+                    </div>
+                </div>
+            `;
+        } else if (userData.status === "approved") {
+            document.getElementById('userStatusText').innerText = "Member: " + userData.fullName;
+            // Houni t7ot el content el 7a9i9i mta3 el members
+        }
+    }
+});

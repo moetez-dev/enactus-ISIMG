@@ -314,3 +314,10 @@ body.site-body {
 .no-account { text-align: center; margin-top: 2rem; color: var(--gray-text); font-size: 0.9rem; }
 .no-account a { color: var(--black); font-weight: 700; text-decoration: underline; }
 
+.stepper { display: flex; align-items: center; justify-content: center; margin-top: 3rem; gap: 0.5rem; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: #ccc; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; }
+.step.active .circle { background: #22c55e; color: white; border-color: #22c55e; }
+.step.current .circle { background: var(--yellow); color: var(--black); border-color: var(--yellow); box-shadow: 0 0 15px rgba(255,194,34,0.5); }
+.circle { width: 35px; height: 35px; border: 2px solid #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+.line { width: 40px; height: 2px; background: #eee; margin-bottom: 1.5rem; }
+.line.active { background: #22c55e; }

@@ -206,3 +206,62 @@ if (forgotPasswordLink) {
             });
     });
 }
+// Fil registrationForm event listener
+await db.collection("users").doc(user.uid).set({
+    uid: user.uid,
+    fullName: fullName,
+    email: email,
+    department: department,
+    status: "pending", // <--- Hadha houwa el muftah
+    role: "member",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+});
+// Badel hadha b el email mte3ek el s7i7
+const ADMIN_EMAIL = "admin.enactus@isimg.tn"; 
+
+auth.onAuthStateChanged(async (user) => {
+    if (!user) { window.location.href = "login.html"; return; }
+
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const userData = userDoc.data();
+
+    if (user.email === ADMIN_EMAIL) {
+        showAdminPanel();
+    } else if (userData.status === "pending") {
+        showTimeline(); 
+    } else {
+        showMemberContent(userData);
+    }
+});
+
+async function showAdminPanel() {
+    const adminDiv = document.getElementById('adminPanel');
+    const listDiv = document.getElementById('pendingList');
+    adminDiv.classList.remove('hidden');
+
+    const snapshot = await db.collection("users").where("status", "==", "pending").get();
+    
+    listDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+        const u = doc.data();
+        const card = document.createElement('div');
+        card.className = "bento-card card-light"; // Nesta3mlou el styles elli 3anna
+        card.style.padding = "1.5rem";
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+                <div>
+                    <h4 style="font-weight:900">${u.fullName}</h4>
+                    <p style="font-size:0.8rem">${u.email} | Dept: ${u.department}</p>
+                </div>
+                <button onclick="approveUser('${doc.id}')" style="background:var(--yellow); padding:0.5rem 1rem; border-radius:10px; font-weight:800">Approve</button>
+            </div>
+        `;
+        listDiv.appendChild(card);
+    });
+}
+
+window.approveUser = async (uid) => {
+    await db.collection("users").doc(uid).update({ status: "approved" });
+    alert("Member Approved!");
+    location.reload();
+};
