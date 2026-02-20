@@ -48,7 +48,7 @@
 
   <!-- 1. Floating Navigation (Pill Style) -->
     <!-- Professional Full-Width Navbar -->
-    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
+    <nav class="fixed w-full z-50 bg-white shadow-md transition-all duration-300">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <!-- المربع الأصفر واللوغو -->
@@ -370,7 +370,7 @@
             }
         };
 
-        const leadership = [
+         const leadership = [
             { name: "Ghofran Chergui", role: "President", img: "enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg", fb: "#", ig: "#" },
             { name: "Azmi Ben Hassine", role: "Vice President", img: "enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg", fb: "#", ig: "#" },
             { name: "Naceur Zidi", role: "Media Coord", img: "enactuss/9bd9521e-5ddf-413f-86f5-919e3a823d7d.jpg", fb: "#", ig: "#" },
@@ -379,12 +379,15 @@
             { name: "Hela Lakhdhar", role: "Project Manager", img: "enactuss/34f1e12e-5d8e-48a7-9a3f-b013ad32380f.jpg", fb: "#", ig: "#" },
             { name: "Mohamed Amin", role: "Graphic Design", img: "enactuss/78762702-a127-4b64-aba9-c74281e5ac52.jpg", fb: "#", ig: "#" },
             { name: "Dhia Ben Salha", role: "Marketing", img: "enactuss/c64e3754-0679-4d72-8dc5-1a8e02362da0.jpg", fb: "#", ig: "#" },
-            { name: "Leader 9", role: "Logistics", img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg", fb: "#", ig: "#" },
-            { name: "Leader 10", role: "Public Relations", img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg", fb: "#", ig: "#" }
+            { name: "Nahla Ben Yahya", role: "Event Manager", img:"enactuss/nahla.jpg ", fb: "#", ig: "#" },
         ];
 
-        const enactors = Array(12).fill({ name: "Enactor Member", role: "Active Member", img: "enactuss/558811326_122142516362674747_1770264375635943538_n.jpg", fb: "#", ig: "#" });
-
+        const enactors = [
+            { name: "Oumayma Ben Salem", role: "Active Member", img: "enactuss/481186204_1368665821238195_2840693725922138944_n.jpg", fb: "#", ig: "#" },
+            { name: "Arij Ganfoudi", role: "Active Member", img:"enactuss/629262096_893302356808542_3688099736813211604_n.jpg" , fb: "#", ig: "#" },
+            { name: "Hamza Miled", role: "Active Member", img:"enactuss/e530bdbd-fa84-4d33-8ad1-afdae39da2d4.jpg" , fb: "#", ig: "#" },
+            { name: "Oussema Lbekri", role: "Active Member", img:"enactuss/a875a8f7-fd52-49fe-abe8-04fbacfc7b13.jpg" , fb: "#", ig: "#" },
+         ];
         // 2. RENDERING
         function fillGrid(data, gridId) {
             const grid = document.getElementById(gridId);
