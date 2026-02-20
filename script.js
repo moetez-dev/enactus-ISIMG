@@ -183,4 +183,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
+});// Function Reset Password
+const forgotPasswordLink = document.getElementById('forgotPassword');
+
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('loginEmail').value; // Yeched el email elli ktebou el user
+
+        if (!email) {
+            alert("Please enter your email address first!");
+            return;
+        }
+
+        auth.sendPasswordResetEmail(email)
+            .then(() => {
+                alert("Reset link sent! Check your email (and spam folder).");
+            })
+            .catch((error) => {
+                alert("Error: " + error.message);
+            });
+    });
+}

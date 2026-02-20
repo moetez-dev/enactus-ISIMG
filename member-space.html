@@ -1,30 +1,39 @@
-<!-- member-space.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Member Space</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Space | Enactus ISIMG</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-white">
-    <nav class="p-6 border-b flex justify-between items-center">
-        <span class="font-black">ENACTUS ISIMG</span>
-        <button onclick="auth.signOut().then(()=>window.location.href='login.html')" class="text-red-500 font-bold">Logout</button>
+<body class="member-body">
+
+    <nav class="member-nav">
+        <div class="nav-container">
+            <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
     </nav>
-    <div class="p-10 max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl font-black mb-4">Welcome to Member Space</h1>
-        <p class="text-gray-500">Only approved members can see this.</p>
-    </div>
+
+    <main class="member-main">
+        <div class="welcome-card" data-aos="fade-up">
+            <h1 class="welcome-title">Welcome to <br><span class="highlight">Member Space</span></h1>
+            <p class="welcome-desc">Only approved members can see this portal. More features coming soon.</p>
+            
+            <div class="user-status-box">
+                <span class="status-dot"></span>
+                <span id="userStatusText">Verifying Session...</span>
+            </div>
+        </div>
+    </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script>
-        auth.onAuthStateChanged(user => {
-            if(!user) window.location.href = "login.html";
-        });
-    </script>
+    
+    <script src="member-logic.js"></script>
 </body>
 </html>

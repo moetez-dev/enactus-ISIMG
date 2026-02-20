@@ -2,102 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Member Portal | Enactus ISIMG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Enactus ISIMG</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root { --enactus-yellow: #FFC222; }
-        body { font-family: 'Source Sans 3', sans-serif; }
-        .font-heading { font-family: 'Montserrat', sans-serif; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-white flex items-center justify-center min-h-screen">
+<body class="login-page">
 
-    <!-- Navbar بسيطة باش يرجع للـ Home -->
-    <nav class="fixed top-0 w-full p-6 flex justify-between items-center">
-        <a href="index.html" class="font-heading font-black text-xl uppercase tracking-tighter">ENACTUS <span class="text-[#FFC222]">ISIMG</span></a>
-        <a href="index.html" class="text-xs font-bold uppercase tracking-widest border-b-2 border-black">Back to Home</a>
-    </nav>
-
-    <div class="max-w-md w-full px-6">
-        <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100">
-            <div class="text-center mb-10">
-                <div class="w-16 h-16 bg-[#FFC222] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-yellow-400/20">
-                    <i data-lucide="shield-check" class="text-black"></i>
+    <div class="login-wrapper">
+        <div class="login-brand">
+            <div class="brand-content">
+                <a href="index.html" class="back-home">
+                    <i data-lucide="arrow-left"></i> Back to Home
+                </a>
+                <div class="login-logo">
+                    <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Logo">
                 </div>
-                <h2 class="text-3xl font-black font-heading uppercase tracking-tighter">Secure <span class="text-[#FFC222]">Login</span></h2>
-                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Enter your credentials</p>
+                <h1 class="brand-title">Welcome <br>Back.</h1>
+                <p class="brand-subtitle">Enter your credentials to access the Enactus ISIMG portal.</p>
             </div>
+        </div>
 
-            <form id="loginForm" class="space-y-4">
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-[#FFC222] transition-all" required>
-                <input type="password" id="password" placeholder="Password" class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-2 focus:ring-[#FFC222] transition-all" required>
+        <div class="login-form-container">
+            <form id="loginForm" class="auth-form">
+                <h2 class="form-title">Login</h2>
                 
-                <button type="submit" class="w-full py-5 bg-black text-white font-black rounded-2xl hover:bg-[#FFC222] hover:text-black transition-all uppercase tracking-widest text-xs shadow-xl">
-                    Access My Space
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <a href="#" id="forgotPassword" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-submit">
+                    Sign In <i data-lucide="log-in"></i>
                 </button>
+
+                <p class="no-account">
+                    Don't have an account? <a href="index.html#contact">Apply Now</a>
+                </p>
             </form>
-            
-            <p id="errorArea" class="mt-6 text-red-500 text-center text-xs font-bold hidden"></p>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-    <script>
-        // 1. Firebase Config (نفس اللي استعملناه)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        lucide.createIcons();
-
-        // 2. Login Logic
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errDisplay = document.getElementById('errorArea');
-
-            try {
-                // تسجيل الدخول
-                const cred = await auth.signInWithEmailAndPassword(email, password);
-                
-                // جلب بيانات العضو من Firestore
-                const userDoc = await db.collection("users").doc(cred.user.uid).get();
-                
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-
-                    // التثبت من الحالة (Approved or Pending)
-                    if (userData.status === "pending") {
-                        alert("Account Pending: Your application is still being reviewed by the Bureau.");
-                        auth.signOut();
-                    } else {
-                        // التوجيه حسب الرتبة (Bureau vs Member)
-                        if (userData.role === "admin") {
-                            window.location.href = "bureau-space.html"; // يمشي للـ Bureau
-                        } else {
-                            window.location.href = "member-space.html"; // يمشي للـ Member
-                        }
-                    }
-                }
-            } catch (error) {
-                errDisplay.innerText = "Error: Invalid email or password.";
-                errDisplay.classList.remove('hidden');
-            }
-        });
-    </script>
+    <script src="login-logic.js"></script>
 </body>
 </html>
