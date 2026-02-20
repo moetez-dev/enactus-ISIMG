@@ -348,3 +348,69 @@ body.site-body {
 .tool-card:hover { background: var(--black); color: white; }
 .tool-card h3 { font-weight: 900; text-transform: uppercase; font-size: 0.9rem; }
 .tool-card p { font-size: 0.8rem; opacity: 0.7; }
+/* Recruitment Stepper */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3rem;
+    position: relative;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: #ccc;
+    transition: 0.3s;
+}
+
+.step span {
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #999;
+}
+
+/* Lines between steps */
+.line {
+    flex-grow: 1;
+    height: 2px;
+    background: #eee;
+    margin-bottom: 1.5rem; /* Adjust based on span height */
+}
+
+/* Active & Current States */
+.step.active .circle {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+.step.current .circle {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    color: var(--black);
+    box-shadow: 0 0 15px rgba(255, 194, 34, 0.4);
+}
+
+.line.active { background: #22c55e; }
