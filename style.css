@@ -14,12 +14,7 @@ body {
 .bg-enactus-yellow { background-color: var(--enactus-yellow); }
 .text-enactus-yellow { color: var(--enactus-yellow); }
 
-/* تصميم شريط التنقل العائم (Pill Shape) */
-.glass-nav-pill {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
+
 
 /* تحسين روابط القائمة */
 .nav-item-link {
@@ -124,11 +119,7 @@ img {
     transform: scale(1.1);
 }
 /* Glassmorphism for Nav */
-.glass-pill {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
+
 
 /* Typography Improvements */
 .outline-text {
