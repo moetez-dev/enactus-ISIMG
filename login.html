@@ -16,46 +16,50 @@
 
     <div class="login-wrapper">
         <div class="login-brand">
-            <a href="index.html" class="back-home">
-                <i data-lucide="arrow-left"></i> Back to Home
-            </a>
-            <div class="login-logo">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Logo">
+            <div class="brand-content">
+                <a href="index.html" class="back-home flex items-center gap-2 text-sm font-bold opacity-70 hover:opacity-100 mb-8 transition">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Home
+                </a>
+                <div class="login-logo mb-6">
+                    <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Logo" class="w-20 h-20 rounded-2xl object-cover shadow-2xl border-2 border-yellow-400">
+                </div>
+                <h1 class="brand-title text-5xl font-black font-heading leading-tight mb-4">Welcome <br><span class="text-yellow-400">Back.</span></h1>
+                <p class="brand-subtitle text-gray-400 font-medium">Enter your credentials to access the Enactus ISIMG portal.</p>
             </div>
-            <h1 class="brand-title">Welcome <br>Back.</h1>
-            
         </div>
 
-        <div class="login-form-container">
-            <form id="loginForm" class="auth-form">
-                <h2 class="form-title">Login</h2>
+        <div class="login-form-container bg-white p-10 md:p-16 flex flex-col justify-center">
+            <form id="loginForm" class="max-w-md w-full mx-auto">
+                <h2 class="form-title text-3xl font-black font-heading uppercase mb-8">Login</h2>
                 
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <div class="input-wrapper">
-                        <i data-lucide="mail"></i>
-                        <input type="email" id="loginEmail" placeholder="name@example.com" required>
+                <div class="space-y-6">
+                    <div class="input-group">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 font-heading">Email Address</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input type="email" id="loginEmail" placeholder="name@example.com" class="w-full bg-gray-50 border border-gray-100 p-4 pl-12 rounded-2xl outline-none focus:border-yellow-400 transition text-black font-semibold" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 font-heading">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input type="password" id="loginPassword" placeholder="••••••••" class="w-full bg-gray-50 border border-gray-100 p-4 pl-12 rounded-2xl outline-none focus:border-yellow-400 transition text-black font-semibold" required>
+                        </div>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label>Password</label>
-                    <div class="input-wrapper">
-                        <i data-lucide="lock"></i>
-                        <input type="password" id="loginPassword" placeholder="••••••••" required>
-                    </div>
+                <div class="flex justify-end mt-4">
+                    <button type="button" id="forgotPassword" class="text-xs font-bold text-gray-400 hover:text-yellow-600 transition">Forgot Password?</button>
                 </div>
 
-                <div class="form-options">
-                    <button type="button" id="forgotPassword" class="forgot-link text-sm text-gray-400 hover:text-yellow-500 transition">Forgot Password?</button>
-                </div>
-
-                <button type="submit" id="loginBtn" class="login-submit bg-black text-white w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-500 hover:text-black transition-all">
-                    Sign In <i data-lucide="log-in"></i>
+                <button type="submit" id="loginBtn" class="mt-8 bg-black text-white w-full py-5 rounded-2xl font-black font-heading uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-yellow-400 hover:text-black transition-all shadow-xl shadow-black/10">
+                    Sign In <i data-lucide="log-in" class="w-4 h-4"></i>
                 </button>
 
-                <p class="no-account mt-6 text-center text-sm text-gray-500">
-                    Don't have an account? <a href="index.html#contact" class="text-black font-bold hover:text-yellow-500">Apply Now</a>
+                <p class="mt-10 text-center text-sm font-medium text-gray-500">
+                    Don't have an account? <a href="index.html#contact" class="text-black font-black hover:text-yellow-500 underline underline-offset-4">Apply Now</a>
                 </p>
             </form>
         </div>
@@ -84,7 +88,7 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Login Logic
+        // --- LOGIN LOGIC WITH INTERVIEW STATUS SUPPORT ---
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -95,37 +99,40 @@
             btn.disabled = true;
 
             try {
-                // 1. Auth check
+                // 1. Authenticate User
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const uid = userCredential.user.uid;
 
-                // 2. Fetch User Role and Status from Firestore
+                // 2. Fetch Profile from Firestore
                 const userDoc = await db.collection("users").doc(uid).get();
 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
 
-                    // 3. Routing Logic
+                    // 3. Routing Logic based on Role and Status
                     if (userData.role === "admin") {
+                        // Admin/President goes to Dashboard
                         window.location.href = "admin.html";
                     } 
-                    else if (userData.status === "approved") {
+                    else if (userData.status === "approved" || userData.status === "interview") {
+                        // Members (Approved OR Interviewed) go to Portal
                         window.location.href = "portal.html";
                     } 
                     else {
-                        // Account exists but not approved yet
-                        alert("Your application is still under review by the Board. Please wait for approval.");
+                        // Pending or Rejected
+                        alert("Application Pending: Your account is still being reviewed. You will gain access once you are invited for an interview or approved.");
                         await auth.signOut();
                         window.location.reload();
                     }
                 } else {
-                    alert("Account found but no profile data. Contact Admin.");
+                    alert("Error: Profile data not found. Contact Admin.");
+                    await auth.signOut();
                 }
 
             } catch (err) {
                 alert("Login Error: " + err.message);
             } finally {
-                btn.innerHTML = 'Sign In <i data-lucide="log-in"></i>';
+                btn.innerHTML = 'Sign In <i data-lucide="log-in" class="w-4 h-4"></i>';
                 btn.disabled = false;
                 lucide.createIcons();
             }
@@ -140,7 +147,7 @@
             }
             try {
                 await auth.sendPasswordResetEmail(email);
-                alert("Password reset link sent to your email!");
+                alert("Password reset link sent! Check your inbox.");
             } catch (err) {
                 alert("Error: " + err.message);
             }
