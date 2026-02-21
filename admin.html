@@ -3,76 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Enactus ISIMG</title>
+    <title>Admin Panel | Enactus ISIMG</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Source Sans 3', sans-serif; background-color: #f9fafb; }
+        body { font-family: 'Source Sans 3', sans-serif; background: #f0f2f5; }
         .font-heading { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
-<body>
+<body class="flex min-h-screen">
 
-    <nav class="bg-black text-white p-6 shadow-xl">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="font-heading text-xl uppercase tracking-tighter text-yellow-400">President <span class="text-white">Dashboard</span></h1>
-            <button onclick="logout()" class="text-sm font-bold opacity-70 hover:opacity-100 flex items-center gap-2">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+    <aside class="w-64 bg-black text-white p-6 flex flex-col">
+        <h1 class="font-heading text-2xl mb-10 text-[#FFC222]">ADMIN <span class="text-white">HUB</span></h1>
+        <nav class="space-y-4 flex-1">
+            <button onclick="showSection('members')" class="w-full text-left p-3 rounded-xl hover:bg-[#FFC222] hover:text-black transition font-bold flex items-center gap-3">
+                <i data-lucide="users"></i> Members
             </button>
-        </div>
-    </nav>
+            <button onclick="showSection('news')" class="w-full text-left p-3 rounded-xl hover:bg-[#FFC222] hover:text-black transition font-bold flex items-center gap-3">
+                <i data-lucide="megaphone"></i> Publish News
+            </button>
+        </nav>
+        <button onclick="logout()" class="p-3 text-red-400 font-bold flex items-center gap-3"><i data-lucide="log-out"></i> Logout</button>
+    </aside>
 
-    <main class="max-w-7xl mx-auto px-6 py-12">
+    <main class="flex-1 p-10">
         
-        <div class="bg-black text-white p-10 rounded-[3rem] mb-12 shadow-2xl">
-            <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3 text-yellow-400">
-                <i data-lucide="calendar-plus"></i> Post New Event
-            </h3>
-            <form id="eventForm" class="grid md:grid-cols-3 gap-6">
-                <input type="text" id="evTitle" placeholder="Event Title" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
-                <input type="date" id="evDate" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
-                <input type="text" id="evDesc" placeholder="Description..." class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
-                <button type="submit" id="eventBtn" class="bg-yellow-400 text-black font-black uppercase tracking-widest text-[10px] py-4 rounded-2xl hover:bg-white transition-all md:col-span-3">
-                    Push to Timeline
-                </button>
-            </form>
-        </div>
-
-        <div class="bg-white p-10 rounded-[3rem] mb-12 shadow-sm border border-gray-100">
-            <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3">
-                <i data-lucide="star" class="text-yellow-500"></i> Set Enactor of Month
-            </h3>
-            <form id="eomForm" class="grid md:grid-cols-2 gap-6">
-                <input type="text" id="eomName" placeholder="Member Name" class="bg-gray-50 p-4 rounded-2xl outline-none" required>
-                <input type="text" id="eomText" placeholder="Achievement..." class="bg-gray-50 p-4 rounded-2xl outline-none" required>
-                <button type="submit" class="bg-black text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-2xl hover:bg-yellow-400 hover:text-black transition-all md:col-span-2">
-                    Update Winner
-                </button>
-            </form>
-        </div>
-
-        <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <h2 class="text-4xl font-black font-heading uppercase leading-none">Review<br>Applications</h2>
-            <div class="bg-yellow-400 p-4 rounded-3xl flex items-center gap-4 shadow-lg">
-                <div class="bg-black text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black" id="count">0</div>
-                <span class="font-bold uppercase text-[10px] tracking-widest">Total<br>Applications</span>
+        <section id="membersSection" class="space-y-6">
+            <h2 class="text-3xl font-black font-heading uppercase italic">Manage Enactors</h2>
+            <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-50 border-b">
+                        <tr>
+                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Name</th>
+                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Status</th>
+                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Points</th>
+                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTable" class="divide-y divide-gray-50">
+                        </tbody>
+                </table>
             </div>
-        </div>
+        </section>
 
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Candidate</th>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="applicationsTable"></tbody>
-            </table>
-            <div id="loader" class="p-20 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">Loading...</div>
-        </div>
+        <section id="newsSection" class="hidden space-y-6">
+            <h2 class="text-3xl font-black font-heading uppercase italic">Broadcast Update</h2>
+            <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 max-w-2xl">
+                <input type="text" id="newsTitle" placeholder="Update Title" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 outline-none focus:ring-2 ring-yellow-400 font-bold">
+                <textarea id="newsDesc" placeholder="What's happening in the club?" class="w-full p-4 bg-gray-50 rounded-2xl mb-6 h-32 outline-none focus:ring-2 ring-yellow-400 font-semibold"></textarea>
+                <button onclick="publishNews()" class="bg-black text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#FFC222] hover:text-black transition-all">Publish to Feed</button>
+            </div>
+        </section>
+
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -89,104 +72,72 @@
             appId: "1:348185800306:web:31e228e4bb631e18a91ceb"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
         const auth = firebase.auth();
+        const db = firebase.firestore();
+
         lucide.createIcons();
 
-        // 1. ADD EVENT
-        document.getElementById('eventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('eventBtn');
-            btn.innerText = "Publishing...";
-            try {
-                await db.collection("events").add({
-                    title: document.getElementById('evTitle').value,
-                    date: document.getElementById('evDate').value,
-                    description: document.getElementById('evDesc').value,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert("Event Added!");
-                e.target.reset();
-            } catch(err) { alert(err.message); }
-            finally { btn.innerText = "Push to Timeline"; }
-        });
-
-        // 2. LOAD CANDIDATES (Including Interview Status)
-        function loadApplications() {
-            const table = document.getElementById('applicationsTable');
-            const loader = document.getElementById('loader');
-            
-            // Here we load everyone who is NOT an admin
-            db.collection("users").where("role", "!=", "admin")
-              .onSnapshot((snapshot) => {
-                table.innerHTML = "";
-                loader.style.display = snapshot.empty ? 'block' : 'none';
-                document.getElementById('count').innerText = snapshot.size;
-
-                snapshot.forEach((doc) => {
-                    const user = doc.data();
-                    let statusColor = "bg-gray-100 text-gray-500"; // Pending
-                    if(user.status === 'approved') statusColor = "bg-green-100 text-green-600";
-                    if(user.status === 'interview') statusColor = "bg-blue-100 text-blue-600";
-
-                    const tr = document.createElement('tr');
-                    tr.className = "border-b border-gray-50";
-                    tr.innerHTML = `
-                        <td class="p-6">
-                            <p class="font-bold text-black">${user.fullName}</p>
-                            <p class="text-xs text-gray-400">${user.email}</p>
-                        </td>
-                        <td class="p-6">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${statusColor}">${user.status}</span>
-                        </td>
-                        <td class="p-6 flex gap-2">
-                            <button onclick="updateStatus('${doc.id}', 'approved')" class="bg-green-500 text-white p-2 rounded-lg" title="Approve"><i data-lucide="check" class="w-4 h-4"></i></button>
-                            <button onclick="updateStatus('${doc.id}', 'interview')" class="bg-blue-500 text-white p-2 rounded-lg" title="Interview"><i data-lucide="calendar" class="w-4 h-4"></i></button>
-                            <button onclick="deleteUser('${doc.id}')" class="bg-red-500 text-white p-2 rounded-lg" title="Reject"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </td>
-                    `;
-                    table.appendChild(tr);
-                });
-                lucide.createIcons();
-            });
+        // 1. Navigation
+        function showSection(id) {
+            document.getElementById('membersSection').classList.add('hidden');
+            document.getElementById('newsSection').classList.add('hidden');
+            document.getElementById(id + 'Section').classList.remove('hidden');
         }
 
+        // 2. Load Members
+        db.collection("users").onSnapshot(snap => {
+            const table = document.getElementById('membersTable');
+            table.innerHTML = "";
+            snap.forEach(doc => {
+                const u = doc.data();
+                if(u.role === 'admin') return;
+
+                table.innerHTML += `
+                    <tr>
+                        <td class="p-5">
+                            <p class="font-black text-sm uppercase">${u.fullName}</p>
+                            <p class="text-[10px] text-gray-400">${u.email}</p>
+                        </td>
+                        <td class="p-5">
+                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${u.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}">${u.status}</span>
+                        </td>
+                        <td class="p-5 font-black text-sm">${u.points || 0}</td>
+                        <td class="p-5 space-x-2">
+                            <button onclick="updateStatus('${doc.id}', 'interview')" class="text-[10px] font-black uppercase text-blue-500 hover:underline">Interview</button>
+                            <button onclick="updateStatus('${doc.id}', 'approved')" class="text-[10px] font-black uppercase text-green-500 hover:underline">Approve</button>
+                            <button onclick="addPoints('${doc.id}', ${u.points || 0})" class="text-[10px] font-black uppercase text-yellow-600 hover:underline">+10 Pts</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        });
+
+        // 3. Admin Actions
         async function updateStatus(id, newStatus) {
-            const msg = newStatus === 'approved' ? "Welcome to Enactus!" : "You have an interview scheduled.";
-            if(confirm("Change status to " + newStatus + "?")) {
-                await db.collection("users").doc(id).update({ 
-                    status: newStatus,
-                    notification: msg 
-                });
-            }
+            await db.collection("users").doc(id).update({ status: newStatus });
+            alert("Status updated to " + newStatus);
         }
 
-        async function deleteUser(id) {
-            if(confirm("Reject application?")) await db.collection("users").doc(id).delete();
+        async function addPoints(id, currentPoints) {
+            await db.collection("users").doc(id).update({ points: currentPoints + 10 });
         }
 
-        // 3. EOM FORM
-        document.getElementById('eomForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await db.collection("settings").doc("eom").set({
-                name: document.getElementById('eomName').value,
-                desc: document.getElementById('eomText').value,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        async function publishNews() {
+            const title = document.getElementById('newsTitle').value;
+            const desc = document.getElementById('newsDesc').value;
+            if(!title || !desc) return alert("Fill all fields");
+
+            await db.collection("news").add({
+                title: title,
+                desc: desc,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            alert("Enactor of the Month updated!");
-        });
+            alert("News published!");
+            document.getElementById('newsTitle').value = "";
+            document.getElementById('newsDesc').value = "";
+        }
 
         function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // Security check: Only let admin stay
-                db.collection("users").doc(user.uid).get().then(doc => {
-                    if(doc.data().role !== 'admin') window.location.href = "index.html";
-                    else loadApplications();
-                });
-            } else { window.location.href = "login.html"; }
-        });
     </script>
 </body>
 </html>
