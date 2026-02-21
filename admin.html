@@ -16,7 +16,7 @@
 
     <nav class="bg-black text-white p-6 shadow-xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="font-heading text-xl uppercase tracking-tighter text-yellow-400">Admin <span class="text-white">Portal</span></h1>
+            <h1 class="font-heading text-xl uppercase tracking-tighter text-yellow-400">President <span class="text-white">Dashboard</span></h1>
             <button onclick="logout()" class="text-sm font-bold opacity-70 hover:opacity-100 flex items-center gap-2">
                 <i data-lucide="log-out" class="w-4 h-4"></i> Logout
             </button>
@@ -26,37 +26,37 @@
     <main class="max-w-7xl mx-auto px-6 py-12">
         
         <div class="bg-black text-white p-10 rounded-[3rem] mb-12 shadow-2xl">
-            <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3">
-                <i data-lucide="calendar-plus" class="text-yellow-400"></i> Post New Event
+            <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3 text-yellow-400">
+                <i data-lucide="calendar-plus"></i> Post New Event
             </h3>
             <form id="eventForm" class="grid md:grid-cols-3 gap-6">
-                <input type="text" id="evTitle" placeholder="Event Title" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 focus:border-yellow-400 transition text-white" required>
-                <input type="date" id="evDate" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 focus:border-yellow-400 transition text-white" required>
-                <input type="text" id="evDesc" placeholder="Brief description..." class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 focus:border-yellow-400 transition text-white" required>
+                <input type="text" id="evTitle" placeholder="Event Title" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
+                <input type="date" id="evDate" class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
+                <input type="text" id="evDesc" placeholder="Description..." class="bg-white/10 p-4 rounded-2xl outline-none border border-white/10 text-white" required>
                 <button type="submit" id="eventBtn" class="bg-yellow-400 text-black font-black uppercase tracking-widest text-[10px] py-4 rounded-2xl hover:bg-white transition-all md:col-span-3">
                     Push to Timeline
                 </button>
             </form>
         </div>
+
         <div class="bg-white p-10 rounded-[3rem] mb-12 shadow-sm border border-gray-100">
-    <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3">
-        <i data-lucide="star" class="text-yellow-500"></i> Set Enactor of Month
-    </h3>
-    <form id="eomForm" class="grid md:grid-cols-2 gap-6">
-        <input type="text" id="eomName" placeholder="Member Name" class="bg-gray-50 p-4 rounded-2xl outline-none" required>
-        <input type="text" id="eomText" placeholder="Short achievement (ex: Best Media Leader)" class="bg-gray-50 p-4 rounded-2xl outline-none" required>
-        <button type="submit" class="bg-black text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-2xl hover:bg-yellow-400 hover:text-black transition-all md:col-span-2">
-            Update Winner
-        </button>
-    </form>
-</div>
+            <h3 class="text-2xl font-black font-heading uppercase mb-6 flex items-center gap-3">
+                <i data-lucide="star" class="text-yellow-500"></i> Set Enactor of Month
+            </h3>
+            <form id="eomForm" class="grid md:grid-cols-2 gap-6">
+                <input type="text" id="eomName" placeholder="Member Name" class="bg-gray-50 p-4 rounded-2xl outline-none" required>
+                <input type="text" id="eomText" placeholder="Achievement..." class="bg-gray-50 p-4 rounded-2xl outline-none" required>
+                <button type="submit" class="bg-black text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-2xl hover:bg-yellow-400 hover:text-black transition-all md:col-span-2">
+                    Update Winner
+                </button>
+            </form>
+        </div>
+
         <div class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div>
-                <h2 class="text-4xl font-black font-heading uppercase leading-none">Pending<br>Applications</h2>
-            </div>
-            <div class="bg-yellow-400 p-4 rounded-3xl flex items-center gap-4 shadow-lg shadow-yellow-400/20">
+            <h2 class="text-4xl font-black font-heading uppercase leading-none">Review<br>Applications</h2>
+            <div class="bg-yellow-400 p-4 rounded-3xl flex items-center gap-4 shadow-lg">
                 <div class="bg-black text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black" id="count">0</div>
-                <span class="font-bold uppercase text-[10px] tracking-widest leading-tight">Waiting<br>Review</span>
+                <span class="font-bold uppercase text-[10px] tracking-widest">Total<br>Applications</span>
             </div>
         </div>
 
@@ -65,16 +65,13 @@
                 <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
                         <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Candidate</th>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Department</th>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Motivation</th>
-                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Action</th>
+                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                        <th class="p-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="applicationsTable"></tbody>
             </table>
-            <div id="loader" class="p-20 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">
-                Loading applications...
-            </div>
+            <div id="loader" class="p-20 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">Loading...</div>
         </div>
     </main>
 
@@ -91,18 +88,16 @@
             messagingSenderId: "348185800306",
             appId: "1:348185800306:web:31e228e4bb631e18a91ceb"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         lucide.createIcons();
 
-        // --- 1. HANDLE EVENT FORM ---
+        // 1. ADD EVENT
         document.getElementById('eventForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('eventBtn');
             btn.innerText = "Publishing...";
-            
             try {
                 await db.collection("events").add({
                     title: document.getElementById('evTitle').value,
@@ -110,21 +105,19 @@
                     description: document.getElementById('evDesc').value,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                alert("Event Added Successfully!");
+                alert("Event Added!");
                 e.target.reset();
-            } catch(err) {
-                alert("Error: " + err.message);
-            } finally {
-                btn.innerText = "Push to Timeline";
-            }
+            } catch(err) { alert(err.message); }
+            finally { btn.innerText = "Push to Timeline"; }
         });
 
-        // --- 2. FETCH APPLICATIONS ---
-        async function loadApplications() {
+        // 2. LOAD CANDIDATES (Including Interview Status)
+        function loadApplications() {
             const table = document.getElementById('applicationsTable');
             const loader = document.getElementById('loader');
             
-            db.collection("users").where("status", "==", "pending")
+            // Here we load everyone who is NOT an admin
+            db.collection("users").where("role", "!=", "admin")
               .onSnapshot((snapshot) => {
                 table.innerHTML = "";
                 loader.style.display = snapshot.empty ? 'block' : 'none';
@@ -132,20 +125,24 @@
 
                 snapshot.forEach((doc) => {
                     const user = doc.data();
+                    let statusColor = "bg-gray-100 text-gray-500"; // Pending
+                    if(user.status === 'approved') statusColor = "bg-green-100 text-green-600";
+                    if(user.status === 'interview') statusColor = "bg-blue-100 text-blue-600";
+
                     const tr = document.createElement('tr');
-                    tr.className = "border-b border-gray-50 hover:bg-gray-50/50 transition-all";
+                    tr.className = "border-b border-gray-50";
                     tr.innerHTML = `
                         <td class="p-6">
                             <p class="font-bold text-black">${user.fullName}</p>
                             <p class="text-xs text-gray-400">${user.email}</p>
                         </td>
                         <td class="p-6">
-                            <span class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest">${user.department}</span>
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${statusColor}">${user.status}</span>
                         </td>
-                        <td class="p-6"><p class="text-sm text-gray-500 max-w-xs truncate">${user.motivation}</p></td>
                         <td class="p-6 flex gap-2">
-                            <button onclick="updateStatus('${doc.id}', 'approved')" class="bg-black text-white p-3 rounded-xl hover:bg-yellow-400 hover:text-black transition"><i data-lucide="check" class="w-4 h-4"></i></button>
-                            <button onclick="deleteUser('${doc.id}')" class="border border-gray-200 p-3 rounded-xl hover:bg-red-50 hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="updateStatus('${doc.id}', 'approved')" class="bg-green-500 text-white p-2 rounded-lg" title="Approve"><i data-lucide="check" class="w-4 h-4"></i></button>
+                            <button onclick="updateStatus('${doc.id}', 'interview')" class="bg-blue-500 text-white p-2 rounded-lg" title="Interview"><i data-lucide="calendar" class="w-4 h-4"></i></button>
+                            <button onclick="deleteUser('${doc.id}')" class="bg-red-500 text-white p-2 rounded-lg" title="Reject"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     `;
                     table.appendChild(tr);
@@ -155,30 +152,41 @@
         }
 
         async function updateStatus(id, newStatus) {
-            if(confirm("Confirm approval?")) await db.collection("users").doc(id).update({ status: newStatus });
+            const msg = newStatus === 'approved' ? "Welcome to Enactus!" : "You have an interview scheduled.";
+            if(confirm("Change status to " + newStatus + "?")) {
+                await db.collection("users").doc(id).update({ 
+                    status: newStatus,
+                    notification: msg 
+                });
+            }
         }
 
         async function deleteUser(id) {
-            if(confirm("Delete application?")) await db.collection("users").doc(id).delete();
+            if(confirm("Reject application?")) await db.collection("users").doc(id).delete();
         }
 
-        function logout() {
-            auth.signOut().then(() => window.location.href = "login.html");
-        }
+        // 3. EOM FORM
+        document.getElementById('eomForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await db.collection("settings").doc("eom").set({
+                name: document.getElementById('eomName').value,
+                desc: document.getElementById('eomText').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("Enactor of the Month updated!");
+        });
+
+        function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
 
         auth.onAuthStateChanged(user => {
-            if (user) { loadApplications(); } 
-            else { window.location.href = "login.html"; }
+            if (user) {
+                // Security check: Only let admin stay
+                db.collection("users").doc(user.uid).get().then(doc => {
+                    if(doc.data().role !== 'admin') window.location.href = "index.html";
+                    else loadApplications();
+                });
+            } else { window.location.href = "login.html"; }
         });
-        document.getElementById('eomForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await db.collection("settings").doc("eom").set({
-        name: document.getElementById('eomName').value,
-        desc: document.getElementById('eomText').value,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    alert("Enactor of the Month updated!");
-});
     </script>
 </body>
 </html>
