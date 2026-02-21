@@ -154,7 +154,41 @@
             </div>
         </div>
     </section>
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-10">
+        
+        <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="p-10 bg-gray-50 rounded-[3rem] text-center hover:bg-yellow transition-all group" data-aos="zoom-in">
+                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Active Projects</p>
+            </div>
+            <div class="p-10 bg-black text-white rounded-[3rem] text-center hover:bg-yellow hover:text-black transition-all group" data-aos="zoom-in" data-aos-delay="100">
+                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Enactors</p>
+            </div>
+            <div class="p-10 bg-gray-50 rounded-[3rem] text-center hover:bg-yellow transition-all group md:col-span-1 col-span-2" data-aos="zoom-in" data-aos-delay="200">
+                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Impacted Lives</p>
+            </div>
+        </div>
 
+        <div class="bg-yellow p-8 rounded-[3rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-6">
+                    <i data-lucide="crown" class="w-5 h-5"></i>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
+                </div>
+                <div class="w-32 h-32 rounded-3xl overflow-hidden border-4 border-black/10 mb-6 group-hover:rotate-3 transition-transform">
+                    <img id="eom-img" src="enactuss/nahla.jpg" class="w-full h-full object-cover" alt="Member">
+                </div>
+                <h4 id="eom-name" class="text-2xl font-black font-heading uppercase">Nahla Ben Yahya</h4>
+                <p id="eom-desc" class="text-sm font-bold opacity-70 mt-2">Outstanding leadership in the "Green Tech" event.</p>
+            </div>
+            <i data-lucide="award" class="absolute -bottom-10 -right-10 w-40 h-40 opacity-10 group-hover:rotate-12 transition-transform"></i>
+        </div>
+
+    </div>
+</section>
     <section id="projects" class="py-32 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mb-16">Our Innovation</h2>
@@ -184,7 +218,24 @@
             </div>
         </div>
     </section>
+    <section id="events" class="py-32 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20" data-aos="fade-up">
+            <span class="text-yellow-600 font-black uppercase tracking-[0.4em] text-[10px]">What's Happening</span>
+            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-4">Action <span class="text-yellow">Timeline</span></h2>
+        </div>
 
+        <div class="relative">
+            <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-100 hidden md:block"></div>
+
+            <div id="events-container" class="space-y-16">
+                <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-10">
+                    Loading our next big moves...
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     <section id="team" class="py-32 bg-black text-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-between items-center mb-24 text-center md:text-left">
@@ -264,7 +315,34 @@
             <button onclick="closeModal()" class="mt-10 w-full py-4 border-2 border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400">Close</button>
         </div>
     </div>
+<section class="py-20 bg-gray-50 overflow-hidden border-y border-gray-100">
+    <div class="max-w-7xl mx-auto px-6 mb-10 text-center">
+        <p class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400">Our Trusted Partners</p>
+    </div>
+    
+    <div class="flex space-x-12 animate-scroll whitespace-nowrap">
+        <div class="flex items-center gap-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto">
+            <span class="font-heading text-2xl font-black opacity-30">ISIMG GABES</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto">
+            <span class="font-heading text-2xl font-black opacity-30">PARTNER NAME</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto">
+            <span class="font-heading text-2xl font-black opacity-30">SPONSOR LOGO</span>
+        </div>
+    </div>
+</section>
 
+<style>
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.animate-scroll {
+    display: flex;
+    width: 200%;
+    animation: scroll 20s linear infinite;
+}
+</style>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -399,6 +477,40 @@
                 btn.innerText = "Submit Application";
             }
         });
+        function loadEOM() {
+    db.collection("settings").doc("eom").onSnapshot(doc => {
+        if(doc.exists) {
+            document.getElementById('eom-name').innerText = doc.data().name;
+            document.getElementById('eom-desc').innerText = doc.data().desc;
+        }
+    });
+}
+loadEOM();
+function loadTimeline() {
+    const container = document.getElementById('events-container');
+    db.collection("events").orderBy("date", "asc").onSnapshot(snapshot => {
+        container.innerHTML = "";
+        snapshot.forEach((doc, index) => {
+            const ev = doc.data();
+            const isEven = index % 2 === 0;
+            const eventEl = document.createElement('div');
+            eventEl.className = `relative flex items-center justify-between md:justify-normal group ${isEven ? 'md:flex-row-reverse' : ''}`;
+            
+            eventEl.innerHTML = `
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-yellow rounded-full border-4 border-white shadow-sm z-10 hidden md:block"></div>
+                
+                <div class="w-full md:w-[45%] p-8 bg-gray-50 rounded-[2.5rem] hover:bg-black hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl" data-aos="${isEven ? 'fade-left' : 'fade-right'}">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-yellow group-hover:text-yellow-400">${ev.date}</span>
+                    <h4 class="text-2xl font-black font-heading mt-2 uppercase">${ev.title}</h4>
+                    <p class="mt-4 text-sm opacity-60 leading-relaxed">${ev.description}</p>
+                </div>
+            `;
+            container.appendChild(eventEl);
+        });
+    });
+}
+loadTimeline(); // Call it when page loads
     </script>
+    
 </body>
 </html>
