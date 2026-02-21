@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enactus Hub | Member Dashboard</title>
+    
+    <!-- Scripts & UI Kits -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --enactus-yellow: #FFC222; }
+        body { font-family: 'Source Sans 3', sans-serif; background-color: #f4f7fe; }
+        .font-heading { font-family: 'Montserrat', sans-serif; }
+        .glass-sidebar { background: #000; }
+        .sidebar-item:hover { background: var(--enactus-yellow); color: black; transform: translateX(5px); }
+        .active-nav { background: var(--enactus-yellow); color: black; }
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.04); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+        .sdg-mini { transition: all 0.3s ease; filter: grayscale(100%); cursor: help; }
+        .sdg-mini:hover { filter: grayscale(0%); transform: scale(1.1); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 1. Side Navigation -->
+    <aside class="w-20 lg:w-72 glass-sidebar text-white flex flex-col transition-all duration-300 z-50">
+        <div class="p-6 mb-8 flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#FFC222] rounded-xl flex-shrink-0 flex items-center justify-center">
+                <i data-lucide="zap" class="text-black w-6 h-6"></i>
+            </div>
+            <span class="font-heading text-xl font-black hidden lg:block tracking-tighter uppercase">Enactus <span class="text-[#FFC222]">Hub</span></span>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="#" class="sidebar-item active-nav flex items-center gap-4 p-4 rounded-2xl font-bold transition-all">
+                <i data-lucide="layout-dashboard"></i> <span class="hidden lg:block text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-4 p-4 rounded-2xl opacity-50 hover:opacity-100 transition-all">
+                <i data-lucide="briefcase"></i> <span class="hidden lg:block text-sm">Projects</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-4 p-4 rounded-2xl opacity-50 hover:opacity-100 transition-all">
+                <i data-lucide="calendar"></i> <span class="hidden lg:block text-sm">Timeline</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center gap-4 p-4 rounded-2xl opacity-50 hover:opacity-100 transition-all">
+                <i data-lucide="settings"></i> <span class="hidden lg:block text-sm">Settings</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-white/10">
+            <button id="logoutBtn" class="flex items-center gap-4 p-4 w-full rounded-2xl text-red-400 hover:bg-red-500/10 transition-all font-bold">
+                <i data-lucide="log-out"></i> <span class="hidden lg:block text-sm">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 2. Main Dashboard Area -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <!-- Top Bar -->
+        <header class="bg-white/80 backdrop-blur-md border-b px-8 py-4 flex justify-between items-center h-20 flex-shrink-0">
+            <h1 class="text-xl font-black font-heading text-zinc-800 hidden md:block uppercase tracking-tight">Member Portal</h1>
+            
+            <div class="flex items-center gap-6">
+                <div class="text-right flex flex-col">
+                    <span id="userMailDisplay" class="text-[11px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1"></span>
+                    <span class="text-xs font-bold text-black opacity-80">Enactus ISIMG Member</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-black border-2 border-[#FFC222] overflow-hidden flex items-center justify-center">
+                    <i data-lucide="user" class="text-white w-5 h-5"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Body -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
+            
+            <!-- ADMIN SECTION: Broadcast (Only visible if admin) -->
+            <section id="adminPostSection" class="hidden mb-10">
+                <div class="bg-black text-white p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                            <i data-lucide="megaphone" class="text-[#FFC222]"></i> Publish Club Update
+                        </h2>
+                        <div class="grid lg:grid-cols-4 gap-4">
+                            <input type="text" id="postTitle" placeholder="Update Title" class="bg-zinc-800 border-none rounded-xl p-4 text-sm focus:ring-2 ring-[#FFC222] text-white">
+                            <input type="text" id="postImg" placeholder="Image URL (Unsplash)" class="bg-zinc-800 border-none rounded-xl p-4 text-sm focus:ring-2 ring-[#FFC222] text-white">
+                            <textarea id="postDesc" placeholder="Describe the update..." class="lg:col-span-2 bg-zinc-800 border-none rounded-xl p-4 text-sm focus:ring-2 ring-[#FFC222] text-white h-14"></textarea>
+                        </div>
+                        <button onclick="publishNews()" class="mt-6 bg-[#FFC222] text-black font-black px-10 py-3 rounded-xl hover:scale-105 transition active:scale-95 shadow-lg shadow-yellow-500/20 uppercase text-xs tracking-widest">
+                            Publish to Feed
+                        </button>
+                    </div>
+                    <div class="absolute right-[-20px] bottom-[-20px] w-48 h-48 bg-[#FFC222] opacity-5 rounded-full blur-3xl"></div>
+                </div>
+            </section>
+
+            <div class="grid lg:grid-cols-12 gap-8">
+                
+                <!-- COLUMN LEFT: Welcome & News Feed (8/12) -->
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <!-- Welcome Banner Widget -->
+                    <div class="bg-white p-8 lg:p-12 rounded-[3rem] card-shadow border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden">
+                        <div class="flex-1 relative z-10 text-center md:text-left">
+                            <h2 class="text-3xl lg:text-5xl font-black font-heading leading-tight mb-4">DRIVEN BY <span class="text-[#FFC222]">IMPACT.</span></h2>
+                            <p class="text-gray-500 font-medium mb-6">"Entrepreneurs don't wait for the future, they build it." Welcome back to your hub.</p>
+                            <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                                <span class="px-4 py-2 bg-gray-100 rounded-xl text-[10px] font-black uppercase tracking-widest"><i data-lucide="target" class="inline w-3 h-3 mr-1"></i> 3 Active Projects</span>
+                                <span class="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-xl text-[10px] font-black uppercase tracking-widest"><i data-lucide="award" class="inline w-3 h-3 mr-1"></i> National Champion</span>
+                            </div>
+                        </div>
+                        <div class="w-48 h-48 bg-gray-50 rounded-full flex items-center justify-center border-8 border-white shadow-inner flex-shrink-0">
+                             <i data-lucide="sparkles" class="w-16 h-16 text-[#FFC222]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Member Feed Content -->
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-black text-xl flex items-center gap-2">
+                                <i data-lucide="rss" class="text-[#FFC222] w-5 h-5"></i> Member Feed
+                            </h3>
+                            <button class="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black">Refresh Feed</button>
+                        </div>
+                        <div id="newsFeed" class="grid grid-cols-1 gap-6">
+                            <!-- Injected by member.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMN RIGHT: Sidebar Widgets (4/12) -->
+                <div class="lg:col-span-4 space-y-8">
+                    
+                    <!-- Quick Stats Card -->
+                    <div id="userCard" class="bg-black text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+                        <!-- Injected by JS: Name, Points, etc. -->
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-[#FFC222] mb-2">Member Stats</p>
+                            <h3 class="text-2xl font-black font-heading mb-4 leading-none">Loading...</h3>
+                            <div class="h-[1px] bg-white/10 w-full mb-6"></div>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div><p class="text-xl font-black">--</p><p class="text-[8px] uppercase font-bold text-gray-500 tracking-widest">Points</p></div>
+                                <div><p class="text-xl font-black">--</p><p class="text-[8px] uppercase font-bold text-gray-500 tracking-widest">Rank</p></div>
+                            </div>
+                        </div>
+                        <i data-lucide="shield-check" class="absolute -right-4 -bottom-4 w-24 h-24 text-white/5 transition-transform group-hover:scale-110"></i>
+                    </div>
+
+                    <!-- Leaderboard Widget -->
+                    <div class="bg-white p-8 rounded-[3rem] card-shadow border border-gray-50">
+                        <h3 class="font-black text-xl mb-6 flex items-center gap-2">
+                            <i data-lucide="trophy" class="text-[#FFC222] w-5 h-5"></i> Top Enactors
+                        </h3>
+                        <div id="leaderboardList" class="space-y-4">
+                            <!-- Injected by member.js -->
+                        </div>
+                    </div>
+
+                    <!-- SDG Progress Widget -->
+                    <div class="bg-white p-8 rounded-[3rem] card-shadow border border-gray-50">
+                        <h3 class="font-black text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">Our SDG Commitments</h3>
+                        <div class="grid grid-cols-4 gap-3">
+                            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg" class="sdg-mini rounded-xl shadow-sm" title="No Poverty">
+                            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg" class="sdg-mini rounded-xl shadow-sm" title="Quality Education">
+                            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg" class="sdg-mini rounded-xl shadow-sm" title="Decent Work">
+                            <img src="https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg" class="sdg-mini rounded-xl shadow-sm" title="Responsible Consumption">
+                        </div>
+                    </div>
+
+                    <!-- Support Widget -->
+                    <div class="bg-[#FFC222]/10 p-8 rounded-[3rem] border border-[#FFC222]/20">
+                        <h4 class="font-black text-sm mb-2">Need Technical Help?</h4>
+                        <p class="text-xs text-gray-500 mb-4">Contact our IT support team for portal issues.</p>
+                        <a href="mailto:it@enactus-isimg.tn" class="text-xs font-black uppercase tracking-widest underline decoration-[#FFC222] decoration-2">Contact IT Support</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase System Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Your Logic Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/member.js"></script>
+
+    <!-- UI Init -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
