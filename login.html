@@ -10,8 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css"> 
 </head>
 <body class="login-page">
 
@@ -24,7 +23,7 @@
                 <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Logo">
             </div>
             <h1 class="brand-title">Welcome <br>Back.</h1>
-            <p class="brand-subtitle">Enter your credentials to access the Enactus ISIMG portal.</p>
+            
         </div>
 
         <div class="login-form-container">
@@ -48,15 +47,15 @@
                 </div>
 
                 <div class="form-options">
-                    <a href="#" id="forgotPassword" class="forgot-link">Forgot Password?</a>
+                    <button type="button" id="forgotPassword" class="forgot-link text-sm text-gray-400 hover:text-yellow-500 transition">Forgot Password?</button>
                 </div>
 
-                <button type="submit" class="login-submit">
+                <button type="submit" id="loginBtn" class="login-submit bg-black text-white w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-yellow-500 hover:text-black transition-all">
                     Sign In <i data-lucide="log-in"></i>
                 </button>
 
-                <p class="no-account">
-                    Don't have an account? <a href="index.html#contact">Apply Now</a>
+                <p class="no-account mt-6 text-center text-sm text-gray-500">
+                    Don't have an account? <a href="index.html#contact" class="text-black font-bold hover:text-yellow-500">Apply Now</a>
                 </p>
             </form>
         </div>
@@ -66,7 +65,86 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/login.js"></script>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDL5ZWW6ofy9SFXw7tMSVxM34k9BDecrjI",
+            authDomain: "enactus-isimg-99469.firebaseapp.com",
+            projectId: "enactus-isimg-99469",
+            storageBucket: "enactus-isimg-99469.firebasestorage.app",
+            messagingSenderId: "348185800306",
+            appId: "1:348185800306:web:31e228e4bb631e18a91ceb"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Login Logic
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            btn.innerText = "Authenticating...";
+            btn.disabled = true;
+
+            try {
+                // 1. Auth check
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const uid = userCredential.user.uid;
+
+                // 2. Fetch User Role and Status from Firestore
+                const userDoc = await db.collection("users").doc(uid).get();
+
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+
+                    // 3. Routing Logic
+                    if (userData.role === "admin") {
+                        window.location.href = "admin.html";
+                    } 
+                    else if (userData.status === "approved") {
+                        window.location.href = "portal.html";
+                    } 
+                    else {
+                        // Account exists but not approved yet
+                        alert("Your application is still under review by the Board. Please wait for approval.");
+                        await auth.signOut();
+                        window.location.reload();
+                    }
+                } else {
+                    alert("Account found but no profile data. Contact Admin.");
+                }
+
+            } catch (err) {
+                alert("Login Error: " + err.message);
+            } finally {
+                btn.innerHTML = 'Sign In <i data-lucide="log-in"></i>';
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        });
+
+        // Forgot Password Logic
+        document.getElementById('forgotPassword').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            if (!email) {
+                alert("Please enter your email address first.");
+                return;
+            }
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert("Password reset link sent to your email!");
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        });
+    </script>
 </body>
 </html>
