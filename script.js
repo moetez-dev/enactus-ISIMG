@@ -25,16 +25,18 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // 3. UI RENDERING (Nav & Smooth Scroll)
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            nav.style.padding = "0.75rem 0";
-            nav.style.boxShadow = "0 20px 25px -5px rgba(0, 0, 0, 0.1)";
-        } else {
-            nav.style.padding = "1.25rem 0";
-            nav.style.boxShadow = "none";
-        }
-    });
+    const nav = document.querySelector('.main-nav');
+    if (nav) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.padding = "0.75rem 0";
+                nav.style.boxShadow = "0 20px 25px -5px rgba(0, 0, 0, 0.1)";
+            } else {
+                nav.style.padding = "1.25rem 0";
+                nav.style.boxShadow = "none";
+            }
+        });
+    }
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -48,17 +50,30 @@ document.addEventListener('DOMContentLoaded', function() {
     window.openProject = function(id) {
         const p = projectData[id];
         if(!p) return;
-        document.getElementById('projName').innerText = p.name;
-        document.getElementById('projTag').innerText = p.tag;
-        document.getElementById('projProb').innerText = p.prob;
-        document.getElementById('projSol').innerText = p.sol;
-        document.getElementById('projImpact').innerText = p.impact;
-        document.getElementById('projectContent').classList.remove('hidden');
-        document.getElementById('unifiedModal').style.display = 'flex';
+        const nameEl = document.getElementById('projName');
+        const tagEl = document.getElementById('projTag');
+        const probEl = document.getElementById('projProb');
+        const solEl = document.getElementById('projSol');
+        const impactEl = document.getElementById('projImpact');
+
+        if(nameEl) nameEl.innerText = p.name;
+        if(tagEl) tagEl.innerText = p.tag;
+        if(probEl) probEl.innerText = p.prob;
+        if(solEl) solEl.innerText = p.sol;
+        if(impactEl) impactEl.innerText = p.impact;
+
+        const projCont = document.getElementById('projectContent');
+        const membCont = document.getElementById('memberContent');
+        const modal = document.getElementById('unifiedModal');
+
+        if(projCont) projCont.classList.remove('hidden');
+        if(membCont) membCont.classList.add('hidden');
+        if(modal) modal.style.display = 'flex';
     };
 
     window.closeModal = () => {
-        document.getElementById('unifiedModal').style.display = 'none';
+        const modal = document.getElementById('unifiedModal');
+        if(modal) modal.style.display = 'none';
     };
 
     // 5. FIREBASE REGISTRATION
@@ -83,7 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const email = document.getElementById('regEmail').value;
                 const password = document.getElementById('regPassword').value;
                 const fullName = document.getElementById('regName').value;
-                const department = document.querySelector('input[name="dept"]:checked').value;
+                const deptInput = document.querySelector('input[name="dept"]:checked');
+                const department = deptInput ? deptInput.value : "General";
 
                 try {
                     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
