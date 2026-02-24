@@ -3,56 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Enactus ISIMG</title>
+    <title>Enactus Hub | Admin Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Source+Sans+3:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Source Sans 3', sans-serif; background: #f0f2f5; }
+        :root { --enactus-yellow: #FFC222; }
+        body { font-family: 'Source Sans 3', sans-serif; background: #f8fafc; }
         .font-heading { font-family: 'Montserrat', sans-serif; }
+        .sidebar-link.active { background: var(--enactus-yellow); color: black; }
+        .section-content { display: none; animation: slideUp 0.3s ease-out; }
+        .section-content.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="flex min-h-screen">
 
-    <aside class="w-64 bg-black text-white p-6 flex flex-col">
-        <h1 class="font-heading text-2xl mb-10 text-[#FFC222]">ADMIN <span class="text-white">HUB</span></h1>
-        <nav class="space-y-4 flex-1">
-            <button onclick="showSection('members')" class="w-full text-left p-3 rounded-xl hover:bg-[#FFC222] hover:text-black transition font-bold flex items-center gap-3">
-                <i data-lucide="users"></i> Members
+    <aside class="w-72 bg-black text-white p-8 flex flex-col fixed h-full z-50">
+        <div class="mb-12 flex items-center gap-3">
+            <div class="w-10 h-10 bg-yellow-400 rounded-2xl flex items-center justify-center italic font-black text-black text-xl">A</div>
+            <h1 class="font-heading text-xl tracking-tighter uppercase">Admin<span class="text-yellow-400 italic">Panel</span></h1>
+        </div>
+
+        <nav class="space-y-3 flex-1">
+            <button onclick="showSection('reviews', this)" class="sidebar-link active w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="clipboard-check"></i> Submissions
             </button>
-            <button onclick="showSection('news')" class="w-full text-left p-3 rounded-xl hover:bg-[#FFC222] hover:text-black transition font-bold flex items-center gap-3">
-                <i data-lucide="megaphone"></i> Publish News
+            <button onclick="showSection('tasks', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="plus-square"></i> Assign Mission
+            </button>
+            <button onclick="showSection('projects', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="rocket"></i> Hub Projects
+            </button>
+            <button onclick="showSection('calendar', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="calendar"></i> Timeline
+            </button>
+            <button onclick="showSection('broadcast', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="megaphone"></i> Broadcast
             </button>
         </nav>
-        <button onclick="logout()" class="p-3 text-red-400 font-bold flex items-center gap-3"><i data-lucide="log-out"></i> Logout</button>
+
+        <button onclick="logout()" class="p-4 text-red-400 font-black uppercase text-xs tracking-widest flex items-center gap-3 mt-auto">
+            <i data-lucide="log-out"></i> Sign Out
+        </button>
     </aside>
 
-    <main class="flex-1 p-10">
+    <main class="flex-1 ml-72 p-12">
         
-        <section id="membersSection" class="space-y-6">
-            <h2 class="text-3xl font-black font-heading uppercase italic">Manage Enactors</h2>
-            <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50 border-b">
-                        <tr>
-                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Name</th>
-                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Status</th>
-                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Points</th>
-                            <th class="p-5 text-xs font-black uppercase tracking-widest text-gray-400">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="membersTable" class="divide-y divide-gray-50">
-                        </tbody>
-                </table>
+        <section id="reviewsSection" class="section-content active space-y-8">
+            <div class="flex justify-between items-end">
+                <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-blue-500 decoration-8">Review Work</h2>
+                <span class="text-xs font-bold text-gray-400 uppercase italic">Pending Submissions</span>
+            </div>
+            <div id="submissionsList" class="grid gap-6">
+                </div>
+        </section>
+
+        <section id="tasksSection" class="section-content space-y-8">
+            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-yellow-400 decoration-8">New Mission</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Target Enactor</label>
+                        <select id="taskMember" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold border-2 border-transparent focus:border-yellow-400 outline-none transition"></select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Mission Description</label>
+                        <input type="text" id="taskText" placeholder="e.g. Design 3 Instagram Posts" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold border-2 border-transparent focus:border-yellow-400 outline-none transition">
+                    </div>
+                    <button onclick="assignTask()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-yellow-400 hover:text-black transition transform active:scale-95">Deploy Mission</button>
+                </div>
             </div>
         </section>
 
-        <section id="newsSection" class="hidden space-y-6">
-            <h2 class="text-3xl font-black font-heading uppercase italic">Broadcast Update</h2>
-            <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 max-w-2xl">
-                <input type="text" id="newsTitle" placeholder="Update Title" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 outline-none focus:ring-2 ring-yellow-400 font-bold">
-                <textarea id="newsDesc" placeholder="What's happening in the club?" class="w-full p-4 bg-gray-50 rounded-2xl mb-6 h-32 outline-none focus:ring-2 ring-yellow-400 font-semibold"></textarea>
-                <button onclick="publishNews()" class="bg-black text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-[#FFC222] hover:text-black transition-all">Publish to Feed</button>
+        <section id="projectsSection" class="section-content space-y-8">
+            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-green-400 decoration-8">Project Hub</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
+                <div class="space-y-6">
+                    <input type="text" id="pName" placeholder="Project Name" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="pProgress" placeholder="Progress %" class="flex-1 p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                        <span class="font-black text-xl">%</span>
+                    </div>
+                    <button onclick="updateProject()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-green-400 transition">Update Member Hub</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendarSection" class="section-content space-y-8">
+            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-orange-400 decoration-8">Events Planner</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="eDate" placeholder="Date (e.g. 20 MAR)" class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <input type="text" id="eTitle" placeholder="Event Name" class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <textarea id="eDesc" placeholder="Event Details..." class="col-span-2 p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
+                    <button onclick="addEvent()" class="col-span-2 py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-orange-400 transition">Schedule Event</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="broadcastSection" class="section-content space-y-8">
+            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-red-400 decoration-8">Club News</h2>
+            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
+                <div class="space-y-6">
+                    <input type="text" id="nTitle" placeholder="Announcement Title" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <textarea id="nDesc" placeholder="Content..." class="w-full p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
+                    <button onclick="publishNews()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-red-500 transition">Broadcast Globally</button>
+                </div>
             </div>
         </section>
 
@@ -72,69 +129,99 @@
             appId: "1:348185800306:web:31e228e4bb631e18a91ceb"
         };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
         lucide.createIcons();
 
-        // 1. Navigation
-        function showSection(id) {
-            document.getElementById('membersSection').classList.add('hidden');
-            document.getElementById('newsSection').classList.add('hidden');
-            document.getElementById(id + 'Section').classList.remove('hidden');
+        function showSection(id, btn) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id + 'Section').classList.add('active');
+            btn.classList.add('active');
         }
 
-        // 2. Load Members
+        // Fetch Members for Dropdown
         db.collection("users").onSnapshot(snap => {
-            const table = document.getElementById('membersTable');
-            table.innerHTML = "";
+            const select = document.getElementById('taskMember');
+            select.innerHTML = '<option value="">-- Choose Member --</option>';
             snap.forEach(doc => {
-                const u = doc.data();
-                if(u.role === 'admin') return;
-
-                table.innerHTML += `
-                    <tr>
-                        <td class="p-5">
-                            <p class="font-black text-sm uppercase">${u.fullName}</p>
-                            <p class="text-[10px] text-gray-400">${u.email}</p>
-                        </td>
-                        <td class="p-5">
-                            <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${u.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}">${u.status}</span>
-                        </td>
-                        <td class="p-5 font-black text-sm">${u.points || 0}</td>
-                        <td class="p-5 space-x-2">
-                            <button onclick="updateStatus('${doc.id}', 'interview')" class="text-[10px] font-black uppercase text-blue-500 hover:underline">Interview</button>
-                            <button onclick="updateStatus('${doc.id}', 'approved')" class="text-[10px] font-black uppercase text-green-500 hover:underline">Approve</button>
-                            <button onclick="addPoints('${doc.id}', ${u.points || 0})" class="text-[10px] font-black uppercase text-yellow-600 hover:underline">+10 Pts</button>
-                        </td>
-                    </tr>
-                `;
+                if(doc.data().role !== 'admin') {
+                    select.innerHTML += `<option value="${doc.id}">${doc.data().fullName} (${doc.data().department || 'No Dept'})</option>`;
+                }
             });
         });
 
-        // 3. Admin Actions
-        async function updateStatus(id, newStatus) {
-            await db.collection("users").doc(id).update({ status: newStatus });
-            alert("Status updated to " + newStatus);
+        // Review Submissions in Real-time
+        db.collection("tasks").where("status", "==", "pending_review").onSnapshot(snap => {
+            const list = document.getElementById('submissionsList');
+            list.innerHTML = snap.empty ? '<p class="font-bold text-gray-400 italic">No submissions to review right now.</p>' : "";
+            
+            snap.forEach(doc => {
+                const t = doc.data();
+                db.collection("users").doc(t.uid).get().then(uDoc => {
+                    const u = uDoc.data();
+                    list.innerHTML += `
+                        <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-l-8 border-blue-500 flex justify-between items-center animate-in">
+                            <div class="flex items-center gap-6">
+                                <img src="${u.profilePic || 'https://ui-avatars.com/api/?name='+u.fullName}" class="w-16 h-16 rounded-2xl object-cover">
+                                <div>
+                                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">${u.fullName}</p>
+                                    <h4 class="text-xl font-black italic uppercase">${t.text}</h4>
+                                    <a href="${t.workLink}" target="_blank" class="text-xs text-blue-400 underline font-bold italic">Click to view work</a>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="approveWork('${doc.id}', '${t.uid}')" class="bg-green-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-black transition shadow-lg shadow-green-200">Approve & +50</button>
+                                <button onclick="rejectWork('${doc.id}')" class="bg-red-100 text-red-500 px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-red-500 hover:text-white transition">Reject</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        });
+
+        async function approveWork(tId, uId) {
+            await db.collection("tasks").doc(tId).update({ status: "approved", completed: true });
+            const userRef = db.collection("users").doc(uId);
+            const user = await userRef.get();
+            await userRef.update({ points: (user.data().points || 0) + 50 });
+            alert("Mission validated! Member received 50 points.");
         }
 
-        async function addPoints(id, currentPoints) {
-            await db.collection("users").doc(id).update({ points: currentPoints + 10 });
+        async function rejectWork(id) {
+            await db.collection("tasks").doc(id).update({ status: "live", submitted: false });
+            alert("Work rejected. Member can re-submit.");
+        }
+
+        // Admin Functions
+        async function assignTask() {
+            const uid = document.getElementById('taskMember').value;
+            const text = document.getElementById('taskText').value;
+            if(!uid || !text) return alert("Select member and write task!");
+            await db.collection("tasks").add({ uid, text, completed: false, submitted: false, status: "live", createdAt: new Date() });
+            alert("Mission Deployed!");
+        }
+
+        async function updateProject() {
+            const name = document.getElementById('pName').value;
+            const progress = document.getElementById('pProgress').value;
+            await db.collection("projects").doc(name.toLowerCase()).set({ name, progress: parseInt(progress) });
+            alert("Hub Updated!");
+        }
+
+        async function addEvent() {
+            const date = document.getElementById('eDate').value;
+            const title = document.getElementById('eTitle').value;
+            const desc = document.getElementById('eDesc').value;
+            await db.collection("events").add({ date, title, description: desc, createdAt: new Date() });
+            alert("Event Published!");
         }
 
         async function publishNews() {
-            const title = document.getElementById('newsTitle').value;
-            const desc = document.getElementById('newsDesc').value;
-            if(!title || !desc) return alert("Fill all fields");
-
-            await db.collection("news").add({
-                title: title,
-                desc: desc,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            alert("News published!");
-            document.getElementById('newsTitle').value = "";
-            document.getElementById('newsDesc').value = "";
+            const title = document.getElementById('nTitle').value;
+            const desc = document.getElementById('nDesc').value;
+            await db.collection("news").add({ title, desc, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            alert("Broadcast Sent!");
         }
 
         function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
