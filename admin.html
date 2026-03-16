@@ -29,6 +29,9 @@
             <button onclick="showSection('reviews', this)" class="sidebar-link active w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
                 <i data-lucide="clipboard-check"></i> Submissions
             </button>
+            <button onclick="showSection('members', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
+                <i data-lucide="users"></i> Members
+            </button>
             <button onclick="showSection('tasks', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
                 <i data-lucide="plus-square"></i> Assign Mission
             </button>
@@ -49,16 +52,23 @@
     </aside>
 
     <main class="flex-1 ml-72 p-12">
-        
+
+        <!-- ── Review Submissions ── -->
         <section id="reviewsSection" class="section-content active space-y-8">
             <div class="flex justify-between items-end">
                 <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-blue-500 decoration-8">Review Work</h2>
                 <span class="text-xs font-bold text-gray-400 uppercase italic">Pending Submissions</span>
             </div>
-            <div id="submissionsList" class="grid gap-6">
-                </div>
+            <div id="submissionsList" class="grid gap-6"></div>
         </section>
 
+        <!-- ── Members Management ── -->
+        <section id="membersSection" class="section-content space-y-8">
+            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-purple-500 decoration-8">Members</h2>
+            <div id="membersList" class="grid gap-6"></div>
+        </section>
+
+        <!-- ── Assign Mission ── -->
         <section id="tasksSection" class="section-content space-y-8">
             <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-yellow-400 decoration-8">New Mission</h2>
             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
@@ -76,13 +86,14 @@
             </div>
         </section>
 
+        <!-- ── Hub Projects ── -->
         <section id="projectsSection" class="section-content space-y-8">
             <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-green-400 decoration-8">Project Hub</h2>
             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
                 <div class="space-y-6">
-                    <input type="text" id="pName" placeholder="Project Name" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <input type="text"   id="pName"     placeholder="Project Name"  class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
                     <div class="flex items-center gap-4">
-                        <input type="number" id="pProgress" placeholder="Progress %" class="flex-1 p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                        <input type="number" id="pProgress" placeholder="Progress %" class="flex-1 p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none" min="0" max="100">
                         <span class="font-black text-xl">%</span>
                     </div>
                     <button onclick="updateProject()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-green-400 transition">Update Member Hub</button>
@@ -90,24 +101,26 @@
             </div>
         </section>
 
+        <!-- ── Events Planner ── -->
         <section id="calendarSection" class="section-content space-y-8">
             <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-orange-400 decoration-8">Events Planner</h2>
             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="eDate" placeholder="Date (e.g. 20 MAR)" class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <input type="text" id="eTitle" placeholder="Event Name" class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <textarea id="eDesc" placeholder="Event Details..." class="col-span-2 p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
+                    <input type="text"     id="eDate"  placeholder="Date (e.g. 20 MAR)"  class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <input type="text"     id="eTitle" placeholder="Event Name"           class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <textarea             id="eDesc"  placeholder="Event Details..."     class="col-span-2 p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
                     <button onclick="addEvent()" class="col-span-2 py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-orange-400 transition">Schedule Event</button>
                 </div>
             </div>
         </section>
 
+        <!-- ── Broadcast ── -->
         <section id="broadcastSection" class="section-content space-y-8">
             <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-red-400 decoration-8">Club News</h2>
             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
                 <div class="space-y-6">
-                    <input type="text" id="nTitle" placeholder="Announcement Title" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <textarea id="nDesc" placeholder="Content..." class="w-full p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
+                    <input type="text" id="nTitle" placeholder="Announcement Title"   class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
+                    <textarea         id="nDesc"  placeholder="Content..."           class="w-full p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
                     <button onclick="publishNews()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-red-500 transition">Broadcast Globally</button>
                 </div>
             </div>
@@ -115,24 +128,44 @@
 
     </main>
 
+    <!-- SCRIPT LOAD ORDER — CRITICAL
+         1. Firebase SDKs
+         2. firebase-config.js  ← single init, exports auth + db
+         3. toast.js
+         4. Page logic + AuthGuard
+    -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/toast.js"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDL5ZWW6ofy9SFXw7tMSVxM34k9BDecrjI",
-            authDomain: "enactus-isimg-99469.firebaseapp.com",
-            projectId: "enactus-isimg-99469",
-            storageBucket: "enactus-isimg-99469.firebasestorage.app",
-            messagingSenderId: "348185800306",
-            appId: "1:348185800306:web:31e228e4bb631e18a91ceb"
-        };
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-
+        /* auth and db come from firebase-config.js — no duplicate init here */
         lucide.createIcons();
 
+        /* ══ AUTH GUARD — admin only ══
+           Redirect non-admins before any data is loaded.
+        */
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) { window.location.href = 'login.html'; return; }
+
+            try {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (!doc.exists || doc.data().role !== 'admin') {
+                    /* Not an admin — kick to member page */
+                    window.location.href = 'member.html';
+                    return;
+                }
+                /* Admin confirmed — boot the panel */
+                initAdminPanel();
+            } catch (err) {
+                console.error('Auth guard error:', err);
+                window.location.href = 'login.html';
+            }
+        });
+
+        /* ══ SECTION SWITCHER ══ */
         function showSection(id, btn) {
             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
@@ -140,90 +173,330 @@
             btn.classList.add('active');
         }
 
-        // Fetch Members for Dropdown
-        db.collection("users").onSnapshot(snap => {
-            const select = document.getElementById('taskMember');
-            select.innerHTML = '<option value="">-- Choose Member --</option>';
-            snap.forEach(doc => {
-                if(doc.data().role !== 'admin') {
-                    select.innerHTML += `<option value="${doc.id}">${doc.data().fullName} (${doc.data().department || 'No Dept'})</option>`;
-                }
-            });
-        });
+        /* ══ PANEL INIT — only called after admin role is confirmed ══ */
+        function initAdminPanel() {
+            loadMemberDropdown();
+            loadSubmissions();
+            loadMembersList();
+        }
 
-        // Review Submissions in Real-time
-        db.collection("tasks").where("status", "==", "pending_review").onSnapshot(snap => {
-            const list = document.getElementById('submissionsList');
-            list.innerHTML = snap.empty ? '<p class="font-bold text-gray-400 italic">No submissions to review right now.</p>' : "";
-            
-            snap.forEach(doc => {
-                const t = doc.data();
-                db.collection("users").doc(t.uid).get().then(uDoc => {
-                    const u = uDoc.data();
-                    list.innerHTML += `
-                        <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-l-8 border-blue-500 flex justify-between items-center animate-in">
-                            <div class="flex items-center gap-6">
-                                <img src="${u.profilePic || 'https://ui-avatars.com/api/?name='+u.fullName}" class="w-16 h-16 rounded-2xl object-cover">
-                                <div>
-                                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">${u.fullName}</p>
-                                    <h4 class="text-xl font-black italic uppercase">${t.text}</h4>
-                                    <a href="${t.workLink}" target="_blank" class="text-xs text-blue-400 underline font-bold italic">Click to view work</a>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <button onclick="approveWork('${doc.id}', '${t.uid}')" class="bg-green-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-black transition shadow-lg shadow-green-200">Approve & +50</button>
-                                <button onclick="rejectWork('${doc.id}')" class="bg-red-100 text-red-500 px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-red-500 hover:text-white transition">Reject</button>
-                            </div>
-                        </div>`;
+        /* ══ MEMBER DROPDOWN (Assign Mission) ══ */
+        function loadMemberDropdown() {
+            db.collection('users').onSnapshot(snap => {
+                const select = document.getElementById('taskMember');
+                select.innerHTML = '';
+
+                const placeholder = document.createElement('option');
+                placeholder.value       = '';
+                placeholder.textContent = '-- Choose Member --';
+                select.appendChild(placeholder);
+
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    if (u.role === 'admin') return;
+
+                    const opt = document.createElement('option');
+                    opt.value       = doc.id;
+                    /* textContent prevents injected HTML in option labels */
+                    opt.textContent = `${u.fullName || 'Unknown'} (${u.department || 'No Dept'})`;
+                    select.appendChild(opt);
                 });
             });
-        });
+        }
 
+        /* ══ REVIEW SUBMISSIONS ══ */
+        function loadSubmissions() {
+            db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
+                const list = document.getElementById('submissionsList');
+                list.innerHTML = '';
+
+                if (snap.empty) {
+                    const msg = document.createElement('p');
+                    msg.className   = 'font-bold text-gray-400 italic';
+                    msg.textContent = 'No submissions to review right now.';
+                    list.appendChild(msg);
+                    return;
+                }
+
+                snap.forEach(doc => {
+                    const t = doc.data();
+
+                    /* Fetch the submitting user's profile */
+                    db.collection('users').doc(t.uid).get().then(uDoc => {
+                        if (!uDoc.exists) return;
+                        const u = uDoc.data();
+
+                        /* ── Card ── */
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-8 rounded-[2.5rem] shadow-xl border-l-8 border-blue-500 flex justify-between items-center';
+
+                        /* Left: avatar + info */
+                        const left = document.createElement('div');
+                        left.className = 'flex items-center gap-6';
+
+                        const avatar = document.createElement('img');
+                        avatar.src       = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName || 'U')}`;
+                        avatar.className = 'w-16 h-16 rounded-2xl object-cover';
+
+                        const info = document.createElement('div');
+
+                        const memberName = document.createElement('p');
+                        memberName.className   = 'text-[10px] font-black text-blue-500 uppercase tracking-widest';
+                        memberName.textContent = u.fullName || '';   /* ✅ textContent */
+
+                        const taskTitle = document.createElement('h4');
+                        taskTitle.className   = 'text-xl font-black italic uppercase';
+                        taskTitle.textContent = t.text || '';   /* ✅ textContent */
+
+                        /* Work link — only allow http/https URLs */
+                        const workLink = document.createElement('a');
+                        const safeLink = /^https?:\/\//i.test(t.workLink || '') ? t.workLink : '#';
+                        workLink.href      = safeLink;
+                        workLink.target    = '_blank';
+                        workLink.rel       = 'noopener noreferrer';
+                        workLink.className = 'text-xs text-blue-400 underline font-bold italic';
+                        workLink.textContent = 'Click to view work';
+
+                        info.appendChild(memberName);
+                        info.appendChild(taskTitle);
+                        info.appendChild(workLink);
+                        left.appendChild(avatar);
+                        left.appendChild(info);
+
+                        /* Right: approve / reject buttons */
+                        const btnGroup = document.createElement('div');
+                        btnGroup.className = 'flex gap-3';
+
+                        const approveBtn = document.createElement('button');
+                        approveBtn.className   = 'bg-green-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-black transition shadow-lg shadow-green-200';
+                        approveBtn.textContent = 'Approve & +50';
+                        approveBtn.addEventListener('click', () => approveWork(doc.id, t.uid));
+
+                        const rejectBtn = document.createElement('button');
+                        rejectBtn.className   = 'bg-red-100 text-red-500 px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-red-500 hover:text-white transition';
+                        rejectBtn.textContent = 'Reject';
+                        rejectBtn.addEventListener('click', () => rejectWork(doc.id));
+
+                        btnGroup.appendChild(approveBtn);
+                        btnGroup.appendChild(rejectBtn);
+
+                        card.appendChild(left);
+                        card.appendChild(btnGroup);
+                        list.appendChild(card);
+                    });
+                });
+            });
+        }
+
+        /* ══ MEMBERS LIST (with approve/reject pending applications) ══ */
+        function loadMembersList() {
+            db.collection('users').onSnapshot(snap => {
+                const list = document.getElementById('membersList');
+                list.innerHTML = '';
+
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    if (u.role === 'admin') return;
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-6 rounded-[2rem] shadow-md border border-gray-100 flex justify-between items-center';
+
+                    const info = document.createElement('div');
+                    info.className = 'flex items-center gap-4';
+
+                    const avatar = document.createElement('img');
+                    avatar.src       = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName || 'U')}`;
+                    avatar.className = 'w-12 h-12 rounded-xl object-cover';
+
+                    const details = document.createElement('div');
+
+                    const nameEl = document.createElement('p');
+                    nameEl.className   = 'font-black uppercase text-sm';
+                    nameEl.textContent = u.fullName || '';
+
+                    const deptEl = document.createElement('p');
+                    deptEl.className   = 'text-[10px] text-gray-400 font-bold uppercase';
+                    deptEl.textContent = `${u.department || 'N/A'} • ${u.status || 'pending'}`;
+
+                    details.appendChild(nameEl);
+                    details.appendChild(deptEl);
+                    info.appendChild(avatar);
+                    info.appendChild(details);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'flex gap-2';
+
+                    if (u.status === 'pending') {
+                        const approveBtn = document.createElement('button');
+                        approveBtn.className   = 'bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-black transition';
+                        approveBtn.textContent = 'Approve';
+                        approveBtn.addEventListener('click', () => approveMember(doc.id));
+
+                        const rejectBtn = document.createElement('button');
+                        rejectBtn.className   = 'bg-red-100 text-red-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition';
+                        rejectBtn.textContent = 'Reject';
+                        rejectBtn.addEventListener('click', () => rejectMember(doc.id));
+
+                        actions.appendChild(approveBtn);
+                        actions.appendChild(rejectBtn);
+                    }
+
+                    card.appendChild(info);
+                    card.appendChild(actions);
+                    list.appendChild(card);
+                });
+            });
+        }
+
+        /* ══ APPROVE / REJECT WORK ══ */
         async function approveWork(tId, uId) {
-            await db.collection("tasks").doc(tId).update({ status: "approved", completed: true });
-            const userRef = db.collection("users").doc(uId);
-            const user = await userRef.get();
-            await userRef.update({ points: (user.data().points || 0) + 50 });
-            alert("Mission validated! Member received 50 points.");
+            try {
+                await db.collection('tasks').doc(tId).update({ status: 'approved', completed: true });
+                const userRef = db.collection('users').doc(uId);
+                const user    = await userRef.get();
+                await userRef.update({ points: (user.data().points || 0) + 50 });
+                Toast.success('Mission validated! Member received 50 points.');
+            } catch (err) {
+                Toast.error('Could not approve work. Please try again.');
+                console.error(err);
+            }
         }
 
         async function rejectWork(id) {
-            await db.collection("tasks").doc(id).update({ status: "live", submitted: false });
-            alert("Work rejected. Member can re-submit.");
+            try {
+                await db.collection('tasks').doc(id).update({ status: 'live', submitted: false });
+                Toast.warning('Work rejected. Member can re-submit.');
+            } catch (err) {
+                Toast.error('Could not reject work. Please try again.');
+                console.error(err);
+            }
         }
 
-        // Admin Functions
+        /* ══ APPROVE / REJECT MEMBER APPLICATIONS ══ */
+        async function approveMember(uid) {
+            try {
+                await db.collection('users').doc(uid).update({ status: 'approved' });
+                Toast.success('Member approved!');
+            } catch (err) {
+                Toast.error('Could not approve member.');
+            }
+        }
+
+        async function rejectMember(uid) {
+            try {
+                await db.collection('users').doc(uid).update({ status: 'rejected' });
+                Toast.warning('Member application rejected.');
+            } catch (err) {
+                Toast.error('Could not reject member.');
+            }
+        }
+
+        /* ══ ASSIGN TASK ══ */
         async function assignTask() {
-            const uid = document.getElementById('taskMember').value;
-            const text = document.getElementById('taskText').value;
-            if(!uid || !text) return alert("Select member and write task!");
-            await db.collection("tasks").add({ uid, text, completed: false, submitted: false, status: "live", createdAt: new Date() });
-            alert("Mission Deployed!");
+            const uid  = document.getElementById('taskMember').value;
+            const text = document.getElementById('taskText').value.trim();
+
+            if (!uid || !text) {
+                Toast.warning('Select a member and write the mission first!');
+                return;
+            }
+
+            try {
+                await db.collection('tasks').add({
+                    uid,
+                    text,
+                    completed:  false,
+                    submitted:  false,
+                    status:     'live',
+                    createdAt:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                Toast.success('Mission deployed!');
+                document.getElementById('taskText').value = '';
+            } catch (err) {
+                Toast.error('Could not deploy mission. Please try again.');
+                console.error(err);
+            }
         }
 
+        /* ══ UPDATE PROJECT ══ */
         async function updateProject() {
-            const name = document.getElementById('pName').value;
-            const progress = document.getElementById('pProgress').value;
-            await db.collection("projects").doc(name.toLowerCase()).set({ name, progress: parseInt(progress) });
-            alert("Hub Updated!");
+            const name     = document.getElementById('pName').value.trim();
+            const progress = parseInt(document.getElementById('pProgress').value, 10);
+
+            if (!name || isNaN(progress)) {
+                Toast.warning('Please enter a project name and a valid progress value.');
+                return;
+            }
+
+            try {
+                await db.collection('projects').doc(name.toLowerCase().replace(/\s+/g, '-')).set({
+                    name,
+                    progress: Math.min(100, Math.max(0, progress))
+                });
+                Toast.success('Hub updated!');
+            } catch (err) {
+                Toast.error('Could not update project.');
+                console.error(err);
+            }
         }
 
+        /* ══ ADD EVENT ══ */
         async function addEvent() {
-            const date = document.getElementById('eDate').value;
-            const title = document.getElementById('eTitle').value;
-            const desc = document.getElementById('eDesc').value;
-            await db.collection("events").add({ date, title, description: desc, createdAt: new Date() });
-            alert("Event Published!");
+            const date  = document.getElementById('eDate').value.trim();
+            const title = document.getElementById('eTitle').value.trim();
+            const desc  = document.getElementById('eDesc').value.trim();
+
+            if (!date || !title) {
+                Toast.warning('Date and title are required.');
+                return;
+            }
+
+            try {
+                await db.collection('events').add({
+                    date,
+                    title,
+                    description: desc,
+                    createdAt:   firebase.firestore.FieldValue.serverTimestamp()
+                });
+                Toast.success('Event published!');
+                document.getElementById('eDate').value  = '';
+                document.getElementById('eTitle').value = '';
+                document.getElementById('eDesc').value  = '';
+            } catch (err) {
+                Toast.error('Could not publish event.');
+                console.error(err);
+            }
         }
 
+        /* ══ PUBLISH NEWS ══ */
         async function publishNews() {
-            const title = document.getElementById('nTitle').value;
-            const desc = document.getElementById('nDesc').value;
-            await db.collection("news").add({ title, desc, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            alert("Broadcast Sent!");
+            const title = document.getElementById('nTitle').value.trim();
+            const desc  = document.getElementById('nDesc').value.trim();
+
+            if (!title || !desc) {
+                Toast.warning('Title and content are required.');
+                return;
+            }
+
+            try {
+                await db.collection('news').add({
+                    title,
+                    desc,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                Toast.success('Broadcast sent!');
+                document.getElementById('nTitle').value = '';
+                document.getElementById('nDesc').value  = '';
+            } catch (err) {
+                Toast.error('Could not broadcast. Please try again.');
+                console.error(err);
+            }
         }
 
-        function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
+        /* ══ LOGOUT ══ */
+        function logout() {
+            auth.signOut().then(() => window.location.href = 'login.html');
+        }
     </script>
 </body>
 </html>
