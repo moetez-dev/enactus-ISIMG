@@ -3,500 +3,1393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enactus Hub | Admin Terminal</title>
+    <title>Enactus ISIMG | Admin Terminal</title>
+    <meta name="robots" content="noindex, nofollow">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        :root { --enactus-yellow: #FFC222; }
-        body { font-family: 'Source Sans 3', sans-serif; background: #f8fafc; }
+        /* ── Variables ──────────────────────────── */
+        :root {
+            --yellow:      #FFC222;
+            --yellow-dim:  rgba(255,194,34,0.12);
+            --black:       #0a0a0a;
+            --surface:     #111111;
+            --surface-2:   #1a1a1a;
+            --surface-3:   #222222;
+            --border:      rgba(255,255,255,0.07);
+            --text-muted:  #6b7280;
+            --green:       #22c55e;
+            --red:         #ef4444;
+            --blue:        #3b82f6;
+            --sidebar-w:   260px;
+        }
+
+        /* ── Base ───────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--black);
+            color: #e5e7eb;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
         .font-heading { font-family: 'Montserrat', sans-serif; }
-        .sidebar-link.active { background: var(--enactus-yellow); color: black; }
-        .section-content { display: none; animation: slideUp 0.3s ease-out; }
-        .section-content.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── Scrollbar ──────────────────────────── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+
+        /* ── Sidebar ────────────────────────────── */
+        #sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        #sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
+
+        .sidebar-logo {
+            padding: 1.75rem 1.5rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .sidebar-logo-icon {
+            width: 36px; height: 36px;
+            background: var(--yellow);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            color: var(--black);
+            flex-shrink: 0;
+        }
+        .sidebar-logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+        .sidebar-logo-text span { color: var(--yellow); }
+
+        .sidebar-section-label {
+            padding: 1.5rem 1.5rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--text-muted);
+        }
+
+        .sidebar-nav { padding: 0 0.75rem; flex: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            color: var(--text-muted);
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            position: relative;
+        }
+        .nav-item:hover { background: var(--surface-2); color: #e5e7eb; }
+        .nav-item.active {
+            background: var(--yellow-dim);
+            color: var(--yellow);
+        }
+        .nav-item.active .nav-icon { color: var(--yellow); }
+        .nav-item .nav-badge {
+            margin-left: auto;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
+            background: var(--yellow);
+            color: var(--black);
+            border-radius: 999px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+        .nav-item .nav-badge.visible { display: flex; }
+
+        .sidebar-footer {
+            padding: 1rem 0.75rem 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Main content ───────────────────────── */
+        #main {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #main.expanded { margin-left: 0; }
+
+        /* ── Topbar ─────────────────────────────── */
+        #topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.875rem 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        #topbar-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .topbar-admin-chip {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.375rem 0.875rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--yellow);
+        }
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ── Content area ───────────────────────── */
+        #content {
+            flex: 1;
+            padding: 2rem 1.75rem 3rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* ── Section panels ─────────────────────── */
+        .section-panel {
+            display: none;
+            animation: fadeSlideUp 0.3s ease-out both;
+        }
+        .section-panel.active { display: block; }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Section headers ─────────────────────── */
+        .section-header {
+            margin-bottom: 2rem;
+        }
+        .section-header h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.75rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            color: #fff;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            font-weight: 600;
+        }
+        .section-accent {
+            display: inline-block;
+            width: 3px;
+            height: 1.6rem;
+            border-radius: 2px;
+            margin-right: 0.75rem;
+            vertical-align: middle;
+        }
+
+        /* ── Stat cards ──────────────────────────── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .stat-card:hover { border-color: var(--yellow); transform: translateY(-2px); }
+        .stat-label {
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .stat-value {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            line-height: 1;
+            color: #fff;
+        }
+        .stat-value.yellow { color: var(--yellow); }
+        .stat-value.green  { color: var(--green); }
+        .stat-value.red    { color: var(--red); }
+
+        /* ── Cards ───────────────────────────────── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: rgba(255,255,255,0.12); }
+
+        /* ── Form inputs ─────────────────────────── */
+        .admin-input {
+            width: 100%;
+            padding: 0.9rem 1.1rem;
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            border-radius: 0.875rem;
+            color: #e5e7eb;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .admin-input::placeholder { color: #4b5563; }
+        .admin-input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 3px rgba(255,194,34,0.1);
+        }
+        .admin-label {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .form-group { margin-bottom: 1.25rem; }
+
+        /* ── Buttons ─────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.875rem;
+            font-weight: 900;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary {
+            background: var(--yellow);
+            color: var(--black);
+        }
+        .btn-primary:hover { background: #e6aa00; }
+        .btn-dark {
+            background: var(--surface-3);
+            color: #e5e7eb;
+            border: 1px solid var(--border);
+        }
+        .btn-dark:hover { background: var(--yellow); color: var(--black); }
+        .btn-success {
+            background: rgba(34,197,94,0.15);
+            color: var(--green);
+            border: 1px solid rgba(34,197,94,0.25);
+        }
+        .btn-success:hover { background: var(--green); color: white; }
+        .btn-danger {
+            background: rgba(239,68,68,0.1);
+            color: var(--red);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .btn-danger:hover { background: var(--red); color: white; }
+        .btn-full { width: 100%; }
+
+        /* ── Submission/Member cards ─────────────── */
+        .record-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .record-card:hover { border-color: rgba(255,255,255,0.12); }
+        .record-card.pending { border-left: 3px solid var(--yellow); }
+        .record-card.approved { border-left: 3px solid var(--green); }
+        .record-card.rejected { border-left: 3px solid var(--red); }
+
+        .member-avatar {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .status-badge.pending  { background: rgba(255,194,34,0.15); color: var(--yellow); }
+        .status-badge.approved { background: rgba(34,197,94,0.15);  color: var(--green); }
+        .status-badge.rejected { background: rgba(239,68,68,0.1);   color: var(--red); }
+
+        /* ── Empty state ─────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+        .empty-state svg {
+            width: 48px; height: 48px;
+            margin: 0 auto 1rem;
+            opacity: 0.3;
+        }
+        .empty-state p {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ── Mobile sidebar overlay ──────────────── */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 90;
+            backdrop-filter: blur(4px);
+        }
+        #sidebar-overlay.visible { display: block; }
+
+        /* ── Responsive ──────────────────────────── */
+        @media (max-width: 768px) {
+            #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+            #sidebar.mobile-open { transform: translateX(0); }
+            #main { margin-left: 0; }
+        }
+
+        /* ── Focus visible ───────────────────────── */
+        :focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+
+        /* ── Divider ─────────────────────────────── */
+        .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+        /* ── Form max-width wrapper ───────────────── */
+        .form-container { max-width: 640px; }
+
+        /* ── Loading skeleton ────────────────────── */
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.75rem;
+            height: 80px;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
-<body class="flex min-h-screen">
+<body>
 
-    <aside class="w-72 bg-black text-white p-8 flex flex-col fixed h-full z-50">
-        <div class="mb-12 flex items-center gap-3">
-            <div class="w-10 h-10 bg-yellow-400 rounded-2xl flex items-center justify-center italic font-black text-black text-xl">A</div>
-            <h1 class="font-heading text-xl tracking-tighter uppercase">Admin<span class="text-yellow-400 italic">Panel</span></h1>
+<!-- ── SIDEBAR OVERLAY (mobile) ──────────────── -->
+<div id="sidebar-overlay" onclick="closeSidebar()" aria-hidden="true"></div>
+
+<!-- ══ SIDEBAR ════════════════════════════════ -->
+<aside id="sidebar" role="navigation" aria-label="Admin navigation">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">A</div>
+        <div class="sidebar-logo-text">
+            Admin<span> Panel</span>
+            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;letter-spacing:0.15em;margin-top:1px;">ENACTUS ISIMG</div>
         </div>
+    </div>
 
-        <nav class="space-y-3 flex-1">
-            <button onclick="showSection('reviews', this)" class="sidebar-link active w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="clipboard-check"></i> Submissions
-            </button>
-            <button onclick="showSection('members', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="users"></i> Members
-            </button>
-            <button onclick="showSection('tasks', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="plus-square"></i> Assign Mission
-            </button>
-            <button onclick="showSection('projects', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="rocket"></i> Hub Projects
-            </button>
-            <button onclick="showSection('calendar', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="calendar"></i> Timeline
-            </button>
-            <button onclick="showSection('broadcast', this)" class="sidebar-link w-full text-left p-4 rounded-2xl transition-all font-bold flex items-center gap-3 opacity-70 hover:opacity-100">
-                <i data-lucide="megaphone"></i> Broadcast
-            </button>
-        </nav>
-
-        <button onclick="logout()" class="p-4 text-red-400 font-black uppercase text-xs tracking-widest flex items-center gap-3 mt-auto">
-            <i data-lucide="log-out"></i> Sign Out
+    <!-- Nav -->
+    <p class="sidebar-section-label">Management</p>
+    <nav class="sidebar-nav" style="padding-bottom:0.5rem;">
+        <button class="nav-item active" onclick="showSection('overview', this)" data-section="overview" aria-current="page">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Overview
         </button>
-    </aside>
+        <button class="nav-item" onclick="showSection('reviews', this)" data-section="reviews">
+            <i data-lucide="clipboard-check" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Submissions
+            <span class="nav-badge" id="badge-reviews">0</span>
+        </button>
+        <button class="nav-item" onclick="showSection('members', this)" data-section="members">
+            <i data-lucide="users" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Members
+            <span class="nav-badge" id="badge-members">0</span>
+        </button>
 
-    <main class="flex-1 ml-72 p-12">
+        <p class="sidebar-section-label" style="padding-top:1.25rem;">Tools</p>
+        <button class="nav-item" onclick="showSection('tasks', this)" data-section="tasks">
+            <i data-lucide="send" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Assign Mission
+        </button>
+        <button class="nav-item" onclick="showSection('projects', this)" data-section="projects">
+            <i data-lucide="rocket" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Hub Projects
+        </button>
+        <button class="nav-item" onclick="showSection('calendar', this)" data-section="calendar">
+            <i data-lucide="calendar-plus" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Events Planner
+        </button>
+        <button class="nav-item" onclick="showSection('eom', this)" data-section="eom">
+            <i data-lucide="crown" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Enactor of Month
+        </button>
+        <button class="nav-item" onclick="showSection('broadcast', this)" data-section="broadcast">
+            <i data-lucide="megaphone" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
+            Broadcast
+        </button>
+    </nav>
 
-        <!-- ── Review Submissions ── -->
-        <section id="reviewsSection" class="section-content active space-y-8">
-            <div class="flex justify-between items-end">
-                <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-blue-500 decoration-8">Review Work</h2>
-                <span class="text-xs font-bold text-gray-400 uppercase italic">Pending Submissions</span>
+    <!-- Footer -->
+    <div class="sidebar-footer">
+        <button onclick="logout()" class="nav-item" style="color:#ef4444;">
+            <i data-lucide="log-out" class="w-4 h-4" aria-hidden="true"></i>
+            Sign Out
+        </button>
+    </div>
+</aside>
+
+
+<!-- ══ MAIN ════════════════════════════════════ -->
+<main id="main">
+
+    <!-- Topbar -->
+    <header id="topbar" role="banner">
+        <!-- Mobile burger -->
+        <button id="burgerBtn" onclick="toggleSidebar()"
+                style="background:none;border:none;cursor:pointer;color:#e5e7eb;display:none;"
+                class="md:hidden" aria-label="Toggle menu">
+            <i data-lucide="menu" class="w-5 h-5" aria-hidden="true"></i>
+        </button>
+
+        <span id="topbar-title">Overview</span>
+
+        <div class="topbar-admin-chip" role="status">
+            <span class="status-dot" aria-hidden="true"></span>
+            Admin · Online
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div id="content">
+
+        <!-- ══ OVERVIEW ════════════════════════════ -->
+        <section id="overviewSection" class="section-panel active">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:var(--yellow);"></span>Dashboard</h2>
+                <p>Welcome back, Admin. Here's what's happening.</p>
             </div>
-            <div id="submissionsList" class="grid gap-6"></div>
-        </section>
 
-        <!-- ── Members Management ── -->
-        <section id="membersSection" class="section-content space-y-8">
-            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-purple-500 decoration-8">Members</h2>
-            <div id="membersList" class="grid gap-6"></div>
-        </section>
+            <!-- Stats row -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <p class="stat-label">Total Members</p>
+                    <p class="stat-value" id="stat-total">—</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Pending Review</p>
+                    <p class="stat-value yellow" id="stat-pending">—</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Approved</p>
+                    <p class="stat-value green" id="stat-approved">—</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-label">Submissions</p>
+                    <p class="stat-value" id="stat-submissions">—</p>
+                </div>
+            </div>
 
-        <!-- ── Assign Mission ── -->
-        <section id="tasksSection" class="section-content space-y-8">
-            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-yellow-400 decoration-8">New Mission</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Target Enactor</label>
-                        <select id="taskMember" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold border-2 border-transparent focus:border-yellow-400 outline-none transition"></select>
+            <!-- Quick actions -->
+            <h3 style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--text-muted);margin-bottom:1rem;">Quick Actions</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.875rem;">
+                <button class="card" onclick="showSection('reviews', document.querySelector('[data-section=reviews]'))" style="cursor:pointer;text-align:left;border:none;">
+                    <div style="width:36px;height:36px;background:rgba(59,130,246,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                        <i data-lucide="clipboard-check" style="width:18px;height:18px;color:#3b82f6;" aria-hidden="true"></i>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-2">Mission Description</label>
-                        <input type="text" id="taskText" placeholder="e.g. Design 3 Instagram Posts" class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold border-2 border-transparent focus:border-yellow-400 outline-none transition">
+                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Review Work</p>
+                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Approve or reject submissions</p>
+                </button>
+                <button class="card" onclick="showSection('members', document.querySelector('[data-section=members]'))" style="cursor:pointer;text-align:left;border:none;">
+                    <div style="width:36px;height:36px;background:var(--yellow-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                        <i data-lucide="users" style="width:18px;height:18px;color:var(--yellow);" aria-hidden="true"></i>
                     </div>
-                    <button onclick="assignTask()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-yellow-400 hover:text-black transition transform active:scale-95">Deploy Mission</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- ── Hub Projects ── -->
-        <section id="projectsSection" class="section-content space-y-8">
-            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-green-400 decoration-8">Project Hub</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
-                <div class="space-y-6">
-                    <input type="text"   id="pName"     placeholder="Project Name"  class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <div class="flex items-center gap-4">
-                        <input type="number" id="pProgress" placeholder="Progress %" class="flex-1 p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none" min="0" max="100">
-                        <span class="font-black text-xl">%</span>
+                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Members</p>
+                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Manage applications & status</p>
+                </button>
+                <button class="card" onclick="showSection('tasks', document.querySelector('[data-section=tasks]'))" style="cursor:pointer;text-align:left;border:none;">
+                    <div style="width:36px;height:36px;background:rgba(34,197,94,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                        <i data-lucide="send" style="width:18px;height:18px;color:var(--green);" aria-hidden="true"></i>
                     </div>
-                    <button onclick="updateProject()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-green-400 transition">Update Member Hub</button>
+                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Assign Mission</p>
+                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Deploy tasks to enactors</p>
+                </button>
+                <button class="card" onclick="showSection('broadcast', document.querySelector('[data-section=broadcast]'))" style="cursor:pointer;text-align:left;border:none;">
+                    <div style="width:36px;height:36px;background:rgba(239,68,68,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                        <i data-lucide="megaphone" style="width:18px;height:18px;color:var(--red);" aria-hidden="true"></i>
+                    </div>
+                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Broadcast</p>
+                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Send club-wide announcements</p>
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ══ REVIEW SUBMISSIONS ══════════════════ -->
+        <section id="reviewsSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:#3b82f6;"></span>Submissions</h2>
+                <p>Review and validate member work before awarding points.</p>
+            </div>
+            <div id="submissionsList" class="space-y-3">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </section>
+
+
+        <!-- ══ MEMBERS ════════════════════════════ -->
+        <section id="membersSection" class="section-panel">
+            <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+                <div>
+                    <h2><span class="section-accent" style="background:var(--yellow);"></span>Members</h2>
+                    <p>Manage member applications and statuses.</p>
+                </div>
+                <!-- Filter tabs -->
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="filterMembers('all')"     id="filter-all"      style="font-size:0.6rem;">All</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('pending')" id="filter-pending"  style="font-size:0.6rem;">Pending</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('approved')"id="filter-approved" style="font-size:0.6rem;">Approved</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('rejected')"id="filter-rejected" style="font-size:0.6rem;">Rejected</button>
+                </div>
+            </div>
+            <div id="membersList" class="space-y-3">
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+                <div class="skeleton"></div>
+            </div>
+        </section>
+
+
+        <!-- ══ ASSIGN MISSION ════════════════════ -->
+        <section id="tasksSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:var(--green);"></span>Assign Mission</h2>
+                <p>Deploy a task to a specific enactor.</p>
+            </div>
+            <div class="form-container">
+                <div class="card">
+                    <div class="form-group">
+                        <label class="admin-label" for="taskMember">Target Enactor</label>
+                        <select id="taskMember" class="admin-input" aria-required="true"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="admin-label" for="taskText">Mission Description</label>
+                        <input type="text" id="taskText" class="admin-input" placeholder="e.g. Design 3 Instagram Posts for the launch" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label class="admin-label" for="taskPoints">Points Reward</label>
+                        <input type="number" id="taskPoints" class="admin-input" placeholder="50" value="50" min="1" max="500">
+                    </div>
+                    <hr class="divider">
+                    <button onclick="assignTask()" class="btn btn-primary btn-full">
+                        <i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i>
+                        Deploy Mission
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- ── Events Planner ── -->
-        <section id="calendarSection" class="section-content space-y-8">
-            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-orange-400 decoration-8">Events Planner</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text"     id="eDate"  placeholder="Date (e.g. 20 MAR)"  class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <input type="text"     id="eTitle" placeholder="Event Name"           class="p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <textarea             id="eDesc"  placeholder="Event Details..."     class="col-span-2 p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
-                    <button onclick="addEvent()" class="col-span-2 py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-orange-400 transition">Schedule Event</button>
+
+        <!-- ══ HUB PROJECTS ══════════════════════ -->
+        <section id="projectsSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:#22d3ee;"></span>Hub Projects</h2>
+                <p>Update project progress shown in the member portal.</p>
+            </div>
+            <div class="form-container">
+                <div class="card">
+                    <div class="form-group">
+                        <label class="admin-label" for="pName">Project Name</label>
+                        <input type="text" id="pName" class="admin-input" placeholder="e.g. Fytrlance" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label class="admin-label" for="pProgress">Progress (0–100%)</label>
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                            <input type="range" id="pProgressRange" min="0" max="100" value="0"
+                                   style="flex:1;accent-color:var(--yellow);"
+                                   oninput="document.getElementById('pProgress').value=this.value">
+                            <input type="number" id="pProgress" class="admin-input" style="width:80px;" placeholder="0" min="0" max="100"
+                                   oninput="document.getElementById('pProgressRange').value=this.value">
+                            <span style="font-weight:900;color:var(--text-muted);">%</span>
+                        </div>
+                    </div>
+                    <hr class="divider">
+                    <button onclick="updateProject()" class="btn btn-primary btn-full">
+                        <i data-lucide="save" class="w-4 h-4" aria-hidden="true"></i>
+                        Save to Hub
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- ── Broadcast ── -->
-        <section id="broadcastSection" class="section-content space-y-8">
-            <h2 class="text-4xl font-black font-heading uppercase italic underline decoration-red-400 decoration-8">Club News</h2>
-            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 max-w-2xl">
-                <div class="space-y-6">
-                    <input type="text" id="nTitle" placeholder="Announcement Title"   class="w-full p-5 bg-gray-50 rounded-[1.5rem] font-bold outline-none">
-                    <textarea         id="nDesc"  placeholder="Content..."           class="w-full p-5 bg-gray-50 rounded-[1.5rem] h-32 font-bold outline-none"></textarea>
-                    <button onclick="publishNews()" class="w-full py-5 bg-black text-white rounded-[1.5rem] font-black uppercase tracking-widest hover:bg-red-500 transition">Broadcast Globally</button>
+
+        <!-- ══ EVENTS PLANNER ════════════════════ -->
+        <section id="calendarSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:#f97316;"></span>Events Planner</h2>
+                <p>Schedule events that appear on the public timeline.</p>
+            </div>
+            <div class="form-container">
+                <div class="card">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="admin-label" for="eDate">Date</label>
+                            <input type="text" id="eDate" class="admin-input" placeholder="e.g. 20 MAR 2026" aria-required="true">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="admin-label" for="eTitle">Event Name</label>
+                            <input type="text" id="eTitle" class="admin-input" placeholder="e.g. Green Tech Day" aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label class="admin-label" for="eDesc">Event Details</label>
+                        <textarea id="eDesc" class="admin-input" style="height:100px;resize:vertical;" placeholder="Brief description of the event..."></textarea>
+                    </div>
+                    <hr class="divider">
+                    <button onclick="addEvent()" class="btn btn-primary btn-full">
+                        <i data-lucide="calendar-plus" class="w-4 h-4" aria-hidden="true"></i>
+                        Publish Event
+                    </button>
                 </div>
             </div>
         </section>
 
-    </main>
 
-    <!-- SCRIPT LOAD ORDER — CRITICAL
-         1. Firebase SDKs
-         2. firebase-config.js  ← single init, exports auth + db
-         3. toast.js
-         4. Page logic + AuthGuard
-    -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/toast.js"></script>
+        <!-- ══ ENACTOR OF THE MONTH ══════════════ -->
+        <section id="eomSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:var(--yellow);"></span>Enactor of the Month</h2>
+                <p>Set the featured member shown on the public homepage.</p>
+            </div>
+            <div class="form-container">
+                <div class="card">
+                    <div class="form-group">
+                        <label class="admin-label" for="eomMember">Select Member</label>
+                        <select id="eomMember" class="admin-input"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="admin-label" for="eomDesc">Achievement Description</label>
+                        <input type="text" id="eomDesc" class="admin-input" placeholder="e.g. Outstanding leadership in the Green Tech event." aria-required="true">
+                    </div>
+                    <hr class="divider">
+                    <button onclick="setEOM()" class="btn btn-primary btn-full">
+                        <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
+                        Set as Enactor of the Month
+                    </button>
+                </div>
+            </div>
+        </section>
 
-    <script>
-        /* auth and db come from firebase-config.js — no duplicate init here */
-        lucide.createIcons();
 
-        /* ══ AUTH GUARD — admin only ══
-           Redirect non-admins before any data is loaded.
-        */
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) { window.location.href = 'login.html'; return; }
+        <!-- ══ BROADCAST ══════════════════════════ -->
+        <section id="broadcastSection" class="section-panel">
+            <div class="section-header">
+                <h2><span class="section-accent" style="background:var(--red);"></span>Broadcast</h2>
+                <p>Send a club-wide announcement to all members.</p>
+            </div>
+            <div class="form-container">
+                <div class="card">
+                    <div class="form-group">
+                        <label class="admin-label" for="nTitle">Announcement Title</label>
+                        <input type="text" id="nTitle" class="admin-input" placeholder="e.g. Important meeting this Friday" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label class="admin-label" for="nDesc">Message</label>
+                        <textarea id="nDesc" class="admin-input" style="height:120px;resize:vertical;" placeholder="Write your announcement here..." aria-required="true"></textarea>
+                    </div>
+                    <hr class="divider">
+                    <button onclick="publishNews()" class="btn btn-primary btn-full">
+                        <i data-lucide="megaphone" class="w-4 h-4" aria-hidden="true"></i>
+                        Broadcast Globally
+                    </button>
+                </div>
+            </div>
+        </section>
 
-            try {
-                const doc = await db.collection('users').doc(user.uid).get();
-                if (!doc.exists || doc.data().role !== 'admin') {
-                    /* Not an admin — kick to member page */
-                    window.location.href = 'member.html';
-                    return;
-                }
-                /* Admin confirmed — boot the panel */
-                initAdminPanel();
-            } catch (err) {
-                console.error('Auth guard error:', err);
-                window.location.href = 'login.html';
-            }
+    </div><!-- /content -->
+</main><!-- /main -->
+
+
+<!-- ══ SCRIPTS ═════════════════════════════════
+     Load order: Firebase → Config → Toast → Logic
+═════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/toast.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+lucide.createIcons();
+
+/* Mobile burger button visibility */
+const burgerBtn = document.getElementById('burgerBtn');
+if (window.innerWidth <= 768) burgerBtn.style.display = 'flex';
+window.addEventListener('resize', () => {
+    burgerBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+});
+
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR TOGGLE
+═══════════════════════════════════════════════ */
+function toggleSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebar-overlay');
+    const isOpen   = sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('visible', isOpen);
+    burgerBtn.setAttribute('aria-expanded', isOpen);
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebar-overlay').classList.remove('visible');
+}
+
+
+/* ═══════════════════════════════════════════════
+   AUTH GUARD — admin only
+═══════════════════════════════════════════════ */
+auth.onAuthStateChanged(async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+
+    try {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (!doc.exists || doc.data().role !== 'admin') {
+            window.location.href = 'member.html';
+            return;
+        }
+        initAdminPanel();
+    } catch (err) {
+        console.error('Auth guard error:', err);
+        window.location.href = 'login.html';
+    }
+});
+
+
+/* ═══════════════════════════════════════════════
+   PANEL INIT
+═══════════════════════════════════════════════ */
+function initAdminPanel() {
+    loadStats();
+    loadMemberDropdowns();
+    loadSubmissions();
+    loadMembersList();
+}
+
+
+/* ═══════════════════════════════════════════════
+   SECTION SWITCHER
+═══════════════════════════════════════════════ */
+const sectionTitles = {
+    overview:  'Overview',
+    reviews:   'Submissions',
+    members:   'Members',
+    tasks:     'Assign Mission',
+    projects:  'Hub Projects',
+    calendar:  'Events Planner',
+    eom:       'Enactor of Month',
+    broadcast: 'Broadcast'
+};
+
+function showSection(id, btn) {
+    /* Hide all panels */
+    document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+    /* Deactivate all nav items */
+    document.querySelectorAll('.nav-item').forEach(l => {
+        l.classList.remove('active');
+        l.removeAttribute('aria-current');
+    });
+
+    /* Activate target */
+    const panel = document.getElementById(id + 'Section');
+    if (panel) panel.classList.add('active');
+    if (btn)   { btn.classList.add('active'); btn.setAttribute('aria-current', 'page'); }
+
+    /* Update topbar title */
+    document.getElementById('topbar-title').textContent = sectionTitles[id] || id;
+
+    /* Close mobile sidebar */
+    closeSidebar();
+}
+
+
+/* ═══════════════════════════════════════════════
+   LIVE STATS (Overview)
+═══════════════════════════════════════════════ */
+function loadStats() {
+    /* Members stats */
+    db.collection('users').onSnapshot(snap => {
+        let total = 0, pending = 0, approved = 0;
+        snap.forEach(doc => {
+            const u = doc.data();
+            if (u.role === 'admin') return;
+            total++;
+            if (u.status === 'pending')  pending++;
+            if (u.status === 'approved') approved++;
+        });
+        document.getElementById('stat-total').textContent    = total;
+        document.getElementById('stat-pending').textContent  = pending;
+        document.getElementById('stat-approved').textContent = approved;
+
+        /* Update badge */
+        const badge = document.getElementById('badge-members');
+        badge.textContent = pending;
+        badge.classList.toggle('visible', pending > 0);
+    });
+
+    /* Submissions stats */
+    db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
+        document.getElementById('stat-submissions').textContent = snap.size;
+        const badge = document.getElementById('badge-reviews');
+        badge.textContent = snap.size;
+        badge.classList.toggle('visible', snap.size > 0);
+    });
+}
+
+
+/* ═══════════════════════════════════════════════
+   MEMBER DROPDOWNS (Assign Mission + EOM)
+═══════════════════════════════════════════════ */
+function loadMemberDropdowns() {
+    db.collection('users').where('status', '==', 'approved').onSnapshot(snap => {
+        const taskSelect = document.getElementById('taskMember');
+        const eomSelect  = document.getElementById('eomMember');
+
+        [taskSelect, eomSelect].forEach(sel => {
+            sel.innerHTML = '';
+            const placeholder = document.createElement('option');
+            placeholder.value       = '';
+            placeholder.textContent = '— Choose Member —';
+            sel.appendChild(placeholder);
         });
 
-        /* ══ SECTION SWITCHER ══ */
-        function showSection(id, btn) {
-            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id + 'Section').classList.add('active');
-            btn.classList.add('active');
-        }
+        snap.forEach(doc => {
+            const u = doc.data();
+            if (u.role === 'admin') return;
 
-        /* ══ PANEL INIT — only called after admin role is confirmed ══ */
-        function initAdminPanel() {
-            loadMemberDropdown();
-            loadSubmissions();
-            loadMembersList();
-        }
-
-        /* ══ MEMBER DROPDOWN (Assign Mission) ══ */
-        function loadMemberDropdown() {
-            db.collection('users').onSnapshot(snap => {
-                const select = document.getElementById('taskMember');
-                select.innerHTML = '';
-
-                const placeholder = document.createElement('option');
-                placeholder.value       = '';
-                placeholder.textContent = '-- Choose Member --';
-                select.appendChild(placeholder);
-
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    if (u.role === 'admin') return;
-
-                    const opt = document.createElement('option');
-                    opt.value       = doc.id;
-                    /* textContent prevents injected HTML in option labels */
-                    opt.textContent = `${u.fullName || 'Unknown'} (${u.department || 'No Dept'})`;
-                    select.appendChild(opt);
-                });
+            [taskSelect, eomSelect].forEach(sel => {
+                const opt         = document.createElement('option');
+                opt.value         = doc.id;
+                opt.textContent   = `${u.fullName || 'Unknown'} · ${u.department || 'No Dept'}`;
+                /* Store extra data for EOM */
+                opt.dataset.name  = u.fullName  || '';
+                opt.dataset.img   = u.profilePic || '';
+                sel.appendChild(opt);
             });
+        });
+    });
+}
+
+
+/* ═══════════════════════════════════════════════
+   REVIEW SUBMISSIONS
+═══════════════════════════════════════════════ */
+function loadSubmissions() {
+    const list = document.getElementById('submissionsList');
+
+    db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
+        list.innerHTML = '';
+
+        if (snap.empty) {
+            list.appendChild(makeEmptyState('clipboard-check', 'No submissions to review right now.'));
+            return;
         }
 
-        /* ══ REVIEW SUBMISSIONS ══ */
-        function loadSubmissions() {
-            db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
-                const list = document.getElementById('submissionsList');
-                list.innerHTML = '';
+        snap.forEach(doc => {
+            const t = doc.data();
+            db.collection('users').doc(t.uid).get().then(uDoc => {
+                if (!uDoc.exists) return;
+                const u = uDoc.data();
 
-                if (snap.empty) {
-                    const msg = document.createElement('p');
-                    msg.className   = 'font-bold text-gray-400 italic';
-                    msg.textContent = 'No submissions to review right now.';
-                    list.appendChild(msg);
-                    return;
-                }
+                const card = document.createElement('div');
+                card.className = 'record-card';
 
-                snap.forEach(doc => {
-                    const t = doc.data();
+                /* Left */
+                const left = document.createElement('div');
+                left.style.cssText = 'display:flex;align-items:center;gap:1rem;flex:1;min-width:0;';
 
-                    /* Fetch the submitting user's profile */
-                    db.collection('users').doc(t.uid).get().then(uDoc => {
-                        if (!uDoc.exists) return;
-                        const u = uDoc.data();
+                const avatar  = document.createElement('img');
+                avatar.src    = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName||'U')}&background=1a1a1a&color=FFC222`;
+                avatar.alt    = u.fullName || '';
+                avatar.className = 'member-avatar';
 
-                        /* ── Card ── */
-                        const card = document.createElement('div');
-                        card.className = 'bg-white p-8 rounded-[2.5rem] shadow-xl border-l-8 border-blue-500 flex justify-between items-center';
+                const info = document.createElement('div');
+                info.style.minWidth = '0';
 
-                        /* Left: avatar + info */
-                        const left = document.createElement('div');
-                        left.className = 'flex items-center gap-6';
+                const nameEl  = document.createElement('p');
+                nameEl.style.cssText = 'font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--yellow);margin-bottom:0.2rem;';
+                nameEl.textContent = u.fullName || '';
 
-                        const avatar = document.createElement('img');
-                        avatar.src       = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName || 'U')}`;
-                        avatar.className = 'w-16 h-16 rounded-2xl object-cover';
+                const taskEl  = document.createElement('p');
+                taskEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#e5e7eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+                taskEl.textContent = t.text || '';
 
-                        const info = document.createElement('div');
+                const safeLink = /^https?:\/\//i.test(t.workLink || '') ? t.workLink : '#';
+                const linkEl   = document.createElement('a');
+                linkEl.href    = safeLink;
+                linkEl.target  = '_blank';
+                linkEl.rel     = 'noopener noreferrer';
+                linkEl.style.cssText = 'font-size:0.7rem;color:#3b82f6;font-weight:700;';
+                linkEl.textContent   = safeLink !== '#' ? '↗ View submitted work' : 'No link provided';
 
-                        const memberName = document.createElement('p');
-                        memberName.className   = 'text-[10px] font-black text-blue-500 uppercase tracking-widest';
-                        memberName.textContent = u.fullName || '';   /* ✅ textContent */
+                info.appendChild(nameEl);
+                info.appendChild(taskEl);
+                info.appendChild(linkEl);
+                left.appendChild(avatar);
+                left.appendChild(info);
 
-                        const taskTitle = document.createElement('h4');
-                        taskTitle.className   = 'text-xl font-black italic uppercase';
-                        taskTitle.textContent = t.text || '';   /* ✅ textContent */
+                /* Actions */
+                const actions = document.createElement('div');
+                actions.style.cssText = 'display:flex;gap:0.5rem;flex-shrink:0;';
 
-                        /* Work link — only allow http/https URLs */
-                        const workLink = document.createElement('a');
-                        const safeLink = /^https?:\/\//i.test(t.workLink || '') ? t.workLink : '#';
-                        workLink.href      = safeLink;
-                        workLink.target    = '_blank';
-                        workLink.rel       = 'noopener noreferrer';
-                        workLink.className = 'text-xs text-blue-400 underline font-bold italic';
-                        workLink.textContent = 'Click to view work';
+                const approveBtn = document.createElement('button');
+                approveBtn.className   = 'btn btn-success';
+                approveBtn.innerHTML   = `<i data-lucide="check" style="width:14px;height:14px;"></i> Approve`;
+                approveBtn.addEventListener('click', () => approveWork(doc.id, t.uid, t.points));
 
-                        info.appendChild(memberName);
-                        info.appendChild(taskTitle);
-                        info.appendChild(workLink);
-                        left.appendChild(avatar);
-                        left.appendChild(info);
+                const rejectBtn = document.createElement('button');
+                rejectBtn.className   = 'btn btn-danger';
+                rejectBtn.innerHTML   = `<i data-lucide="x" style="width:14px;height:14px;"></i> Reject`;
+                rejectBtn.addEventListener('click', () => rejectWork(doc.id));
 
-                        /* Right: approve / reject buttons */
-                        const btnGroup = document.createElement('div');
-                        btnGroup.className = 'flex gap-3';
+                actions.appendChild(approveBtn);
+                actions.appendChild(rejectBtn);
 
-                        const approveBtn = document.createElement('button');
-                        approveBtn.className   = 'bg-green-500 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-black transition shadow-lg shadow-green-200';
-                        approveBtn.textContent = 'Approve & +50';
-                        approveBtn.addEventListener('click', () => approveWork(doc.id, t.uid));
+                card.appendChild(left);
+                card.appendChild(actions);
+                list.appendChild(card);
 
-                        const rejectBtn = document.createElement('button');
-                        rejectBtn.className   = 'bg-red-100 text-red-500 px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-red-500 hover:text-white transition';
-                        rejectBtn.textContent = 'Reject';
-                        rejectBtn.addEventListener('click', () => rejectWork(doc.id));
-
-                        btnGroup.appendChild(approveBtn);
-                        btnGroup.appendChild(rejectBtn);
-
-                        card.appendChild(left);
-                        card.appendChild(btnGroup);
-                        list.appendChild(card);
-                    });
-                });
+                lucide.createIcons();
             });
+        });
+    });
+}
+
+
+/* ═══════════════════════════════════════════════
+   MEMBERS LIST
+═══════════════════════════════════════════════ */
+let _allMembersData = [];
+
+function loadMembersList() {
+    const list = document.getElementById('membersList');
+
+    db.collection('users').onSnapshot(snap => {
+        _allMembersData = [];
+        snap.forEach(doc => {
+            const u = doc.data();
+            if (u.role === 'admin') return;
+            _allMembersData.push({ id: doc.id, ...u });
+        });
+        renderMembersList(_allMembersData);
+    });
+}
+
+function filterMembers(status) {
+    /* Update filter buttons */
+    ['all','pending','approved','rejected'].forEach(s => {
+        const btn = document.getElementById('filter-' + s);
+        btn.className = s === status ? 'btn btn-primary' : 'btn btn-dark';
+        btn.style.fontSize = '0.6rem';
+    });
+
+    const filtered = status === 'all' ? _allMembersData : _allMembersData.filter(u => u.status === status);
+    renderMembersList(filtered);
+}
+
+function renderMembersList(members) {
+    const list = document.getElementById('membersList');
+    list.innerHTML = '';
+
+    if (!members.length) {
+        list.appendChild(makeEmptyState('users', 'No members found.'));
+        return;
+    }
+
+    members.forEach(u => {
+        const card     = document.createElement('div');
+        const statusCl = u.status === 'approved' ? 'approved' : u.status === 'rejected' ? 'rejected' : 'pending';
+        card.className = `record-card ${statusCl}`;
+
+        /* Info */
+        const info = document.createElement('div');
+        info.style.cssText = 'display:flex;align-items:center;gap:0.875rem;flex:1;min-width:0;';
+
+        const avatar  = document.createElement('img');
+        avatar.src    = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName||'U')}&background=1a1a1a&color=FFC222`;
+        avatar.alt    = u.fullName || '';
+        avatar.className = 'member-avatar';
+
+        const details = document.createElement('div');
+        details.style.minWidth = '0';
+
+        const nameEl = document.createElement('p');
+        nameEl.style.cssText = 'font-weight:900;font-size:0.85rem;color:#e5e7eb;';
+        nameEl.textContent = u.fullName || 'Unknown';
+
+        const deptEl = document.createElement('p');
+        deptEl.style.cssText = 'font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;';
+        deptEl.textContent = `${u.department || 'N/A'} · ${u.points || 0} pts`;
+
+        const badge = document.createElement('span');
+        badge.className   = `status-badge ${statusCl}`;
+        badge.textContent = u.status || 'pending';
+
+        details.appendChild(nameEl);
+        details.appendChild(deptEl);
+        info.appendChild(avatar);
+        info.appendChild(details);
+
+        /* Actions */
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-shrink:0;';
+        actions.appendChild(badge);
+
+        if (u.status === 'pending') {
+            const approveBtn = document.createElement('button');
+            approveBtn.className   = 'btn btn-success';
+            approveBtn.innerHTML   = `<i data-lucide="check" style="width:13px;height:13px;"></i> Approve`;
+            approveBtn.addEventListener('click', () => approveMember(u.id));
+
+            const rejectBtn = document.createElement('button');
+            rejectBtn.className   = 'btn btn-danger';
+            rejectBtn.innerHTML   = `<i data-lucide="x" style="width:13px;height:13px;"></i> Reject`;
+            rejectBtn.addEventListener('click', () => rejectMember(u.id));
+
+            actions.appendChild(approveBtn);
+            actions.appendChild(rejectBtn);
         }
 
-        /* ══ MEMBERS LIST (with approve/reject pending applications) ══ */
-        function loadMembersList() {
-            db.collection('users').onSnapshot(snap => {
-                const list = document.getElementById('membersList');
-                list.innerHTML = '';
+        card.appendChild(info);
+        card.appendChild(actions);
+        list.appendChild(card);
+    });
 
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    if (u.role === 'admin') return;
+    lucide.createIcons();
+}
 
-                    const card = document.createElement('div');
-                    card.className = 'bg-white p-6 rounded-[2rem] shadow-md border border-gray-100 flex justify-between items-center';
 
-                    const info = document.createElement('div');
-                    info.className = 'flex items-center gap-4';
+/* ═══════════════════════════════════════════════
+   APPROVE / REJECT WORK
+═══════════════════════════════════════════════ */
+async function approveWork(tId, uId, taskPoints) {
+    const pts = parseInt(taskPoints) || 50;
+    try {
+        await db.collection('tasks').doc(tId).update({ status: 'approved', completed: true });
+        const userRef = db.collection('users').doc(uId);
+        const user    = await userRef.get();
+        await userRef.update({ points: (user.data().points || 0) + pts });
+        Toast.success(`Mission validated! +${pts} points awarded.`);
+    } catch (err) {
+        Toast.error('Could not approve work. Please try again.');
+        console.error(err);
+    }
+}
 
-                    const avatar = document.createElement('img');
-                    avatar.src       = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName || 'U')}`;
-                    avatar.className = 'w-12 h-12 rounded-xl object-cover';
+async function rejectWork(id) {
+    try {
+        await db.collection('tasks').doc(id).update({ status: 'live', submitted: false });
+        Toast.warning('Work rejected. Member can re-submit.');
+    } catch (err) {
+        Toast.error('Could not reject work. Please try again.');
+        console.error(err);
+    }
+}
 
-                    const details = document.createElement('div');
 
-                    const nameEl = document.createElement('p');
-                    nameEl.className   = 'font-black uppercase text-sm';
-                    nameEl.textContent = u.fullName || '';
+/* ═══════════════════════════════════════════════
+   APPROVE / REJECT MEMBERS
+═══════════════════════════════════════════════ */
+async function approveMember(uid) {
+    try {
+        await db.collection('users').doc(uid).update({ status: 'approved' });
+        Toast.success('Member approved and activated!');
+    } catch (err) {
+        Toast.error('Could not approve member.');
+        console.error(err);
+    }
+}
 
-                    const deptEl = document.createElement('p');
-                    deptEl.className   = 'text-[10px] text-gray-400 font-bold uppercase';
-                    deptEl.textContent = `${u.department || 'N/A'} • ${u.status || 'pending'}`;
+async function rejectMember(uid) {
+    try {
+        await db.collection('users').doc(uid).update({ status: 'rejected' });
+        Toast.warning('Member application rejected.');
+    } catch (err) {
+        Toast.error('Could not reject member.');
+        console.error(err);
+    }
+}
 
-                    details.appendChild(nameEl);
-                    details.appendChild(deptEl);
-                    info.appendChild(avatar);
-                    info.appendChild(details);
 
-                    const actions = document.createElement('div');
-                    actions.className = 'flex gap-2';
+/* ═══════════════════════════════════════════════
+   ASSIGN TASK
+═══════════════════════════════════════════════ */
+async function assignTask() {
+    const uid    = document.getElementById('taskMember').value;
+    const text   = document.getElementById('taskText').value.trim();
+    const points = parseInt(document.getElementById('taskPoints').value) || 50;
 
-                    if (u.status === 'pending') {
-                        const approveBtn = document.createElement('button');
-                        approveBtn.className   = 'bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-black transition';
-                        approveBtn.textContent = 'Approve';
-                        approveBtn.addEventListener('click', () => approveMember(doc.id));
+    if (!uid || !text) {
+        Toast.warning('Please select a member and write the mission description.');
+        return;
+    }
 
-                        const rejectBtn = document.createElement('button');
-                        rejectBtn.className   = 'bg-red-100 text-red-500 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition';
-                        rejectBtn.textContent = 'Reject';
-                        rejectBtn.addEventListener('click', () => rejectMember(doc.id));
+    try {
+        await db.collection('tasks').add({
+            uid,
+            text,
+            points:     Math.min(500, Math.max(1, points)),
+            completed:  false,
+            submitted:  false,
+            status:     'live',
+            createdAt:  firebase.firestore.FieldValue.serverTimestamp()
+        });
+        Toast.success('Mission deployed successfully!');
+        document.getElementById('taskText').value   = '';
+        document.getElementById('taskPoints').value = '50';
+    } catch (err) {
+        Toast.error('Could not deploy mission. Please try again.');
+        console.error(err);
+    }
+}
 
-                        actions.appendChild(approveBtn);
-                        actions.appendChild(rejectBtn);
-                    }
 
-                    card.appendChild(info);
-                    card.appendChild(actions);
-                    list.appendChild(card);
-                });
-            });
-        }
+/* ═══════════════════════════════════════════════
+   UPDATE PROJECT
+═══════════════════════════════════════════════ */
+async function updateProject() {
+    const name     = document.getElementById('pName').value.trim();
+    const progress = parseInt(document.getElementById('pProgress').value, 10);
 
-        /* ══ APPROVE / REJECT WORK ══ */
-        async function approveWork(tId, uId) {
-            try {
-                await db.collection('tasks').doc(tId).update({ status: 'approved', completed: true });
-                const userRef = db.collection('users').doc(uId);
-                const user    = await userRef.get();
-                await userRef.update({ points: (user.data().points || 0) + 50 });
-                Toast.success('Mission validated! Member received 50 points.');
-            } catch (err) {
-                Toast.error('Could not approve work. Please try again.');
-                console.error(err);
-            }
-        }
+    if (!name || isNaN(progress)) {
+        Toast.warning('Please enter a project name and a valid progress value (0–100).');
+        return;
+    }
 
-        async function rejectWork(id) {
-            try {
-                await db.collection('tasks').doc(id).update({ status: 'live', submitted: false });
-                Toast.warning('Work rejected. Member can re-submit.');
-            } catch (err) {
-                Toast.error('Could not reject work. Please try again.');
-                console.error(err);
-            }
-        }
+    try {
+        await db.collection('projects').doc(name.toLowerCase().replace(/\s+/g, '-')).set({
+            name,
+            progress: Math.min(100, Math.max(0, progress)),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        Toast.success('Project progress updated in the hub!');
+    } catch (err) {
+        Toast.error('Could not update project.');
+        console.error(err);
+    }
+}
 
-        /* ══ APPROVE / REJECT MEMBER APPLICATIONS ══ */
-        async function approveMember(uid) {
-            try {
-                await db.collection('users').doc(uid).update({ status: 'approved' });
-                Toast.success('Member approved!');
-            } catch (err) {
-                Toast.error('Could not approve member.');
-            }
-        }
 
-        async function rejectMember(uid) {
-            try {
-                await db.collection('users').doc(uid).update({ status: 'rejected' });
-                Toast.warning('Member application rejected.');
-            } catch (err) {
-                Toast.error('Could not reject member.');
-            }
-        }
+/* ═══════════════════════════════════════════════
+   ADD EVENT
+═══════════════════════════════════════════════ */
+async function addEvent() {
+    const date  = document.getElementById('eDate').value.trim();
+    const title = document.getElementById('eTitle').value.trim();
+    const desc  = document.getElementById('eDesc').value.trim();
 
-        /* ══ ASSIGN TASK ══ */
-        async function assignTask() {
-            const uid  = document.getElementById('taskMember').value;
-            const text = document.getElementById('taskText').value.trim();
+    if (!date || !title) {
+        Toast.warning('Event date and title are required.');
+        return;
+    }
 
-            if (!uid || !text) {
-                Toast.warning('Select a member and write the mission first!');
-                return;
-            }
+    try {
+        await db.collection('events').add({
+            date,
+            title,
+            description: desc,
+            createdAt:   firebase.firestore.FieldValue.serverTimestamp()
+        });
+        Toast.success('Event published to the public timeline!');
+        ['eDate','eTitle','eDesc'].forEach(id => document.getElementById(id).value = '');
+    } catch (err) {
+        Toast.error('Could not publish event.');
+        console.error(err);
+    }
+}
 
-            try {
-                await db.collection('tasks').add({
-                    uid,
-                    text,
-                    completed:  false,
-                    submitted:  false,
-                    status:     'live',
-                    createdAt:  firebase.firestore.FieldValue.serverTimestamp()
-                });
-                Toast.success('Mission deployed!');
-                document.getElementById('taskText').value = '';
-            } catch (err) {
-                Toast.error('Could not deploy mission. Please try again.');
-                console.error(err);
-            }
-        }
 
-        /* ══ UPDATE PROJECT ══ */
-        async function updateProject() {
-            const name     = document.getElementById('pName').value.trim();
-            const progress = parseInt(document.getElementById('pProgress').value, 10);
+/* ═══════════════════════════════════════════════
+   SET ENACTOR OF THE MONTH
+═══════════════════════════════════════════════ */
+async function setEOM() {
+    const select = document.getElementById('eomMember');
+    const uid    = select.value;
+    const desc   = document.getElementById('eomDesc').value.trim();
 
-            if (!name || isNaN(progress)) {
-                Toast.warning('Please enter a project name and a valid progress value.');
-                return;
-            }
+    if (!uid || !desc) {
+        Toast.warning('Please select a member and write an achievement description.');
+        return;
+    }
 
-            try {
-                await db.collection('projects').doc(name.toLowerCase().replace(/\s+/g, '-')).set({
-                    name,
-                    progress: Math.min(100, Math.max(0, progress))
-                });
-                Toast.success('Hub updated!');
-            } catch (err) {
-                Toast.error('Could not update project.');
-                console.error(err);
-            }
-        }
+    const selectedOption = select.options[select.selectedIndex];
+    const name           = selectedOption.dataset.name  || '';
+    const img            = selectedOption.dataset.img   || '';
 
-        /* ══ ADD EVENT ══ */
-        async function addEvent() {
-            const date  = document.getElementById('eDate').value.trim();
-            const title = document.getElementById('eTitle').value.trim();
-            const desc  = document.getElementById('eDesc').value.trim();
+    try {
+        await db.collection('settings').doc('eom').set({ uid, name, desc, img,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        Toast.success(`${name} is now Enactor of the Month!`);
+        document.getElementById('eomDesc').value = '';
+    } catch (err) {
+        Toast.error('Could not update Enactor of the Month.');
+        console.error(err);
+    }
+}
 
-            if (!date || !title) {
-                Toast.warning('Date and title are required.');
-                return;
-            }
 
-            try {
-                await db.collection('events').add({
-                    date,
-                    title,
-                    description: desc,
-                    createdAt:   firebase.firestore.FieldValue.serverTimestamp()
-                });
-                Toast.success('Event published!');
-                document.getElementById('eDate').value  = '';
-                document.getElementById('eTitle').value = '';
-                document.getElementById('eDesc').value  = '';
-            } catch (err) {
-                Toast.error('Could not publish event.');
-                console.error(err);
-            }
-        }
+/* ═══════════════════════════════════════════════
+   PUBLISH BROADCAST
+═══════════════════════════════════════════════ */
+async function publishNews() {
+    const title = document.getElementById('nTitle').value.trim();
+    const desc  = document.getElementById('nDesc').value.trim();
 
-        /* ══ PUBLISH NEWS ══ */
-        async function publishNews() {
-            const title = document.getElementById('nTitle').value.trim();
-            const desc  = document.getElementById('nDesc').value.trim();
+    if (!title || !desc) {
+        Toast.warning('Title and message content are both required.');
+        return;
+    }
 
-            if (!title || !desc) {
-                Toast.warning('Title and content are required.');
-                return;
-            }
+    try {
+        await db.collection('news').add({
+            title, desc,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        Toast.success('Broadcast sent to all members!');
+        document.getElementById('nTitle').value = '';
+        document.getElementById('nDesc').value  = '';
+    } catch (err) {
+        Toast.error('Could not broadcast. Please try again.');
+        console.error(err);
+    }
+}
 
-            try {
-                await db.collection('news').add({
-                    title,
-                    desc,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                Toast.success('Broadcast sent!');
-                document.getElementById('nTitle').value = '';
-                document.getElementById('nDesc').value  = '';
-            } catch (err) {
-                Toast.error('Could not broadcast. Please try again.');
-                console.error(err);
-            }
-        }
 
-        /* ══ LOGOUT ══ */
-        function logout() {
-            auth.signOut().then(() => window.location.href = 'login.html');
-        }
-    </script>
+/* ═══════════════════════════════════════════════
+   LOGOUT
+═══════════════════════════════════════════════ */
+function logout() {
+    auth.signOut().then(() => window.location.href = 'login.html');
+}
+
+
+/* ═══════════════════════════════════════════════
+   HELPER — Empty state DOM element
+═══════════════════════════════════════════════ */
+function makeEmptyState(icon, message) {
+    const div = document.createElement('div');
+    div.className = 'empty-state';
+
+    const svg = document.createElement('div');
+    svg.innerHTML = `<i data-lucide="${icon}" style="width:48px;height:48px;margin:0 auto;display:block;opacity:0.3;color:#9ca3af;"></i>`;
+
+    const p = document.createElement('p');
+    p.textContent = message;
+
+    div.appendChild(svg);
+    div.appendChild(p);
+
+    setTimeout(() => lucide.createIcons(), 0);
+    return div;
+}
+</script>
 </body>
 </html>

@@ -4,518 +4,1744 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enactus Hub | Member Space</title>
-    
+    <meta name="robots" content="noindex, nofollow">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
-        :root { --enactus-yellow: #FFC222; }
-        body { font-family: 'Source Sans 3', sans-serif; background-color: #f4f7fe; }
-        .font-heading { font-family: 'Montserrat', sans-serif; }
-        .glass-sidebar { background: #000; }
-        .sidebar-item:hover, .active-tab { background: var(--enactus-yellow); color: black !important; opacity: 1 !important; transform: translateX(5px); }
-        .card-shadow { box-shadow: 0 20px 50px -15px rgba(0,0,0,0.05); }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
-        
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ── Variables ──────────────────────────── */
+        :root {
+            --yellow:      #FFC222;
+            --yellow-dim:  rgba(255,194,34,0.12);
+            --yellow-glow: rgba(255,194,34,0.25);
+            --black:       #0a0a0a;
+            --surface:     #111111;
+            --surface-2:   #1a1a1a;
+            --surface-3:   #222222;
+            --border-dark: rgba(255,255,255,0.07);
+            --bg:          #f6f6f3;
+            --card:        #ffffff;
+            --border:      #ececea;
+            --text:        #0a0a0a;
+            --text-muted:  #9ca3af;
+            --sidebar-w:   260px;
+            --topbar-h:    72px;
+            --green:       #22c55e;
+            --orange:      #f97316;
+            --red:         #ef4444;
+            --blue:        #3b82f6;
+        }
 
-        .badge-unlock { filter: grayscale(1); opacity: 0.3; transition: 0.3s; }
-        .badge-unlock.earned { filter: grayscale(0); opacity: 1; }
+        /* ── Reset ──────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { height: 100%; }
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        .font-heading { font-family: 'Montserrat', sans-serif; }
+
+        /* ── Scrollbar ──────────────────────────── */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+
+        /* ══════════════════════════════════════════
+           SIDEBAR
+        ══════════════════════════════════════════ */
+        #sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border-dark);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow: hidden;
+        }
+        #sidebar.mobile-hidden { transform: translateX(calc(-1 * var(--sidebar-w))); }
+
+        .sidebar-logo {
+            padding: 1.5rem 1.25rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-dark);
+            flex-shrink: 0;
+        }
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: var(--yellow);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #fff;
+            line-height: 1.15;
+        }
+        .logo-text span { color: var(--yellow); }
+        .logo-sub {
+            font-size: 0.55rem;
+            color: #4b5563;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* Member card in sidebar */
+        .sidebar-member-card {
+            margin: 1rem 0.875rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border-dark);
+            border-radius: 1rem;
+            padding: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+        .sidebar-avatar {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(255,194,34,0.4);
+            flex-shrink: 0;
+        }
+        .sidebar-member-name {
+            font-weight: 900;
+            font-size: 0.78rem;
+            color: #e5e7eb;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar-member-dept {
+            font-size: 0.58rem;
+            color: #4b5563;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 1px;
+        }
+
+        /* XP bar in sidebar */
+        .sidebar-xp {
+            padding: 0 0.875rem 0.75rem;
+            flex-shrink: 0;
+        }
+        .xp-track {
+            height: 4px;
+            background: var(--surface-3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .xp-fill {
+            height: 100%;
+            background: var(--yellow);
+            border-radius: 2px;
+            transition: width 1s ease;
+        }
+        .xp-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #4b5563;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Nav */
+        .sidebar-nav {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            overflow-y: auto;
+        }
+        .nav-section-label {
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: #374151;
+            padding: 0.875rem 0.5rem 0.4rem;
+        }
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.875rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #4b5563;
+            text-align: left;
+            transition: background 0.2s, color 0.2s;
+            position: relative;
+        }
+        .nav-btn:hover { background: var(--surface-2); color: #e5e7eb; }
+        .nav-btn.active {
+            background: var(--yellow-dim);
+            color: var(--yellow);
+        }
+        .nav-btn .nav-badge {
+            margin-left: auto;
+            min-width: 18px; height: 18px;
+            padding: 0 4px;
+            background: var(--yellow);
+            color: var(--black);
+            border-radius: 999px;
+            font-size: 0.55rem;
+            font-weight: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn .nav-badge.show { display: flex; }
+
+        .sidebar-footer {
+            padding: 0.875rem 0.75rem 1.25rem;
+            border-top: 1px solid var(--border-dark);
+            flex-shrink: 0;
+        }
+
+        /* ══════════════════════════════════════════
+           MAIN LAYOUT
+        ══════════════════════════════════════════ */
+        #main {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ── Topbar ─────────────────────────────── */
+        #topbar {
+            height: var(--topbar-h);
+            background: rgba(246,246,243,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+            z-index: 50;
+            position: sticky;
+            top: 0;
+        }
+        #burger-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.375rem;
+            cursor: pointer;
+            color: var(--text);
+            align-items: center;
+            justify-content: center;
+        }
+        #page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+        .points-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--yellow-dim);
+            border: 1px solid rgba(255,194,34,0.25);
+            border-radius: 999px;
+            padding: 0.3rem 0.875rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.72rem;
+            color: #92400e;
+        }
+        .topbar-avatar {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(255,194,34,0.4);
+            cursor: pointer;
+        }
+        .level-badge {
+            padding: 0.25rem 0.625rem;
+            border-radius: 999px;
+            font-size: 0.58rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* ── Content scroll area ─────────────────── */
+        #content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.75rem;
+        }
+
+        /* ── Tab panels ──────────────────────────── */
+        .tab-panel {
+            display: none;
+            animation: fadeSlideUp 0.3s ease-out both;
+        }
+        .tab-panel.active { display: block; }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ══════════════════════════════════════════
+           CARDS & SHARED COMPONENTS
+        ══════════════════════════════════════════ */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover { border-color: #ddd; box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
+        .card-dark {
+            background: var(--surface);
+            border: 1px solid var(--border-dark);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            color: #e5e7eb;
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--text-muted);
+            margin-bottom: 0.875rem;
+        }
+
+        /* ── Welcome card ────────────────────────── */
+        .welcome-card {
+            background: var(--surface);
+            border-radius: 2rem;
+            padding: 2rem 2rem 1.75rem;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+        }
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 220px; height: 220px;
+            background: var(--yellow);
+            opacity: 0.06;
+            border-radius: 50%;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+        .welcome-grid-bg {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+        .welcome-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            position: relative;
+        }
+        .welcome-name span { color: var(--yellow); }
+
+        /* ── Stats mini row ──────────────────────── */
+        .stats-row {
+            display: flex;
+            gap: 0.875rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            position: relative;
+        }
+        .stat-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.875rem;
+            padding: 0.875rem 1.1rem;
+            min-width: 90px;
+        }
+        .stat-pill-label {
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #4b5563;
+            margin-bottom: 0.35rem;
+        }
+        .stat-pill-value {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: var(--yellow);
+        }
+        .stat-pill-value.white { color: #fff; }
+
+        /* ── Badges row ──────────────────────────── */
+        .badge-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.75rem;
+            border-radius: 0.875rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            min-width: 68px;
+            transition: all 0.3s;
+            filter: grayscale(1);
+            opacity: 0.3;
+        }
+        .badge-item.earned {
+            filter: grayscale(0);
+            opacity: 1;
+            border-color: rgba(255,194,34,0.2);
+            background: rgba(255,194,34,0.06);
+        }
+        .badge-item p {
+            font-size: 0.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+            text-align: center;
+        }
+        .badge-item.earned p { color: #d97706; }
+
+        /* ── Mission cards ───────────────────────── */
+        .mission-card {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.125rem 1.25rem;
+            transition: border-color 0.2s;
+        }
+        .mission-card.done {
+            border-color: rgba(34,197,94,0.25);
+            background: rgba(34,197,94,0.03);
+        }
+        .mission-card.reviewing {
+            border-color: rgba(249,115,22,0.25);
+            background: rgba(249,115,22,0.03);
+        }
+        .mission-title {
+            font-weight: 900;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mission-pts {
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            background: var(--yellow-dim);
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* Submit link input */
+        .link-input {
+            flex: 1;
+            padding: 0.6rem 0.875rem;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 0.75rem;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .link-input:focus { border-color: var(--yellow); }
+        .link-input::placeholder { color: #c4c4c4; }
+
+        /* ── Feed cards ──────────────────────────── */
+        .feed-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            transition: border-color 0.2s;
+        }
+        .feed-card:hover { border-color: #ddd; }
+        .feed-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--yellow);
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        /* ── Leaderboard ─────────────────────────── */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.875rem;
+            transition: background 0.2s;
+        }
+        .lb-row:hover { background: var(--bg); }
+        .lb-row.me { background: var(--yellow-dim); }
+        .lb-rank {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.7rem;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .lb-avatar {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .lb-name {
+            font-weight: 900;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lb-pts {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .lb-pts.top { color: var(--yellow); }
+
+        /* ── EOM card ────────────────────────────── */
+        .eom-card {
+            background: var(--yellow);
+            border-radius: 1.5rem;
+            padding: 1.25rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .eom-avatar {
+            width: 72px; height: 72px;
+            border-radius: 1rem;
+            object-fit: cover;
+            border: 3px solid rgba(0,0,0,0.12);
+            margin: 0 auto 0.75rem;
+            display: block;
+        }
+        .eom-label {
+            font-size: 0.55rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.6;
+            margin-bottom: 0.25rem;
+        }
+        .eom-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+        }
+        .eom-desc {
+            font-size: 0.72rem;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-top: 0.375rem;
+            line-height: 1.4;
+        }
+
+        /* ── Projects tab ────────────────────────── */
+        .project-card {
+            background: var(--surface);
+            border: 1px solid var(--border-dark);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            color: #e5e7eb;
+            transition: border-color 0.2s;
+        }
+        .project-card:hover { border-color: rgba(255,194,34,0.3); }
+        .project-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .progress-track {
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--yellow);
+            border-radius: 3px;
+            transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ── Events tab ──────────────────────────── */
+        .event-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--yellow);
+            border-radius: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+        .event-date-box {
+            text-align: center;
+            flex-shrink: 0;
+            min-width: 52px;
+        }
+        .event-day {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .event-month {
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+        }
+        .event-title {
+            font-weight: 900;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .event-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* ── Settings tab ────────────────────────── */
+        .settings-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 0.875rem;
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .settings-input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 4px rgba(255,194,34,0.1);
+        }
+        .settings-label {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── Buttons ─────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 900;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--black); color: #fff; }
+        .btn-primary:hover { background: var(--yellow); color: var(--black); }
+        .btn-yellow { background: var(--yellow); color: var(--black); }
+        .btn-yellow:hover { background: #e6aa00; }
+        .btn-ghost {
+            background: var(--bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+        .btn-danger { background: rgba(239,68,68,0.08); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
+        .btn-danger:hover { background: var(--red); color: #fff; }
+        .btn-full { width: 100%; }
+
+        /* ── Empty state ─────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+        }
+        .empty-state p {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.75rem;
+        }
+
+        /* ── Sidebar overlay (mobile) ─────────────── */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 90;
+            backdrop-filter: blur(4px);
+        }
+        #sidebar-overlay.show { display: block; }
+
+        /* ── Responsive ──────────────────────────── */
+        @media (max-width: 768px) {
+            #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+            #sidebar.mobile-open { transform: translateX(0); }
+            #main { margin-left: 0; }
+            #burger-btn { display: flex; }
+            #content-area { padding: 1rem; }
+        }
+
+        /* ── Focus visible ───────────────────────── */
+        :focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body>
 
-    <aside class="w-20 lg:w-72 glass-sidebar text-white flex flex-col transition-all duration-300 z-50">
-        <div class="p-8 mb-4 flex items-center gap-3">
-            <div class="w-10 h-10 bg-[#FFC222] rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
-                <i data-lucide="zap" class="text-black w-6 h-6"></i>
-            </div>
-            <span class="font-heading text-xl font-black hidden lg:block tracking-tighter uppercase text-[#FFC222]">HUB</span>
+<!-- Mobile overlay -->
+<div id="sidebar-overlay" onclick="closeSidebar()" aria-hidden="true"></div>
+
+<!-- ══ SIDEBAR ════════════════════════════════ -->
+<aside id="sidebar" role="navigation" aria-label="Member navigation">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+        <div class="logo-icon">
+            <i data-lucide="zap" style="width:18px;height:18px;color:#0a0a0a;" aria-hidden="true"></i>
         </div>
-
-        <nav class="flex-1 px-4 space-y-2 mt-4">
-            <button onclick="switchTab('dashboard', this)" class="sidebar-item active-tab w-full flex items-center gap-4 p-4 rounded-2xl font-bold transition-all text-left">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span class="hidden lg:block text-[11px] uppercase tracking-widest">Dashboard</span>
-            </button>
-            <button onclick="switchTab('projects', this)" class="sidebar-item w-full flex items-center gap-4 p-4 rounded-2xl opacity-40 hover:opacity-100 transition-all text-left">
-                <i data-lucide="folder-kanban" class="w-5 h-5"></i> <span class="hidden lg:block text-[11px] uppercase tracking-widest">Projects</span>
-            </button>
-            <button onclick="switchTab('calendar', this)" class="sidebar-item w-full flex items-center gap-4 p-4 rounded-2xl opacity-40 hover:opacity-100 transition-all text-left">
-                <i data-lucide="calendar-days" class="w-5 h-5"></i> <span class="hidden lg:block text-[11px] uppercase tracking-widest">Calendar</span>
-            </button>
-            <button onclick="switchTab('settings', this)" class="sidebar-item w-full flex items-center gap-4 p-4 rounded-2xl opacity-40 hover:opacity-100 transition-all text-left">
-                <i data-lucide="settings" class="w-5 h-5"></i> <span class="hidden lg:block text-[11px] uppercase tracking-widest">Settings</span>
-            </button>
-        </nav>
-
-        <div class="p-6 border-t border-white/5">
-            <button onclick="logout()" class="flex items-center gap-4 p-4 w-full rounded-2xl text-red-400 hover:bg-red-500/10 transition-all font-black uppercase text-[10px] tracking-widest text-left">
-                <i data-lucide="log-out" class="w-5 h-5"></i> <span class="hidden lg:block">Sign Out</span>
-            </button>
-        </div>
-    </aside>
-
-    <div class="flex-1 flex flex-col h-screen overflow-hidden">
-        
-        <header class="bg-white/80 backdrop-blur-xl border-b px-8 py-4 flex justify-between items-center h-20 flex-shrink-0 z-40">
-            <div id="statusTag" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-green-100 text-green-600 border border-green-200">
-                Active Member
-            </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right flex flex-col">
-                    <span id="userNameDisplay" class="text-sm font-black text-black uppercase tracking-tight italic">Loading...</span>
-                    <span id="userDept" class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Department</span>
-                </div>
-                <div class="w-11 h-11 rounded-2xl bg-zinc-900 border-2 border-[#FFC222] p-0.5 shadow-lg overflow-hidden">
-                    <img id="userAvatar" src="https://ui-avatars.com/api/?background=000&color=FFC222" class="w-full h-full rounded-xl object-cover">
-                </div>
-            </div>
-        </header>
-
-        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 space-y-10">
-            
-            <div id="dashboard" class="tab-content active space-y-10">
-                <div class="grid lg:grid-cols-12 gap-10">
-                    <div class="lg:col-span-8 space-y-10">
-                        <div class="bg-black rounded-[3rem] p-12 text-white relative overflow-hidden shadow-2xl">
-                            <h2 class="text-5xl font-black font-heading leading-none mb-6 italic tracking-tighter uppercase">WELCOME, <br><span class="text-[#FFC222]" id="welcomeName">ENACTOR</span></h2>
-                            <div class="flex flex-wrap gap-4 mt-8">
-                                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                                    <p class="text-[8px] text-gray-500 font-black uppercase mb-3 tracking-widest leading-none">Club Points</p>
-                                    <p id="userPointsDisplay" class="text-3xl font-black text-[#FFC222]">0</p>
-                                </div>
-                                <div class="bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                                    <p class="text-[8px] text-gray-400 font-black uppercase mb-3 tracking-widest leading-none">Badges</p>
-                                    <div class="flex gap-2">
-                                        <i data-lucide="shield-check" class="badge-unlock earned w-6 h-6 text-blue-400"></i>
-                                        <i data-lucide="flame" id="streakBadge" class="badge-unlock w-6 h-6 text-orange-500"></i>
-                                        <i data-lucide="award" id="premiumBadge" class="badge-unlock w-6 h-6 text-yellow-400"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-8 rounded-[3rem] card-shadow border border-gray-100">
-                            <h3 class="font-black text-xl mb-6 flex items-center gap-3 uppercase italic underline decoration-yellow-400 decoration-4">My Missions</h3>
-                            <div id="tasksList" class="grid gap-4">
-                                <p class="text-xs text-gray-400 italic">Looking for new missions...</p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-6">
-                            <h3 class="font-black text-2xl font-heading flex items-center gap-3 italic">Club Feed</h3>
-                            <div id="newsFeed" class="grid gap-6"></div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-4 space-y-10">
-                        <div class="bg-white p-8 rounded-[3rem] card-shadow border border-gray-100 text-center">
-                            <div class="relative inline-block mb-4">
-                                <img id="motmImage" src="https://ui-avatars.com/api/?background=FFC222" class="w-24 h-24 rounded-3xl border-4 border-yellow-400 shadow-xl object-cover">
-                                <div class="absolute -bottom-2 -right-2 bg-black text-white p-2 rounded-xl"><i data-lucide="crown" class="w-4 h-4 text-yellow-400"></i></div>
-                            </div>
-                            <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Top Enactor</h4>
-                            <h3 id="motmName" class="text-xl font-black italic">--</h3>
-                        </div>
-
-                        <div class="bg-white p-8 rounded-[3rem] card-shadow border border-gray-100">
-                            <h3 class="font-black text-[11px] uppercase tracking-[0.2em] text-gray-400 mb-8">Leaderboard</h3>
-                            <div id="leaderboardList" class="space-y-5"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="projects" class="tab-content space-y-10">
-                <h2 class="text-4xl font-black font-heading mb-10 italic uppercase">Live Progress</h2>
-                <div id="projectsGrid" class="grid md:grid-cols-2 gap-8"></div>
-            </div>
-
-            <div id="calendar" class="tab-content space-y-10">
-                <h2 class="text-4xl font-black font-heading mb-10 italic uppercase">Timeline</h2>
-                <div class="max-w-3xl space-y-6" id="calendarList"></div>
-            </div>
-
-            <div id="settings" class="tab-content space-y-10">
-                <div class="bg-white p-10 rounded-[3.5rem] card-shadow border border-gray-100 max-w-2xl mx-auto">
-                    <h3 class="font-black text-2xl mb-8">Edit Profile</h3>
-                    <div class="space-y-6">
-                        <input type="text" id="editName" placeholder="Full Name" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold border-2 border-transparent focus:border-yellow-400">
-                        <input type="text" id="editPic"  placeholder="Avatar URL" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold border-2 border-transparent focus:border-yellow-400">
-                        <button onclick="updateProfile()" class="w-full py-4 bg-black text-white rounded-2xl font-black uppercase tracking-widest hover:bg-yellow-400 hover:text-black transition shadow-lg">Save Changes</button>
-                    </div>
-                </div>
-            </div>
-
+        <div>
+            <div class="logo-text">ENACTUS <span>HUB</span></div>
+            <div class="logo-sub">Member Portal</div>
         </div>
     </div>
 
-    <!-- SCRIPT LOAD ORDER — CRITICAL
-         1. Firebase SDKs
-         2. firebase-config.js  ← single init, exports auth + db
-         3. toast.js
-         4. Page logic
-    -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/toast.js"></script>
+    <!-- Member card -->
+    <div class="sidebar-member-card">
+        <img id="sidebar-avatar" src="https://ui-avatars.com/api/?background=111&color=FFC222&name=E"
+             class="sidebar-avatar" alt="Your avatar">
+        <div style="min-width:0;">
+            <p class="sidebar-member-name" id="sidebar-name">Loading...</p>
+            <p class="sidebar-member-dept" id="sidebar-dept">Department</p>
+        </div>
+    </div>
 
-    <script>
-        /* auth and db come from firebase-config.js — no duplicate init here */
-        let userUID = null;
+    <!-- XP bar -->
+    <div class="sidebar-xp">
+        <div class="xp-label">
+            <span id="xp-level-label">Junior</span>
+            <span id="xp-pts-label">0 pts</span>
+        </div>
+        <div class="xp-track">
+            <div class="xp-fill" id="xp-fill" style="width:0%"></div>
+        </div>
+    </div>
 
-        lucide.createIcons();
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+        <p class="nav-section-label">Main</p>
+        <button class="nav-btn active" onclick="switchTab('dashboard', this)" data-tab="dashboard">
+            <i data-lucide="layout-dashboard" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Dashboard
+        </button>
+        <button class="nav-btn" onclick="switchTab('missions', this)" data-tab="missions">
+            <i data-lucide="check-square" style="width:16px;height:16px;" aria-hidden="true"></i>
+            My Missions
+            <span class="nav-badge" id="badge-missions">0</span>
+        </button>
 
-        /* ══ TAB SWITCHER ══ */
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active-tab'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active-tab');
-            if (tabId === 'projects') loadProjects();
-            if (tabId === 'calendar') loadEvents();
-            lucide.createIcons();
+        <p class="nav-section-label">Club</p>
+        <button class="nav-btn" onclick="switchTab('projects', this)" data-tab="projects">
+            <i data-lucide="folder-kanban" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Projects
+        </button>
+        <button class="nav-btn" onclick="switchTab('events', this)" data-tab="events">
+            <i data-lucide="calendar-days" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Events
+        </button>
+        <button class="nav-btn" onclick="switchTab('feed', this)" data-tab="feed">
+            <i data-lucide="rss" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Club Feed
+        </button>
+
+        <p class="nav-section-label">Account</p>
+        <button class="nav-btn" onclick="switchTab('settings', this)" data-tab="settings">
+            <i data-lucide="settings" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Settings
+        </button>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="nav-btn btn-danger" onclick="logout()" style="border:none;background:rgba(239,68,68,0.06);color:#ef4444;">
+            <i data-lucide="log-out" style="width:16px;height:16px;" aria-hidden="true"></i>
+            Sign Out
+        </button>
+    </div>
+</aside>
+
+
+<!-- ══ MAIN ════════════════════════════════════ -->
+<div id="main">
+
+    <!-- Topbar -->
+    <header id="topbar">
+        <button id="burger-btn" onclick="toggleSidebar()" aria-label="Toggle menu" aria-expanded="false">
+            <i data-lucide="menu" style="width:18px;height:18px;" aria-hidden="true"></i>
+        </button>
+
+        <span id="page-title">Dashboard</span>
+
+        <div class="topbar-right">
+            <span class="level-badge" id="topbar-level">Junior</span>
+            <div class="points-chip" role="status" aria-label="Your points">
+                <i data-lucide="star" style="width:12px;height:12px;" aria-hidden="true"></i>
+                <span id="topbar-points">0</span> pts
+            </div>
+            <img id="topbar-avatar" src="https://ui-avatars.com/api/?background=111&color=FFC222&name=E"
+                 class="topbar-avatar" alt="Your avatar"
+                 onclick="switchTab('settings', document.querySelector('[data-tab=settings]'))"
+                 title="Go to settings">
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div id="content-area">
+
+        <!-- ══ DASHBOARD ══════════════════════════ -->
+        <div id="dashboard" class="tab-panel active">
+            <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start;" class="dashboard-grid">
+
+                <!-- Left column -->
+                <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+                    <!-- Welcome card -->
+                    <div class="welcome-card">
+                        <div class="welcome-grid-bg"></div>
+                        <p style="font-size:0.58rem;font-weight:900;text-transform:uppercase;letter-spacing:0.3em;color:#374151;margin-bottom:0.5rem;position:relative;">
+                            Good to see you
+                        </p>
+                        <h2 class="welcome-name">
+                            Welcome, <span id="welcomeName">Enactor</span>
+                        </h2>
+                        <p style="color:#4b5563;font-size:0.82rem;font-weight:600;margin-top:0.5rem;position:relative;">
+                            Keep pushing. Every mission matters.
+                        </p>
+
+                        <div class="stats-row">
+                            <div class="stat-pill">
+                                <p class="stat-pill-label">Points</p>
+                                <p class="stat-pill-value" id="dash-points">0</p>
+                            </div>
+                            <div class="stat-pill">
+                                <p class="stat-pill-label">Level</p>
+                                <p class="stat-pill-value white" id="dash-level">—</p>
+                            </div>
+                            <div class="stat-pill">
+                                <p class="stat-pill-label">Department</p>
+                                <p style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:0.9rem;line-height:1;color:#fff;" id="dash-dept">—</p>
+                            </div>
+                        </div>
+
+                        <!-- Badges -->
+                        <div style="display:flex;gap:0.625rem;margin-top:1.25rem;position:relative;flex-wrap:wrap;">
+                            <div class="badge-item earned" id="badge-member">
+                                <i data-lucide="shield-check" style="width:20px;height:20px;color:#3b82f6;" aria-hidden="true"></i>
+                                <p>Member</p>
+                            </div>
+                            <div class="badge-item" id="badge-active">
+                                <i data-lucide="flame" style="width:20px;height:20px;color:#f97316;" aria-hidden="true"></i>
+                                <p>Active</p>
+                            </div>
+                            <div class="badge-item" id="badge-expert">
+                                <i data-lucide="award" style="width:20px;height:20px;color:#fbbf24;" aria-hidden="true"></i>
+                                <p>Expert</p>
+                            </div>
+                            <div class="badge-item" id="badge-legend">
+                                <i data-lucide="crown" style="width:20px;height:20px;color:#a855f7;" aria-hidden="true"></i>
+                                <p>Legend</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent missions preview -->
+                    <div class="card">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                            <p class="section-title" style="margin-bottom:0;">Recent Missions</p>
+                            <button class="btn btn-ghost" style="padding:0.4rem 0.875rem;font-size:0.6rem;"
+                                    onclick="switchTab('missions', document.querySelector('[data-tab=missions]'))">
+                                View All →
+                            </button>
+                        </div>
+                        <div id="dash-missions-preview" class="space-y-3"></div>
+                    </div>
+
+                    <!-- Club feed preview -->
+                    <div class="card">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                            <p class="section-title" style="margin-bottom:0;">Club Feed</p>
+                            <button class="btn btn-ghost" style="padding:0.4rem 0.875rem;font-size:0.6rem;"
+                                    onclick="switchTab('feed', document.querySelector('[data-tab=feed]'))">
+                                View All →
+                            </button>
+                        </div>
+                        <div id="dash-feed-preview" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Right column -->
+                <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+                    <!-- EOM -->
+                    <div class="eom-card">
+                        <i data-lucide="crown" style="position:absolute;top:-10px;right:-10px;width:80px;height:80px;opacity:0.08;" aria-hidden="true"></i>
+                        <p class="eom-label">⭐ Enactor of the Month</p>
+                        <img id="eom-img" src="https://ui-avatars.com/api/?background=000&color=FFC222&name=E"
+                             class="eom-avatar" alt="Enactor of the Month">
+                        <p class="eom-name" id="eom-name">Loading...</p>
+                        <p class="eom-desc" id="eom-desc"></p>
+                    </div>
+
+                    <!-- Leaderboard -->
+                    <div class="card">
+                        <p class="section-title">Leaderboard</p>
+                        <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:0.25rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ══ MY MISSIONS ════════════════════════ -->
+        <div id="missions" class="tab-panel">
+            <p class="section-title">My Active Missions</p>
+            <div id="missions-list" style="display:flex;flex-direction:column;gap:0.875rem;max-width:720px;"></div>
+        </div>
+
+
+        <!-- ══ PROJECTS ═══════════════════════════ -->
+        <div id="projects" class="tab-panel">
+            <p class="section-title">Live Project Progress</p>
+            <div id="projects-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;"></div>
+        </div>
+
+
+        <!-- ══ EVENTS ══════════════════════════════ -->
+        <div id="events" class="tab-panel">
+            <p class="section-title">Upcoming Events</p>
+            <div id="events-list" style="display:flex;flex-direction:column;gap:0.875rem;max-width:680px;"></div>
+        </div>
+
+
+        <!-- ══ CLUB FEED ════════════════════════════ -->
+        <div id="feed" class="tab-panel">
+            <p class="section-title">Announcements</p>
+            <div id="feed-list" style="display:flex;flex-direction:column;gap:0.875rem;max-width:680px;"></div>
+        </div>
+
+
+        <!-- ══ SETTINGS ════════════════════════════ -->
+        <div id="settings" class="tab-panel">
+            <div style="max-width:520px;display:flex;flex-direction:column;gap:1.25rem;">
+
+                <!-- Profile card -->
+                <div class="card">
+                    <p class="section-title">Edit Profile</p>
+
+                    <!-- Avatar preview -->
+                    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+                        <img id="settings-avatar-preview"
+                             src="https://ui-avatars.com/api/?background=111&color=FFC222&name=E"
+                             style="width:60px;height:60px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,194,34,0.4);"
+                             alt="Your avatar">
+                        <div>
+                            <p id="settings-name-label" style="font-weight:900;font-size:0.9rem;text-transform:uppercase;">Loading...</p>
+                            <p id="settings-dept-label" style="font-size:0.65rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;"></p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:1rem;">
+                        <div>
+                            <label class="settings-label" for="editName">Display Name</label>
+                            <input type="text" id="editName" class="settings-input" placeholder="Your full name" autocomplete="name">
+                        </div>
+                        <div>
+                            <label class="settings-label" for="editPic">Avatar URL</label>
+                            <input type="url" id="editPic" class="settings-input" placeholder="https://example.com/photo.jpg"
+                                   oninput="previewAvatar(this.value)">
+                            <p style="font-size:0.6rem;color:var(--text-muted);margin-top:0.4rem;font-weight:600;">Paste an image URL to update your avatar.</p>
+                        </div>
+                        <button onclick="updateProfile()" class="btn btn-primary btn-full" style="padding:0.9rem;">
+                            <i data-lucide="save" style="width:14px;height:14px;" aria-hidden="true"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Account info card -->
+                <div class="card">
+                    <p class="section-title">Account Info</p>
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Status</span>
+                            <span style="font-size:0.72rem;font-weight:900;color:var(--green);text-transform:uppercase;background:rgba(34,197,94,0.1);padding:0.2rem 0.625rem;border-radius:999px;">Active</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Email</span>
+                            <span id="settings-email" style="font-size:0.72rem;font-weight:700;color:var(--text);">—</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Points</span>
+                            <span id="settings-points" style="font-size:0.72rem;font-weight:900;color:#92400e;">— pts</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
+                            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Level</span>
+                            <span id="settings-level" style="font-size:0.72rem;font-weight:900;color:var(--text);">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger zone -->
+                <div class="card" style="border-color:rgba(239,68,68,0.15);">
+                    <p class="section-title" style="color:var(--red);">Danger Zone</p>
+                    <button onclick="logout()" class="btn btn-danger btn-full" style="padding:0.875rem;">
+                        <i data-lucide="log-out" style="width:14px;height:14px;" aria-hidden="true"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content-area -->
+</div><!-- /main -->
+
+
+<!-- ══ SCRIPTS ═════════════════════════════════
+     Load order: Firebase → Config → Toast → Logic
+═════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/toast.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let userUID  = null;
+let userData = {};
+
+lucide.createIcons();
+
+
+/* ═══════════════════════════════════════════════
+   MOBILE SIDEBAR
+═══════════════════════════════════════════════ */
+function toggleSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebar-overlay');
+    const btn      = document.getElementById('burger-btn');
+    const isOpen   = sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('show', isOpen);
+    btn.setAttribute('aria-expanded', isOpen);
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+    document.getElementById('burger-btn').setAttribute('aria-expanded', false);
+}
+
+
+/* ═══════════════════════════════════════════════
+   TAB SWITCHER
+═══════════════════════════════════════════════ */
+const tabTitles = {
+    dashboard: 'Dashboard',
+    missions:  'My Missions',
+    projects:  'Projects',
+    events:    'Events',
+    feed:      'Club Feed',
+    settings:  'Settings'
+};
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    if (btn) btn.classList.add('active');
+    document.getElementById('page-title').textContent = tabTitles[tabId] || tabId;
+    closeSidebar();
+
+    /* Lazy-load tabs */
+    if (tabId === 'projects') loadProjects();
+    if (tabId === 'events')   loadEvents();
+    if (tabId === 'feed')     loadFeed();
+    if (tabId === 'missions') loadMissions('missions-list');
+
+    lucide.createIcons();
+}
+
+
+/* ═══════════════════════════════════════════════
+   AUTH GUARD + PROFILE LISTENER
+═══════════════════════════════════════════════ */
+auth.onAuthStateChanged(user => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    userUID = user.uid;
+
+    /* Show auth user email in settings */
+    const emailEl = document.getElementById('settings-email');
+    if (emailEl) emailEl.textContent = user.email || '—';
+
+    /* Real-time profile listener */
+    db.collection('users').doc(user.uid).onSnapshot(doc => {
+        if (!doc.exists) return;
+        userData = doc.data();
+        updateUI(userData);
+    });
+
+    /* Load data for default tab */
+    loadLeaderboard();
+    loadEOM();
+    loadMissions('dash-missions-preview', true);
+    loadFeedPreview();
+});
+
+
+/* ═══════════════════════════════════════════════
+   UPDATE UI WITH PROFILE DATA
+═══════════════════════════════════════════════ */
+function updateUI(data) {
+    const name   = data.fullName   || 'Enactor';
+    const first  = name.split(' ')[0];
+    const dept   = data.department || 'Member';
+    const points = data.points     || 0;
+    const level  = computeLevel(points);
+    const xpPct  = computeXpPercent(points);
+
+    /* textContent — never innerHTML — for all user data */
+    setTxt('welcomeName',       first);
+    setTxt('sidebar-name',      name);
+    setTxt('sidebar-dept',      dept);
+    setTxt('dash-points',       points);
+    setTxt('dash-level',        level);
+    setTxt('dash-dept',         dept);
+    setTxt('topbar-points',     points);
+    setTxt('topbar-level',      level);
+    setTxt('xp-level-label',    level);
+    setTxt('xp-pts-label',      points + ' pts');
+    setTxt('settings-name-label', name);
+    setTxt('settings-dept-label', dept);
+    setTxt('settings-points',   points + ' pts');
+    setTxt('settings-level',    level);
+
+    /* Avatar */
+    const avatarUrl = data.profilePic || avatarFallback(name);
+    ['sidebar-avatar','topbar-avatar','settings-avatar-preview'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.src = avatarUrl;
+    });
+
+    /* Pre-fill settings form */
+    const editName = document.getElementById('editName');
+    if (editName && !editName.value) editName.value = name;
+    const editPic = document.getElementById('editPic');
+    if (editPic && !editPic.value && data.profilePic) editPic.value = data.profilePic;
+
+    /* XP bar */
+    const xpFill = document.getElementById('xp-fill');
+    if (xpFill) setTimeout(() => xpFill.style.width = xpPct + '%', 200);
+
+    /* Badges */
+    toggleBadge('badge-active', points >= 50);
+    toggleBadge('badge-expert', points >= 200);
+    toggleBadge('badge-legend', points >= 500);
+}
+
+function setTxt(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+function toggleBadge(id, earned) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('earned', earned);
+}
+function avatarFallback(name) {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=111&color=FFC222`;
+}
+
+
+/* ═══════════════════════════════════════════════
+   LEVEL SYSTEM
+═══════════════════════════════════════════════ */
+const LEVELS = [
+    { name: 'Junior',    min: 0   },
+    { name: 'Explorer',  min: 50  },
+    { name: 'Builder',   min: 150 },
+    { name: 'Innovator', min: 300 },
+    { name: 'Leader',    min: 500 },
+    { name: 'Champion',  min: 800 },
+];
+
+function computeLevel(pts) {
+    let level = LEVELS[0];
+    for (const l of LEVELS) { if (pts >= l.min) level = l; }
+    return level.name;
+}
+
+function computeXpPercent(pts) {
+    let current = LEVELS[0], next = LEVELS[1];
+    for (let i = 0; i < LEVELS.length - 1; i++) {
+        if (pts >= LEVELS[i].min && pts < LEVELS[i+1].min) {
+            current = LEVELS[i];
+            next    = LEVELS[i+1];
+            break;
+        }
+        if (pts >= LEVELS[LEVELS.length-1].min) return 100;
+    }
+    const range = next.min - current.min;
+    const prog  = pts - current.min;
+    return Math.min(100, Math.round((prog / range) * 100));
+}
+
+
+/* ═══════════════════════════════════════════════
+   MISSIONS
+═══════════════════════════════════════════════ */
+function loadMissions(containerId, previewOnly = false) {
+    if (!userUID) return;
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    db.collection('tasks').where('uid', '==', userUID).onSnapshot(snap => {
+        container.innerHTML = '';
+
+        /* Update sidebar badge */
+        const pending = snap.docs.filter(d => !d.data().completed).length;
+        const badge   = document.getElementById('badge-missions');
+        if (badge) {
+            badge.textContent = pending;
+            badge.classList.toggle('show', pending > 0);
         }
 
-        /* ══ AUTH GUARD ══ */
-        auth.onAuthStateChanged(user => {
-            if (!user) { window.location.href = 'login.html'; return; }
+        const docs = previewOnly ? snap.docs.slice(0, 3) : snap.docs;
 
-            userUID = user.uid;
+        if (docs.length === 0) {
+            container.appendChild(makeEmpty('send', 'No missions yet. Check back soon!'));
+            return;
+        }
 
-            db.collection('users').doc(user.uid).onSnapshot(doc => {
-                if (!doc.exists) return;
-                const data = doc.data();
-
-                /* textContent — never innerHTML — for all user-supplied strings */
-                document.getElementById('userNameDisplay').textContent = data.fullName || '';
-                document.getElementById('welcomeName').textContent     = (data.fullName || 'Enactor').split(' ')[0];
-                document.getElementById('userDept').textContent        = data.department || 'General Member';
-                document.getElementById('userPointsDisplay').textContent = data.points || 0;
-
-                if (data.profilePic) document.getElementById('userAvatar').src = data.profilePic;
-                if ((data.points || 0) > 100)  document.getElementById('streakBadge').classList.add('earned');
-                if ((data.points || 0) > 500)  document.getElementById('premiumBadge').classList.add('earned');
-            });
-
-            loadTasks();
-            loadFeed();
-            loadLeaderboard();
+        docs.forEach(doc => {
+            const t    = doc.data();
+            const card = makeMissionCard(doc.id, t);
+            container.appendChild(card);
         });
 
-        /* ══ TASKS ══ */
-        function loadTasks() {
-            db.collection('tasks').where('uid', '==', userUID).onSnapshot(snap => {
-                const list = document.getElementById('tasksList');
-                list.innerHTML = '';
+        lucide.createIcons();
+    });
+}
 
-                if (snap.empty) {
-                    const empty = document.createElement('p');
-                    empty.className   = 'text-xs text-gray-400 italic';
-                    empty.textContent = 'No missions assigned yet.';
-                    list.appendChild(empty);
-                    return;
+function makeMissionCard(docId, t) {
+    const statusClass = t.completed ? 'done' : t.submitted ? 'reviewing' : '';
+    const card = document.createElement('div');
+    card.className = `mission-card ${statusClass}`;
+
+    /* Header row */
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.625rem;';
+
+    const title = document.createElement('p');
+    title.className   = 'mission-title';
+    title.style.color = t.completed ? '#16a34a' : t.submitted ? '#ea580c' : 'var(--text)';
+    title.textContent = t.text || '';
+
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-shrink:0;';
+
+    if (t.points) {
+        const pts = document.createElement('span');
+        pts.className   = 'mission-pts';
+        pts.textContent = '+' + t.points + ' pts';
+        right.appendChild(pts);
+    }
+
+    const iconEl = document.createElement('i');
+    iconEl.setAttribute('data-lucide', t.completed ? 'check-circle-2' : t.submitted ? 'clock' : 'circle');
+    iconEl.style.cssText = `width:18px;height:18px;color:${t.completed ? '#22c55e' : t.submitted ? '#f97316' : '#d1d5db'};flex-shrink:0;`;
+    right.appendChild(iconEl);
+
+    header.appendChild(title);
+    header.appendChild(right);
+    card.appendChild(header);
+
+    /* Body */
+    if (!t.completed && !t.submitted) {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:0.5rem;align-items:center;';
+
+        const input   = document.createElement('input');
+        input.type    = 'url';
+        input.id      = `link-${docId}`;
+        input.placeholder = 'Paste work link (Drive, Docs, Figma...)';
+        input.className   = 'link-input';
+
+        const btn = document.createElement('button');
+        btn.className   = 'btn btn-primary';
+        btn.textContent = 'Submit';
+        btn.addEventListener('click', () => submitTask(docId));
+
+        row.appendChild(input);
+        row.appendChild(btn);
+        card.appendChild(row);
+
+    } else if (t.submitted && !t.completed) {
+        const msg = document.createElement('p');
+        msg.style.cssText = 'font-size:0.72rem;font-weight:700;color:#ea580c;';
+        msg.textContent   = '⏳ Under review by admin...';
+        card.appendChild(msg);
+
+    } else if (t.completed) {
+        const msg = document.createElement('p');
+        msg.style.cssText = 'font-size:0.72rem;font-weight:700;color:#16a34a;';
+        msg.textContent   = '✓ Mission accomplished!';
+        card.appendChild(msg);
+    }
+
+    return card;
+}
+
+
+/* ═══════════════════════════════════════════════
+   SUBMIT TASK
+═══════════════════════════════════════════════ */
+async function submitTask(id) {
+    const input = document.getElementById(`link-${id}`);
+    const link  = input ? input.value.trim() : '';
+
+    if (!link) {
+        Toast.warning('Please paste your work link before submitting.');
+        return;
+    }
+    if (!/^https?:\/\//i.test(link)) {
+        Toast.warning('Please enter a valid URL starting with https://');
+        return;
+    }
+
+    try {
+        await db.collection('tasks').doc(id).update({
+            workLink:  link,
+            submitted: true,
+            status:    'pending_review'
+        });
+        confetti({ particleCount: 80, spread: 50, origin: { y: 0.6 } });
+        Toast.success('Work submitted! 🎉 Waiting for admin review.');
+    } catch (err) {
+        Toast.error('Could not submit. Please try again.');
+        console.error(err);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════
+   PROJECTS
+═══════════════════════════════════════════════ */
+function loadProjects() {
+    const grid = document.getElementById('projects-grid');
+    grid.innerHTML = '';
+
+    db.collection('projects').onSnapshot(snap => {
+        grid.innerHTML = '';
+
+        if (snap.empty) {
+            grid.appendChild(makeEmpty('folder-kanban', 'No projects yet.'));
+            return;
+        }
+
+        snap.forEach(doc => {
+            const p    = doc.data();
+            const pct  = Math.min(100, Math.max(0, p.progress || 0));
+            const card = document.createElement('div');
+            card.className = 'project-card';
+
+            const name = document.createElement('p');
+            name.className   = 'project-name';
+            name.textContent = p.name || '';
+
+            const meta = document.createElement('div');
+            meta.style.cssText = 'display:flex;justify-content:space-between;font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#4b5563;margin-bottom:0.5rem;';
+
+            const lbl = document.createElement('span');
+            lbl.textContent = 'Progress';
+
+            const pctEl = document.createElement('span');
+            pctEl.style.color  = 'var(--yellow)';
+            pctEl.textContent  = pct + '%';
+
+            meta.appendChild(lbl);
+            meta.appendChild(pctEl);
+
+            const track = document.createElement('div');
+            track.className = 'progress-track';
+
+            const fill = document.createElement('div');
+            fill.className  = 'progress-fill';
+            fill.style.width = '0%';
+            setTimeout(() => fill.style.width = pct + '%', 100);
+
+            track.appendChild(fill);
+
+            card.appendChild(name);
+            card.appendChild(meta);
+            card.appendChild(track);
+            grid.appendChild(card);
+        });
+    });
+}
+
+
+/* ═══════════════════════════════════════════════
+   EVENTS
+═══════════════════════════════════════════════ */
+function loadEvents() {
+    const list = document.getElementById('events-list');
+    list.innerHTML = '';
+
+    db.collection('events').orderBy('createdAt', 'desc').onSnapshot(snap => {
+        list.innerHTML = '';
+
+        if (snap.empty) {
+            list.appendChild(makeEmpty('calendar-days', 'No events scheduled yet.'));
+            return;
+        }
+
+        snap.forEach(doc => {
+            const e      = doc.data();
+            const parts  = (e.date || '').split(' ');
+            const card   = document.createElement('div');
+            card.className = 'event-card';
+
+            const dateBox  = document.createElement('div');
+            dateBox.className = 'event-date-box';
+
+            const day  = document.createElement('p');
+            day.className   = 'event-day';
+            day.textContent = parts[0] || '—';
+
+            const mon  = document.createElement('p');
+            mon.className   = 'event-month';
+            mon.textContent = parts[1] || '';
+
+            dateBox.appendChild(day);
+            dateBox.appendChild(mon);
+
+            const sep = document.createElement('div');
+            sep.style.cssText = 'width:1px;background:#e5e7eb;align-self:stretch;flex-shrink:0;';
+
+            const info  = document.createElement('div');
+            const title = document.createElement('p');
+            title.className   = 'event-title';
+            title.textContent = e.title || '';
+
+            const desc  = document.createElement('p');
+            desc.className   = 'event-desc';
+            desc.textContent = e.description || '';
+
+            info.appendChild(title);
+            info.appendChild(desc);
+            card.appendChild(dateBox);
+            card.appendChild(sep);
+            card.appendChild(info);
+            list.appendChild(card);
+        });
+    });
+}
+
+
+/* ═══════════════════════════════════════════════
+   CLUB FEED (full)
+═══════════════════════════════════════════════ */
+function loadFeed() {
+    const list = document.getElementById('feed-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    db.collection('news').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+        list.innerHTML = '';
+
+        if (snap.empty) {
+            list.appendChild(makeEmpty('rss', 'No announcements yet.'));
+            return;
+        }
+
+        snap.forEach(doc => {
+            const n = doc.data();
+            list.appendChild(makeFeedCard(n));
+        });
+    });
+}
+
+/* Club feed preview (dashboard) */
+function loadFeedPreview() {
+    const container = document.getElementById('dash-feed-preview');
+    if (!container) return;
+
+    db.collection('news').orderBy('createdAt', 'desc').limit(2).onSnapshot(snap => {
+        container.innerHTML = '';
+
+        if (snap.empty) {
+            const p = document.createElement('p');
+            p.style.cssText = 'font-size:0.75rem;color:var(--text-muted);font-style:italic;';
+            p.textContent = 'No announcements yet.';
+            container.appendChild(p);
+            return;
+        }
+
+        snap.forEach(doc => container.appendChild(makeFeedCard(doc.data())));
+    });
+}
+
+function makeFeedCard(n) {
+    const card = document.createElement('div');
+    card.className = 'feed-card';
+    card.style.cssText = 'display:flex;gap:0.875rem;';
+
+    const dot = document.createElement('div');
+    dot.className = 'feed-dot';
+    dot.setAttribute('aria-hidden', 'true');
+
+    const body  = document.createElement('div');
+
+    const title = document.createElement('p');
+    title.style.cssText = 'font-weight:900;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.25rem;';
+    title.textContent   = n.title || '';
+
+    const desc  = document.createElement('p');
+    desc.style.cssText  = 'font-size:0.78rem;color:var(--text-muted);font-weight:600;line-height:1.5;';
+    desc.textContent    = n.desc || '';
+
+    body.appendChild(title);
+    body.appendChild(desc);
+    card.appendChild(dot);
+    card.appendChild(body);
+    return card;
+}
+
+
+/* ═══════════════════════════════════════════════
+   LEADERBOARD
+═══════════════════════════════════════════════ */
+function loadLeaderboard() {
+    const list = document.getElementById('leaderboard-list');
+    if (!list) return;
+
+    db.collection('users').orderBy('points', 'desc').limit(5).onSnapshot(snap => {
+        list.innerHTML = '';
+        let rank = 1;
+        const medals = ['🥇','🥈','🥉'];
+
+        snap.forEach(doc => {
+            const u     = doc.data();
+            const isMe  = doc.id === userUID;
+            const row   = document.createElement('div');
+            row.className = `lb-row${isMe ? ' me' : ''}`;
+
+            const rankEl  = document.createElement('span');
+            rankEl.className   = 'lb-rank';
+            rankEl.textContent = medals[rank-1] || rank;
+            rankEl.style.color = rank === 1 ? 'var(--yellow)' : rank <= 3 ? '#9ca3af' : '#4b5563';
+
+            const avatar  = document.createElement('img');
+            avatar.src    = u.profilePic || avatarFallback(u.fullName || 'U');
+            avatar.alt    = u.fullName || '';
+            avatar.className = 'lb-avatar';
+
+            const name    = document.createElement('span');
+            name.className   = 'lb-name';
+            name.textContent = u.fullName || 'Enactor';
+
+            const pts     = document.createElement('span');
+            pts.className = `lb-pts${rank === 1 ? ' top' : ''}`;
+            pts.textContent = (u.points || 0) + ' pts';
+
+            row.appendChild(rankEl);
+            row.appendChild(avatar);
+            row.appendChild(name);
+            row.appendChild(pts);
+            list.appendChild(row);
+
+            /* EOM from leaderboard top 1 (fallback) */
+            if (rank === 1) {
+                const eomName = document.getElementById('eom-name');
+                if (eomName && eomName.textContent === 'Loading...') {
+                    setTxt('eom-name', u.fullName || '');
+                    const eomImg = document.getElementById('eom-img');
+                    if (eomImg && u.profilePic) eomImg.src = u.profilePic;
                 }
-
-                snap.forEach(doc => {
-                    const t = doc.data();
-
-                    /* ── Card wrapper ── */
-                    const card = document.createElement('div');
-                    card.className = `p-6 bg-gray-50 rounded-[2rem] border-2 transition-all ${t.completed ? 'border-green-100' : 'border-transparent'}`;
-
-                    /* ── Header row (task text + status icon) ── */
-                    const header = document.createElement('div');
-                    header.className = 'flex justify-between items-center mb-4';
-
-                    const taskName = document.createElement('span');
-                    taskName.className   = `text-sm font-black uppercase tracking-tight ${t.completed ? 'text-green-600' : 'text-black'}`;
-                    taskName.textContent = t.text || '';   /* ✅ textContent — XSS safe */
-
-                    const icon = document.createElement('i');
-                    icon.setAttribute('data-lucide', t.completed ? 'check-circle' : 'clock');
-                    icon.className = `w-5 h-5 ${t.completed ? 'text-green-500' : 'text-yellow-500'}`;
-
-                    header.appendChild(taskName);
-                    header.appendChild(icon);
-                    card.appendChild(header);
-
-                    /* ── Submission area ── */
-                    if (!t.completed && !t.submitted) {
-                        /* Show link input + submit button */
-                        const row = document.createElement('div');
-                        row.className = 'flex gap-2';
-
-                        const input = document.createElement('input');
-                        input.type        = 'text';
-                        input.id          = `link-${doc.id}`;
-                        input.placeholder = 'Work link (Drive/Docs)';
-                        input.className   = 'flex-1 p-3 text-xs rounded-xl border-none ring-1 ring-gray-200 outline-none focus:ring-yellow-400';
-
-                        const btn = document.createElement('button');
-                        btn.className   = 'bg-black text-white px-5 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-yellow-400 hover:text-black transition';
-                        btn.textContent = 'Submit';
-                        btn.addEventListener('click', () => submitTask(doc.id));
-
-                        row.appendChild(input);
-                        row.appendChild(btn);
-                        card.appendChild(row);
-
-                    } else if (t.submitted && !t.completed) {
-                        const msg = document.createElement('p');
-                        msg.className   = 'text-[10px] text-orange-400 font-bold italic';
-                        msg.textContent = 'Reviewing your work...';
-                        card.appendChild(msg);
-
-                    } else if (t.completed) {
-                        const msg = document.createElement('p');
-                        msg.className   = 'text-[10px] text-gray-400 font-bold';
-                        msg.textContent = 'Mission Accomplished!';
-                        card.appendChild(msg);
-                    }
-
-                    list.appendChild(card);
-                });
-
-                lucide.createIcons();
-            });
-        }
-
-        /* ══ SUBMIT TASK ══ */
-        async function submitTask(id) {
-            const input = document.getElementById(`link-${id}`);
-            const link  = input ? input.value.trim() : '';
-
-            if (!link) {
-                Toast.warning('Please paste your work link before submitting.');
-                return;
             }
 
-            try {
-                await db.collection('tasks').doc(id).update({
-                    workLink:  link,
-                    submitted: true,
-                    status:    'pending_review'
-                });
-                confetti({ particleCount: 50, spread: 40 });
-                Toast.success('Work submitted! Waiting for admin review.');
-            } catch (err) {
-                Toast.error('Could not submit. Please try again.');
-                console.error(err);
-            }
-        }
+            rank++;
+        });
+    });
+}
 
-        /* ══ PROJECTS ══ */
-        function loadProjects() {
-            db.collection('projects').onSnapshot(snap => {
-                const grid = document.getElementById('projectsGrid');
-                grid.innerHTML = '';
 
-                snap.forEach(doc => {
-                    const p = doc.data();
+/* ═══════════════════════════════════════════════
+   ENACTOR OF THE MONTH (from Firestore settings)
+═══════════════════════════════════════════════ */
+function loadEOM() {
+    db.collection('settings').doc('eom').onSnapshot(doc => {
+        if (!doc.exists) return;
+        const d = doc.data();
+        if (d.name) setTxt('eom-name', d.name);
+        if (d.desc) setTxt('eom-desc', d.desc);
+        const img = document.getElementById('eom-img');
+        if (img && d.img) img.src = d.img;
+    }, err => console.warn('EOM load error:', err.message));
+}
 
-                    const card = document.createElement('div');
-                    card.className = 'p-8 bg-zinc-900 text-white rounded-[3rem] shadow-xl relative overflow-hidden group';
 
-                    const title = document.createElement('h3');
-                    title.className   = 'text-2xl font-black italic uppercase mb-6';
-                    title.textContent = p.name || '';   /* ✅ textContent */
+/* ═══════════════════════════════════════════════
+   UPDATE PROFILE
+═══════════════════════════════════════════════ */
+async function updateProfile() {
+    const newName = document.getElementById('editName').value.trim();
+    const newPic  = document.getElementById('editPic').value.trim();
 
-                    const meta = document.createElement('div');
-                    meta.className = 'flex justify-between text-[10px] font-black uppercase text-gray-400';
+    if (!newName) {
+        Toast.warning('Display name is required.');
+        return;
+    }
 
-                    const label = document.createElement('span');
-                    label.textContent = 'Progress';
+    try {
+        const update = { fullName: newName };
+        if (newPic) update.profilePic = newPic;
+        await db.collection('users').doc(userUID).update(update);
+        Toast.success('Profile updated!');
+    } catch (err) {
+        Toast.error('Could not update profile. Please try again.');
+        console.error(err);
+    }
+}
 
-                    const pct = document.createElement('span');
-                    pct.textContent = `${p.progress || 0}%`;   /* ✅ textContent */
+function previewAvatar(url) {
+    const preview = document.getElementById('settings-avatar-preview');
+    if (preview && /^https?:\/\//i.test(url)) preview.src = url;
+}
 
-                    meta.appendChild(label);
-                    meta.appendChild(pct);
 
-                    const track = document.createElement('div');
-                    track.className = 'h-2 bg-white/10 rounded-full overflow-hidden mt-2';
+/* ═══════════════════════════════════════════════
+   LOGOUT
+═══════════════════════════════════════════════ */
+function logout() {
+    auth.signOut().then(() => window.location.href = 'index.html');
+}
 
-                    const bar = document.createElement('div');
-                    bar.className = 'h-full bg-yellow-400';
-                    /* width is a number from Firestore — no XSS risk */
-                    bar.style.width = `${Math.min(100, Math.max(0, p.progress || 0))}%`;
 
-                    track.appendChild(bar);
+/* ═══════════════════════════════════════════════
+   HELPER — Empty state element
+═══════════════════════════════════════════════ */
+function makeEmpty(icon, msg) {
+    const wrap = document.createElement('div');
+    wrap.className = 'empty-state';
 
-                    const metaWrapper = document.createElement('div');
-                    metaWrapper.className = 'space-y-2';
-                    metaWrapper.appendChild(meta);
-                    metaWrapper.appendChild(track);
+    const iconEl = document.createElement('div');
+    iconEl.innerHTML = `<i data-lucide="${icon}" style="width:40px;height:40px;margin:0 auto;display:block;opacity:0.25;color:#9ca3af;"></i>`;
 
-                    card.appendChild(title);
-                    card.appendChild(metaWrapper);
-                    grid.appendChild(card);
-                });
-            });
-        }
+    const p = document.createElement('p');
+    p.textContent = msg;
 
-        /* ══ EVENTS ══ */
-        function loadEvents() {
-            db.collection('events').orderBy('createdAt', 'desc').onSnapshot(snap => {
-                const list = document.getElementById('calendarList');
-                list.innerHTML = '';
-
-                snap.forEach(doc => {
-                    const e = doc.data();
-                    const dateParts = (e.date || '').split(' ');
-
-                    const card = document.createElement('div');
-                    card.className = 'flex gap-6 items-center bg-white p-8 rounded-[2.5rem] card-shadow border-l-8 border-yellow-400';
-
-                    const dateBox = document.createElement('div');
-                    dateBox.className = 'text-center w-20';
-
-                    const dayEl = document.createElement('span');
-                    dayEl.className   = 'block text-2xl font-black';
-                    dayEl.textContent = dateParts[0] || '';
-
-                    const monEl = document.createElement('span');
-                    monEl.className   = 'text-[10px] text-gray-400 uppercase font-black';
-                    monEl.textContent = dateParts[1] || '';
-
-                    dateBox.appendChild(dayEl);
-                    dateBox.appendChild(monEl);
-
-                    const divider = document.createElement('div');
-                    divider.className = 'h-10 w-[1px] bg-gray-100';
-
-                    const info = document.createElement('div');
-
-                    const titleEl = document.createElement('h4');
-                    titleEl.className   = 'font-black text-lg uppercase';
-                    titleEl.textContent = e.title || '';   /* ✅ textContent */
-
-                    const descEl = document.createElement('p');
-                    descEl.className   = 'text-xs text-gray-500';
-                    descEl.textContent = e.description || '';   /* ✅ textContent */
-
-                    info.appendChild(titleEl);
-                    info.appendChild(descEl);
-
-                    card.appendChild(dateBox);
-                    card.appendChild(divider);
-                    card.appendChild(info);
-                    list.appendChild(card);
-                });
-            });
-        }
-
-        /* ══ LEADERBOARD ══ */
-        function loadLeaderboard() {
-            db.collection('users').orderBy('points', 'desc').limit(5).onSnapshot(snap => {
-                const list = document.getElementById('leaderboardList');
-                list.innerHTML = '';
-                let i = 0;
-
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    const isTop = i === 0;
-
-                    const row = document.createElement('div');
-                    row.className = 'flex items-center justify-between';
-
-                    const left = document.createElement('div');
-                    left.className = 'flex items-center gap-3';
-
-                    const rank = document.createElement('span');
-                    rank.className   = `text-[10px] font-black ${isTop ? 'text-yellow-500' : 'text-gray-300'}`;
-                    rank.textContent = `0${i + 1}`;
-
-                    const avatar = document.createElement('img');
-                    avatar.src       = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName || 'U')}`;
-                    avatar.className = 'w-8 h-8 rounded-lg object-cover';
-
-                    const uName = document.createElement('p');
-                    uName.className   = 'text-[10px] font-black uppercase';
-                    uName.textContent = u.fullName || '';   /* ✅ textContent */
-
-                    left.appendChild(rank);
-                    left.appendChild(avatar);
-                    left.appendChild(uName);
-
-                    const pts = document.createElement('span');
-                    pts.className   = 'text-[10px] font-black bg-gray-50 px-2 py-1 rounded-md italic';
-                    pts.textContent = u.points || 0;
-
-                    row.appendChild(left);
-                    row.appendChild(pts);
-                    list.appendChild(row);
-
-                    if (isTop) {
-                        document.getElementById('motmName').textContent = u.fullName || '';
-                        if (u.profilePic) document.getElementById('motmImage').src = u.profilePic;
-                    }
-                    i++;
-                });
-            });
-        }
-
-        /* ══ NEWS FEED ══ */
-        function loadFeed() {
-            db.collection('news').orderBy('createdAt', 'desc').limit(3).onSnapshot(snap => {
-                const feed = document.getElementById('newsFeed');
-                feed.innerHTML = '';
-
-                snap.forEach(doc => {
-                    const n = doc.data();
-
-                    const card = document.createElement('div');
-                    card.className = 'bg-white p-8 rounded-[3rem] border border-gray-100 card-shadow';
-
-                    const titleEl = document.createElement('h4');
-                    titleEl.className   = 'font-black text-xl uppercase mb-3 italic tracking-tighter';
-                    titleEl.textContent = n.title || '';   /* ✅ textContent */
-
-                    const descEl = document.createElement('p');
-                    descEl.className   = 'text-gray-400 text-sm font-semibold leading-relaxed';
-                    descEl.textContent = n.desc || '';   /* ✅ textContent */
-
-                    card.appendChild(titleEl);
-                    card.appendChild(descEl);
-                    feed.appendChild(card);
-                });
-            });
-        }
-
-        /* ══ UPDATE PROFILE ══ */
-        async function updateProfile() {
-            const newName = document.getElementById('editName').value.trim();
-            const newPic  = document.getElementById('editPic').value.trim();
-
-            if (!newName) {
-                Toast.warning('Name is required.');
-                return;
-            }
-
-            try {
-                await db.collection('users').doc(userUID).update({
-                    fullName:   newName,
-                    profilePic: newPic || null
-                });
-                Toast.success('Profile updated successfully!');
-            } catch (err) {
-                Toast.error('Could not update profile. Please try again.');
-                console.error(err);
-            }
-        }
-
-        /* ══ LOGOUT ══ */
-        function logout() {
-            auth.signOut().then(() => window.location.href = 'index.html');
-        }
-    </script>
+    wrap.appendChild(iconEl);
+    wrap.appendChild(p);
+    setTimeout(() => lucide.createIcons(), 0);
+    return wrap;
+}
+</script>
 </body>
 </html>

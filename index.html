@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enactus ISIMG | Entrepreneurial Action</title>
+    <meta name="description" content="Enactus ISIMG — A premier laboratory for social innovation where technology meets entrepreneurial action in Gabès, Tunisia.">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -11,54 +12,74 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        :root { --enactus-yellow: #FFC222; }
+        /* ── CSS Variables ───────────────────────── */
+        :root {
+            --yellow: #FFC222;
+            --yellow-dark: #e6a800;
+            --yellow-light: #fff3cc;
+            --black: #0a0a0a;
+            --gray-soft: #f7f7f5;
+        }
+
+        /* ── Base ───────────────────────────────── */
         html { scroll-behavior: smooth; }
-        body { font-family: 'Source Sans 3', sans-serif; overflow-x: hidden; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            overflow-x: hidden;
+            background: #fff;
+            color: var(--black);
+        }
         .font-heading { font-family: 'Montserrat', sans-serif; }
-        .text-yellow   { color: var(--enactus-yellow); }
-        .bg-yellow     { background-color: var(--enactus-yellow); }
-        .border-yellow { border-color: var(--enactus-yellow); }
 
-        .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .hover-lift:hover { transform: translateY(-10px); }
+        /* ── Color Utilities ─────────────────────── */
+        .text-yellow   { color: var(--yellow); }
+        .bg-yellow     { background-color: var(--yellow); }
+        .border-yellow { border-color: var(--yellow); }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        /* ── Smooth hover lift ───────────────────── */
+        .hover-lift {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+            cursor: pointer;
         }
-        .modal-content {
-            background: white; width: 100%; max-width: 36rem;
-            border-radius: 3.5rem; padding: 2.5rem; position: relative;
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.12);
         }
 
-        #enactors-list { display: none; }
+        /* ── Navigation ──────────────────────────── */
+        #navbar {
+            transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+        }
+        #navbar.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
 
+        /* ── Hero outline text ───────────────────── */
         .outline-text {
-            -webkit-text-stroke: 2px var(--enactus-yellow);
+            -webkit-text-stroke: 2.5px var(--yellow);
             color: transparent;
         }
 
+        /* ── Hero badge ──────────────────────────── */
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.375rem 1rem;
+            padding: 0.375rem 1.125rem;
             background: white;
-            border: 1px solid #f1f5f9;
+            border: 1px solid #ececec;
             border-radius: 9999px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             margin-bottom: 2rem;
         }
         .pulse-dot {
             width: 0.5rem; height: 0.5rem;
-            background: var(--enactus-yellow);
+            background: var(--yellow);
             border-radius: 50%;
             animation: pulse-anim 2s infinite;
         }
@@ -74,128 +95,389 @@
             50%       { transform: scale(1.5); opacity: 0.5; }
         }
 
-        .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
-        .highlight  { color: var(--enactus-yellow); }
-
-        @keyframes scroll {
+        /* ── Marquee / partner scroll ────────────── */
+        @keyframes marquee {
             0%   { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        .animate-scroll {
+        .animate-marquee {
             display: flex;
-            width: 200%;
-            animation: scroll 20s linear infinite;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover { animation-play-state: paused; }
+
+        /* ── Modal ───────────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(10,10,10,0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 38rem;
+            border-radius: 3.5rem;
+            padding: 2.75rem;
+            position: relative;
+            animation: modal-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.92) translateY(20px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* ── Stat cards ──────────────────────────── */
+        .stat-card {
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+        .stat-card:hover { transform: scale(1.04); }
+
+        /* ── Section labels ──────────────────────── */
+        .section-label {
+            font-size: 0.625rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: #9ca3af;
+        }
+
+        /* ── Logo text ───────────────────────────── */
+        .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
+        .highlight  { color: var(--yellow); }
+
+        /* ── Input focus ring ────────────────────── */
+        .form-input {
+            width: 100%;
+            padding: 1.1rem 1.25rem;
+            background: #f7f7f5;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            font-family: 'Source Sans 3', sans-serif;
+        }
+        .form-input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 4px rgba(255,194,34,0.15);
+            background: #fff;
+        }
+
+        /* ── Enactors grid toggle ─────────────────── */
+        #enactors-list { display: none; }
+
+        /* ── Progress bar on scroll ──────────────── */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--yellow);
+            z-index: 9999;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Back to top ─────────────────────────── */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--black);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #back-to-top:hover { background: var(--yellow); color: var(--black); }
+
+        /* ── Mobile menu transition ───────────────── */
+        #mobileMenu {
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #mobileMenu.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* ── Grain overlay on hero ───────────────── */
+        .grain::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── Timeline connector line ─────────────── */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #e5e7eb 10%, #e5e7eb 90%, transparent);
+            transform: translateX(-50%);
+        }
+
+        /* ── Accessibility: focus-visible ─────────── */
+        :focus-visible {
+            outline: 2px solid var(--yellow);
+            outline-offset: 3px;
+        }
+
+        /* ── Custom scrollbar ─────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+
+        /* ── Responsive typography tweaks ─────────── */
+        @media (max-width: 640px) {
+            .hero-h1 { font-size: clamp(3.5rem, 18vw, 6rem); }
+        }
+
+        /* ── Announcement bar ─────────────────────── */
+        #announcement-bar {
+            background: var(--black);
+            color: white;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.6rem 1rem;
+            position: relative;
+            z-index: 60;
         }
     </style>
 </head>
 <body class="bg-white">
 
-<!-- ══ NAVIGATION ══ -->
-<nav class="fixed w-full z-50 bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-yellow rounded-lg flex items-center justify-center font-bold text-black text-xl overflow-hidden">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" class="w-full h-full object-cover" alt="Enactus ISIMG Logo">
+<!-- ── PROGRESS BAR ──────────────────────────── -->
+<div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
+
+<!-- ── ANNOUNCEMENT BAR ───────────────────────── -->
+<div id="announcement-bar">
+    <span>🏆 Limitl'ESS Champions 2025 &nbsp;·&nbsp; Social & Solidarity Economy Excellence, Tunisia</span>
+</div>
+
+<!-- ══ NAVIGATION ══════════════════════════════ -->
+<nav id="navbar" class="sticky top-0 w-full z-50 bg-white py-4">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2.5 group" aria-label="Enactus ISIMG home">
+            <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-yellow/30 group-hover:ring-yellow transition-all">
+                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                     class="w-full h-full object-cover" alt="Enactus ISIMG Logo" loading="eager">
             </div>
             <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-widest">
+            <a href="#about"    class="hover:text-yellow transition-colors duration-200">About</a>
+            <a href="#projects" class="hover:text-yellow transition-colors duration-200">Projects</a>
+            <a href="#events"   class="hover:text-yellow transition-colors duration-200">Events</a>
+            <a href="#team"     class="hover:text-yellow transition-colors duration-200">Team</a>
+            <div class="flex items-center gap-3 ml-2">
+                <a href="login.html" class="border-2 border-black text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest">Log in</a>
+                <a href="#contact"   class="bg-yellow text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest shadow-md shadow-yellow/30">Join Us</a>
+            </div>
         </div>
 
-        <div class="hidden md:flex items-center space-x-10 font-semibold text-sm uppercase tracking-widest">
-            <a href="#about"    class="hover:text-yellow transition">About</a>
-            <a href="#projects" class="hover:text-yellow transition">Projects</a>
-            <a href="#team"     class="hover:text-yellow transition">Team</a>
-            <a href="login.html" class="bg-yellow text-black px-6 py-2 rounded-full hover:bg-black hover:text-white transition shadow-sm">Log in</a>
-            <a href="#contact"  class="bg-black text-white px-6 py-2 rounded-full hover:bg-yellow hover:text-black transition">Join Us</a>
-        </div>
-
-        <button class="md:hidden text-black" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-            <i data-lucide="menu" id="menuIcon"></i>
+        <!-- Mobile burger -->
+        <button id="burgerBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 hover:border-yellow transition-colors"
+                onclick="toggleMobileMenu()" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+            <i data-lucide="menu" id="menuIcon" class="w-5 h-5"></i>
         </button>
     </div>
 
-    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full left-0 p-6 shadow-xl flex flex-col space-y-4 font-bold uppercase text-center tracking-widest text-sm">
-        <a href="#about"    onclick="toggleMobileMenu()" class="py-2 hover:text-yellow">About</a>
-        <a href="#projects" onclick="toggleMobileMenu()" class="py-2 hover:text-yellow">Projects</a>
-        <a href="#team"     onclick="toggleMobileMenu()" class="py-2 hover:text-yellow">Team</a>
-        <hr class="border-gray-100">
-        <a href="login.html" class="bg-yellow text-black py-3 rounded-xl">Log in</a>
-        <a href="#contact"   onclick="toggleMobileMenu()" class="bg-black text-white py-3 rounded-xl">Join Us</a>
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-100 px-6 pt-4 pb-6" role="navigation" aria-label="Mobile navigation">
+        <div class="flex flex-col space-y-1">
+            <a href="#about"    onclick="toggleMobileMenu()" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">About</a>
+            <a href="#projects" onclick="toggleMobileMenu()" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Projects</a>
+            <a href="#events"   onclick="toggleMobileMenu()" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Events</a>
+            <a href="#team"     onclick="toggleMobileMenu()" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Team</a>
+            <div class="pt-3 flex flex-col gap-3">
+                <a href="login.html" class="border-2 border-black text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Log in</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="bg-yellow text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Join Us</a>
+            </div>
+        </div>
     </div>
 </nav>
 
 
-<!-- ══ HERO ══ -->
-<section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-[#fafafa]">
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-yellow opacity-10 rounded-full blur-[120px]"></div>
+<!-- ══ HERO ═══════════════════════════════════ -->
+<section class="relative min-h-[92vh] flex items-center overflow-hidden bg-[#fafaf8] grain">
+    <!-- Ambient blobs -->
+    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow opacity-[0.07] rounded-full blur-[140px] pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute bottom-0 -left-20 w-72 h-72 bg-yellow opacity-[0.05] rounded-full blur-[100px] pointer-events-none" aria-hidden="true"></div>
 
-    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 py-20">
 
-        <div data-aos="fade-right" data-aos-duration="1000">
-            <div class="hero-badge">
-                <span class="pulse-dot"></span>
-                <span class="badge-text">Impact Chapter • Gabès</span>
+        <!-- Left copy -->
+        <div data-aos="fade-right" data-aos-duration="900">
+            <div class="hero-badge" role="status">
+                <span class="pulse-dot" aria-hidden="true"></span>
+                <span class="badge-text">Impact Chapter · Gabès, Tunisia</span>
             </div>
 
-            <h1 class="text-6xl lg:text-[90px] font-black font-heading leading-[0.85] mb-8 uppercase tracking-tighter">
-                Impact<br><span class="outline-text">Through</span><br>Action.
+            <h1 class="hero-h1 text-[clamp(4rem,10vw,90px)] font-black font-heading leading-[0.85] mb-8 uppercase tracking-tighter">
+                Impact<br>
+                <span class="outline-text">Through</span><br>
+                Action.
             </h1>
 
-            <div class="flex flex-wrap gap-5">
-                <a href="#projects" class="bg-yellow text-black px-8 py-4 rounded-full font-bold hover:bg-black hover:text-white transition shadow-lg shadow-yellow/20">
+            <p class="text-gray-500 text-lg font-medium mb-10 max-w-sm leading-relaxed">
+                A student-powered innovation lab turning ideas into real change — in Gabès and beyond.
+            </p>
+
+            <div class="flex flex-wrap gap-4">
+                <a href="#projects" class="bg-yellow text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300 shadow-lg shadow-yellow/25">
                     Our Projects
                 </a>
+                <a href="#about" class="border-2 border-black text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
+                    Learn More
+                </a>
+            </div>
+
+            <!-- Mini stats row -->
+            <div class="flex gap-8 mt-14 pt-10 border-t border-gray-200">
+                <div>
+                    <span class="text-3xl font-black font-heading text-yellow">12+</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Projects</p>
+                </div>
+                <div class="w-px bg-gray-200"></div>
+                <div>
+                    <span class="text-3xl font-black font-heading">50+</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Enactors</p>
+                </div>
+                <div class="w-px bg-gray-200"></div>
+                <div>
+                    <span class="text-3xl font-black font-heading">1.2k</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Lives Impacted</p>
+                </div>
             </div>
         </div>
 
-        <div class="relative" data-aos="zoom-out" data-aos-duration="1200">
-            <div class="relative z-10 rounded-[60px] overflow-hidden shadow-2xl transform -rotate-2 hover:rotate-0 transition-transform duration-700">
-                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg" alt="Enactus ISIMG Students" class="w-full h-auto">
+        <!-- Right image -->
+        <div class="relative" data-aos="zoom-out" data-aos-duration="1100" data-aos-delay="100">
+            <div class="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl shadow-black/10 transform -rotate-2 hover:rotate-0 transition-transform duration-700">
+                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg"
+                     alt="Enactus ISIMG student team" class="w-full h-auto">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
-            <div class="absolute -bottom-10 -left-10 bg-white text-black p-8 rounded-[40px] shadow-2xl z-20 border-8 border-white group hover:-translate-y-2 transition-transform duration-500">
-                <div class="flex items-center gap-4">
-                    <span class="text-5xl font-black text-yellow">22+</span>
-                    <p class="text-[10px] font-bold uppercase tracking-widest leading-tight opacity-70">Active<br>Enactors</p>
+
+            <!-- Floating badge -->
+            <div class="absolute -bottom-6 -left-6 bg-white text-black p-6 rounded-[2.5rem] shadow-2xl z-20 border-4 border-white hover:-translate-y-2 transition-transform duration-500">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl font-black text-yellow leading-none">22+</span>
+                    <p class="text-[9px] font-black uppercase tracking-widest leading-tight text-gray-500">Active<br>Enactors</p>
                 </div>
+            </div>
+
+            <!-- Award badge -->
+            <div class="absolute -top-4 -right-4 bg-yellow text-black p-4 rounded-[2rem] shadow-xl z-20 rotate-6 hover:rotate-0 transition-transform duration-500">
+                <i data-lucide="award" class="w-6 h-6" aria-hidden="true"></i>
+                <p class="text-[8px] font-black uppercase tracking-widest mt-1 leading-tight">Limitl'ESS<br>Champions</p>
             </div>
         </div>
     </div>
 </section>
 
 
-<!-- ══ ABOUT ══ -->
+<!-- ══ ABOUT ═══════════════════════════════════ -->
 <section id="about" class="py-32 bg-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 relative z-10">
 
+        <!-- Section header -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-10">
             <div class="space-y-4" data-aos="fade-right">
-                <span class="text-yellow-600 font-bold uppercase tracking-[0.3em] text-xs px-3 py-1 bg-yellow-100 rounded-md">Established 2025</span>
-                <h2 class="text-6xl font-black font-heading uppercase tracking-tighter leading-none">Driven by <span class="text-yellow">Impact.</span></h2>
+                <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 bg-yellow/15 text-yellow-700 rounded-full">
+                    <i data-lucide="calendar" class="w-3 h-3" aria-hidden="true"></i> Established 2025
+                </span>
+                <h2 class="text-5xl lg:text-6xl font-black font-heading uppercase tracking-tighter leading-none">
+                    Driven by <span class="text-yellow">Impact.</span>
+                </h2>
             </div>
-            <p class="max-w-md text-gray-500 font-medium text-lg border-l-4 border-black pl-6" data-aos="fade-left">
+            <p class="max-w-md text-gray-500 font-medium text-lg border-l-4 border-yellow pl-6" data-aos="fade-left" data-aos-delay="100">
                 Enactus ISIMG is a premier laboratory for social innovation where technology meets entrepreneurial action in Gabès.
             </p>
         </div>
 
-        <div class="grid lg:grid-cols-12 auto-rows-[300px] gap-6">
-            <div class="lg:col-span-7 bg-black text-white p-12 rounded-[3.5rem] relative overflow-hidden group shadow-xl" data-aos="zoom-in">
-                <div class="relative z-10 h-full flex flex-col justify-between">
-                    <div class="w-16 h-16 bg-yellow rounded-2xl flex items-center justify-center text-black shadow-lg group-hover:rotate-12 transition-transform">
-                        <i data-lucide="award" class="w-8 h-8"></i>
-                    </div>
-                    <div>
-                        <h4 class="text-4xl font-black mb-4 font-heading uppercase">Limitl'ESS Champion</h4>
-                        <p class="text-gray-400 text-sm max-w-sm">Recognized for excellence in Social and Solidarity Economy in Tunisia.</p>
-                    </div>
+        <!-- Bento grid -->
+        <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Award card — tall left -->
+            <div class="lg:col-span-7 bg-black text-white p-10 lg:p-12 rounded-[3.5rem] relative overflow-hidden group shadow-xl min-h-[300px] flex flex-col justify-between" data-aos="zoom-in">
+                <div class="absolute -bottom-16 -right-16 w-56 h-56 bg-yellow/5 rounded-full" aria-hidden="true"></div>
+                <div class="w-14 h-14 bg-yellow rounded-2xl flex items-center justify-center text-black shadow-lg group-hover:rotate-12 transition-transform duration-500" aria-hidden="true">
+                    <i data-lucide="award" class="w-7 h-7"></i>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-3xl lg:text-4xl font-black mb-3 font-heading uppercase">Limitl'ESS<br>Champion</h4>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Recognized for excellence in Social and Solidarity Economy in Tunisia. A testament to our commitment to real change.</p>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 bg-gray-50 p-10 rounded-[3.5rem] border border-gray-100 flex flex-col justify-between group hover:border-yellow transition-all" data-aos="fade-left">
-                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-yellow shadow-sm group-hover:scale-110 transition-transform">
+            <!-- Spirit card -->
+            <div class="lg:col-span-5 bg-[#fafaf8] p-10 rounded-[3.5rem] border-2 border-transparent hover:border-yellow transition-all duration-300 group min-h-[300px] flex flex-col justify-between" data-aos="fade-left" data-aos-delay="100">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-yellow shadow-sm group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
                     <i data-lucide="zap" class="w-7 h-7"></i>
                 </div>
                 <div>
-                    <h4 class="text-2xl font-bold mb-4 font-heading uppercase">Our Spirit</h4>
-                    <p class="text-gray-500 text-sm">Changing lives through entrepreneurial action and tech innovation.</p>
+                    <h4 class="text-2xl font-black mb-3 font-heading uppercase">Our Spirit</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">We believe entrepreneurial action creates change. Our students build real solutions to real problems — with mentorship, community, and drive.</p>
+                </div>
+            </div>
+
+            <!-- Mission card — full width -->
+            <div class="lg:col-span-12 bg-yellow p-10 lg:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
+                <div class="flex-1">
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-3 block">Our Mission</span>
+                    <h4 class="text-3xl font-black font-heading uppercase leading-tight">Entrepreneurial Action.<br>Real Community Impact.</h4>
+                </div>
+                <div class="flex-1 grid grid-cols-3 gap-6 text-center">
+                    <div>
+                        <i data-lucide="lightbulb" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Innovate</p>
+                    </div>
+                    <div>
+                        <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Collaborate</p>
+                    </div>
+                    <div>
+                        <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Impact</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,90 +485,114 @@
 </section>
 
 
-<!-- ══ STATS + ENACTOR OF THE MONTH ══ -->
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-10">
+<!-- ══ STATS + ENACTOR OF THE MONTH ══════════ -->
+<section class="py-20 bg-[#fafaf8]">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-8">
 
-        <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="p-10 bg-gray-50 rounded-[3rem] text-center hover:bg-yellow transition-all group" data-aos="zoom-in">
-                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Active Projects</p>
+        <!-- Stats -->
+        <div class="lg:col-span-2 grid grid-cols-3 gap-6" role="list" aria-label="Impact statistics">
+            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Active Projects</p>
             </div>
-            <div class="p-10 bg-black text-white rounded-[3rem] text-center hover:bg-yellow hover:text-black transition-all group" data-aos="zoom-in" data-aos-delay="100">
-                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Enactors</p>
+            <div class="stat-card p-8 lg:p-10 bg-black text-white rounded-[2.5rem] text-center hover:bg-yellow hover:text-black transition-all group shadow-sm cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="100">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Enactors</p>
             </div>
-            <div class="p-10 bg-gray-50 rounded-[3rem] text-center hover:bg-yellow transition-all group md:col-span-1 col-span-2" data-aos="zoom-in" data-aos-delay="200">
-                <h3 class="text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest opacity-50">Impacted Lives</p>
+            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="200">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Impacted Lives</p>
             </div>
         </div>
 
-        <div class="bg-yellow p-8 rounded-[3rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
+        <!-- Enactor of the Month -->
+        <div class="bg-yellow p-8 rounded-[2.5rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
             <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-6">
-                    <i data-lucide="crown" class="w-5 h-5"></i>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
+                <div class="flex items-center gap-2 mb-5">
+                    <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
                 </div>
-                <div class="w-32 h-32 rounded-3xl overflow-hidden border-4 border-black/10 mb-6 group-hover:rotate-3 transition-transform">
-                    <img id="eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg" class="w-full h-full object-cover" alt="Enactor of the Month">
+                <div class="w-28 h-28 rounded-2xl overflow-hidden border-4 border-black/10 mb-5 group-hover:rotate-3 transition-transform duration-500">
+                    <img id="eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
+                         class="w-full h-full object-cover" alt="Enactor of the Month" loading="lazy">
                 </div>
-                <h4 id="eom-name" class="text-2xl font-black font-heading uppercase">Moetez Maraach</h4>
-                <p  id="eom-desc" class="text-sm font-bold opacity-70 mt-2">Outstanding leadership in the "Green Tech" event.</p>
+                <h4 id="eom-name" class="text-xl font-black font-heading uppercase">Moetez Maraach</h4>
+                <p  id="eom-desc" class="text-sm font-semibold opacity-70 mt-1.5 leading-snug">Outstanding leadership in the "Green Tech" event.</p>
             </div>
-            <i data-lucide="award" class="absolute -bottom-10 -right-10 w-40 h-40 opacity-10 group-hover:rotate-12 transition-transform"></i>
+            <i data-lucide="award" class="absolute -bottom-8 -right-8 w-36 h-36 opacity-10 group-hover:rotate-12 transition-transform duration-700" aria-hidden="true"></i>
         </div>
     </div>
 </section>
 
 
-<!-- ══ PROJECTS ══ -->
-<section id="projects" class="py-32 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mb-16">Our Innovation</h2>
-        <div class="grid md:grid-cols-2 gap-12 text-left">
-
-            <div class="hover-lift group" onclick="openProject('fytrlance')">
-                <div class="rounded-[3rem] overflow-hidden relative h-[450px] shadow-2xl shadow-black/5">
-                    <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Fytrlance project">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
-                        <div>
-                            <span class="bg-yellow text-black px-4 py-1 rounded-full font-black text-[10px] uppercase mb-4 inline-block">Tech &amp; Work</span>
-                            <h3 class="text-3xl font-black font-heading text-white uppercase">Fytrlance</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hover-lift group" onclick="openProject('bioverto')">
-                <div class="rounded-[3rem] overflow-hidden relative h-[450px] shadow-2xl shadow-black/5">
-                    <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Bioverto project">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-10">
-                        <div>
-                            <span class="bg-yellow text-black px-4 py-1 rounded-full font-black text-[10px] uppercase mb-4 inline-block">Eco-Wellness</span>
-                            <h3 class="text-3xl font-black font-heading text-white uppercase">Bioverto</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ EVENTS TIMELINE ══ -->
-<section id="events" class="py-32 bg-white overflow-hidden">
+<!-- ══ PROJECTS ════════════════════════════════ -->
+<section id="projects" class="py-32 bg-white">
     <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+            <div data-aos="fade-right">
+                <span class="section-label mb-3 block">What We Build</span>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Our <span class="text-yellow">Innovation</span></h2>
+            </div>
+            <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest" data-aos="fade-left">Click a project to learn more</p>
+        </div>
+
+        <!-- Project cards -->
+        <div class="grid md:grid-cols-2 gap-8 text-left">
+
+            <article class="hover-lift group cursor-pointer" onclick="openProject('fytrlance')" role="button" tabindex="0"
+                     onkeydown="if(event.key==='Enter'||event.key===' ')openProject('fytrlance')"
+                     aria-label="View Fytrlance project details" data-aos="fade-up">
+                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                    <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                         alt="Fytrlance — tech and work project" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                        <div>
+                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Tech & Work</span>
+                            <h3 class="text-3xl font-black font-heading text-white uppercase">Fytrlance</h3>
+                            <p class="text-white/60 text-sm mt-1 font-medium">Freelance platform for ISIMG students</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="hover-lift group cursor-pointer" onclick="openProject('bioverto')" role="button" tabindex="0"
+                     onkeydown="if(event.key==='Enter'||event.key===' ')openProject('bioverto')"
+                     aria-label="View Bioverto project details" data-aos="fade-up" data-aos-delay="100">
+                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                    <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                         alt="Bioverto — eco-wellness project" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                        <div>
+                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Eco-Wellness</span>
+                            <h3 class="text-3xl font-black font-heading text-white uppercase">Bioverto</h3>
+                            <p class="text-white/60 text-sm mt-1 font-medium">Organic household solutions from local resources</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ EVENTS TIMELINE ═════════════════════════ -->
+<section id="events" class="py-32 bg-[#fafaf8] overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+
         <div class="text-center mb-20" data-aos="fade-up">
-            <span class="text-yellow-600 font-black uppercase tracking-[0.4em] text-[10px]">What's Happening</span>
-            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-4">Action <span class="text-yellow">Timeline</span></h2>
+            <span class="section-label mb-3 block">What's Happening</span>
+            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-2">Action <span class="text-yellow">Timeline</span></h2>
         </div>
 
         <div class="relative">
-            <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gray-100 hidden md:block"></div>
-            <div id="events-container" class="space-y-16">
-                <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-10">
+            <div class="timeline-line hidden md:block" aria-hidden="true"></div>
+            <div id="events-container" class="space-y-14" role="list" aria-label="Events timeline">
+                <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-12" aria-live="polite">
                     Loading our next big moves...
                 </div>
             </div>
@@ -295,62 +601,141 @@
 </section>
 
 
-<!-- ══ TEAM ══ -->
+<!-- ══ TEAM ════════════════════════════════════ -->
 <section id="team" class="py-32 bg-black text-white">
     <div class="max-w-7xl mx-auto px-6">
 
-        <div class="flex justify-between items-center mb-24 text-center md:text-left">
-            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter w-full md:w-auto">Leadership</h2>
-            <div class="h-[1px] flex-grow mx-12 bg-white/10 hidden md:block"></div>
-            <span class="text-yellow font-black uppercase tracking-[0.3em] text-xs hidden md:block">The Board 2025</span>
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-20 gap-6">
+            <div>
+                <span class="section-label text-gray-600 mb-3 block">The People Behind It</span>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Leadership</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="h-px w-24 bg-white/10 hidden md:block" aria-hidden="true"></div>
+                <span class="text-yellow font-black uppercase tracking-[0.3em] text-[10px]">The Board 2025</span>
+            </div>
         </div>
 
-        <div id="leadership-grid" class="grid grid-cols-2 md:grid-cols-5 gap-10 mb-32"></div>
+        <div id="leadership-grid" class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-20" role="list" aria-label="Leadership team"></div>
 
-        <div class="text-center">
-            <button onclick="toggleEnactors()" class="group">
-                <div class="w-20 h-20 rounded-full border-2 border-white/20 flex items-center justify-center mx-auto mb-4 group-hover:bg-yellow transition-all">
-                    <i data-lucide="users" class="group-hover:text-black"></i>
+        <!-- Toggle enactors -->
+        <div class="text-center border-t border-white/10 pt-16">
+            <button id="toggleEnactorsBtn" onclick="toggleEnactors()"
+                    class="group inline-flex flex-col items-center gap-3 focus-visible:outline-yellow"
+                    aria-expanded="false" aria-controls="enactors-list">
+                <div class="w-16 h-16 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-yellow group-hover:border-yellow transition-all duration-300">
+                    <i data-lucide="users" class="w-5 h-5 group-hover:text-black transition-colors" aria-hidden="true"></i>
                 </div>
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-500 group-hover:text-white transition">Show All Enactors</p>
+                <p class="text-[9px] font-black uppercase tracking-[0.5em] text-gray-500 group-hover:text-yellow transition-colors">Show All Enactors</p>
             </button>
         </div>
 
-        <div id="enactors-list" class="mt-20 grid grid-cols-2 md:grid-cols-6 gap-6"></div>
+        <div id="enactors-list" class="mt-16 grid grid-cols-2 md:grid-cols-6 gap-6" role="list" aria-label="All enactors"></div>
     </div>
 </section>
 
 
-<!-- ══ JOIN US / REGISTRATION FORM ══ -->
+<!-- ══ JOIN US / REGISTRATION ══════════════════ -->
 <section id="contact" class="py-32 bg-yellow">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col lg:flex-row gap-20 items-center">
+        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
 
-            <div class="lg:w-1/3">
-                <h2 class="text-7xl font-black font-heading uppercase leading-none mb-8">Join <br>The Fam.</h2>
-                <p class="text-xl font-bold opacity-80 mb-12 italic">Join the innovation lab of ISIMG.</p>
+            <!-- Left copy -->
+            <div class="lg:w-2/5" data-aos="fade-right">
+                <span class="section-label opacity-60 mb-4 block">Ready to Make an Impact?</span>
+                <h2 class="text-6xl lg:text-7xl font-black font-heading uppercase leading-[0.9] mb-6">Join<br>The Fam.</h2>
+                <p class="text-lg font-semibold opacity-75 mb-10 leading-relaxed">Be part of the innovation lab of ISIMG. Apply to join and start building solutions that matter.</p>
+
+                <!-- What you get -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">Access to real entrepreneurship projects</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">Mentorship from industry professionals</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">National & international competitions</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">A community driven by purpose</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="lg:w-2/3 w-full">
-                <form id="registrationForm" class="bg-white p-8 md:p-16 rounded-[4rem] shadow-2xl space-y-8">
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <input type="text"  id="regName"     required placeholder="Full Name"           class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 focus:ring-yellow/20">
-                        <input type="email" id="regEmail"    required placeholder="Email Address"       class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 focus:ring-yellow/20">
+            <!-- Form -->
+            <div class="lg:w-3/5 w-full" data-aos="fade-left" data-aos-delay="100">
+                <form id="registrationForm" class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-black/10 space-y-6" novalidate>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="regName" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Full Name *</label>
+                            <input type="text" id="regName" required autocomplete="name" placeholder="Your full name" class="form-input" aria-required="true">
+                        </div>
+                        <div>
+                            <label for="regEmail" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Email *</label>
+                            <input type="email" id="regEmail" required autocomplete="email" placeholder="you@example.com" class="form-input" aria-required="true">
+                        </div>
                     </div>
-                    <input type="password"  id="regPassword" required minlength="6" placeholder="Portal Password (min 6 chars)" class="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 focus:ring-yellow/20">
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <label class="cursor-pointer"><input type="radio" name="dept" value="Projects"  class="hidden peer" checked><div class="py-4 rounded-xl bg-gray-50 text-center font-black text-[10px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest">Projects</div></label>
-                        <label class="cursor-pointer"><input type="radio" name="dept" value="Media"     class="hidden peer"><div class="py-4 rounded-xl bg-gray-50 text-center font-black text-[10px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest">Media</div></label>
-                        <label class="cursor-pointer"><input type="radio" name="dept" value="HR"        class="hidden peer"><div class="py-4 rounded-xl bg-gray-50 text-center font-black text-[10px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest">HR</div></label>
-                        <label class="cursor-pointer"><input type="radio" name="dept" value="Marketing" class="hidden peer"><div class="py-4 rounded-xl bg-gray-50 text-center font-black text-[10px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest">Marketing</div></label>
+                    <div>
+                        <label for="regPassword" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Portal Password * (min 6 chars)</label>
+                        <div class="relative">
+                            <input type="password" id="regPassword" required minlength="6" placeholder="Create a password" class="form-input pr-14" aria-required="true">
+                            <button type="button" id="togglePassword" onclick="togglePasswordVisibility()"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                                    aria-label="Toggle password visibility">
+                                <i data-lucide="eye" id="pwEyeIcon" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <textarea id="regMotivation" required placeholder="Why Enactus ISIMG?" class="w-full p-5 bg-gray-50 rounded-2xl h-32 outline-none focus:ring-4 focus:ring-yellow/20 resize-none"></textarea>
+                    <!-- Department -->
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3" id="dept-label">Choose Your Department *</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-labelledby="dept-label">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Projects" class="sr-only peer" checked>
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Projects</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Media" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Media</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="HR" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">HR</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Marketing" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Marketing</div>
+                            </label>
+                        </div>
+                    </div>
 
-                    <button type="submit" id="submitBtn" class="w-full py-6 bg-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all uppercase tracking-[0.2em] text-xs shadow-xl">
-                        Submit Application
+                    <div>
+                        <label for="regMotivation" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Why Enactus ISIMG? *</label>
+                        <textarea id="regMotivation" required placeholder="Tell us your motivation..." class="form-input h-32 resize-none" aria-required="true"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                            class="w-full py-5 bg-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all duration-300 uppercase tracking-[0.2em] text-xs shadow-lg shadow-yellow/30 disabled:opacity-60 disabled:cursor-not-allowed">
+                        Submit Application →
                     </button>
+
+                    <p class="text-center text-[10px] text-gray-400 font-semibold">Your application will be reviewed by our HR team. You'll receive a confirmation email.</p>
                 </form>
             </div>
         </div>
@@ -358,353 +743,550 @@
 </section>
 
 
-<!-- ══ PROJECT / MEMBER MODAL ══ -->
-<div id="unifiedModal" class="modal-overlay" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-
-        <div id="projectContent" class="hidden">
-            <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase mb-4"></div>
-            <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6"></h3>
-            <div class="space-y-6 text-gray-500 text-sm">
-                <p id="projProb"></p>
-                <p id="projSol"></p>
-                <p id="projImpact" class="bg-gray-50 p-6 rounded-3xl"></p>
-            </div>
-        </div>
-
-        <div id="memberContent" class="hidden text-center">
-            <img id="mImg" src="" class="w-40 h-40 object-cover rounded-[2.5rem] mx-auto mb-6 border-4 border-yellow" alt="Member photo">
-            <h3 id="mName" class="text-3xl font-black font-heading uppercase mb-1"></h3>
-            <p  id="mRole" class="text-yellow font-black uppercase tracking-widest text-[10px] mb-8"></p>
-            <div class="flex justify-center gap-4">
-                <a id="mFB" href="#" class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition"><i data-lucide="facebook"></i></a>
-                <a id="mIG" href="#" class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition"><i data-lucide="instagram"></i></a>
-            </div>
-        </div>
-
-        <button onclick="closeModal()" class="mt-10 w-full py-4 border-2 border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition">
-            Close
-        </button>
+<!-- ══ PARTNERS SCROLL BANNER ══════════════════ -->
+<section class="py-16 bg-white overflow-hidden border-y border-gray-100" aria-label="Our partners">
+    <div class="mb-10 text-center">
+        <p class="section-label">Our Trusted Partners</p>
     </div>
-</div>
-
-
-<!-- ══ PARTNERS SCROLL BANNER ══ -->
-<section class="py-20 bg-gray-50 overflow-hidden border-y border-gray-100">
-    <div class="max-w-7xl mx-auto px-6 mb-10 text-center">
-        <p class="text-[10px] font-black uppercase tracking-[0.5em] text-gray-400">Our Trusted Partners</p>
-    </div>
-    <div class="flex space-x-12 animate-scroll whitespace-nowrap">
-        <div class="flex items-center gap-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto" alt="Enactus">
-            <span class="font-heading text-2xl font-black opacity-30">ISIMG GABES</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto" alt="Partner">
-            <span class="font-heading text-2xl font-black opacity-30">PARTNER NAME</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-12 w-auto" alt="Sponsor">
-            <span class="font-heading text-2xl font-black opacity-30">SPONSOR LOGO</span>
+    <div class="relative">
+        <div class="animate-marquee" aria-hidden="true">
+            <!-- Repeated twice for seamless loop -->
+            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Enactus">
+                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Partner">
+                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Sponsor">
+                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+            </div>
+            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity" aria-hidden="true">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+            </div>
         </div>
     </div>
 </section>
 
 
-<!-- ══ SCRIPTS — LOAD ORDER IS CRITICAL ══
-     1. AOS
-     2. Firebase SDKs
-     3. firebase-config.js  ← single init point
-     4. toast.js
-     5. Page logic
--->
+<!-- ══ FOOTER ══════════════════════════════════ -->
+<footer class="bg-black text-white py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
+
+            <!-- Brand -->
+            <div>
+                <div class="flex items-center gap-2.5 mb-5">
+                    <div class="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-yellow/30">
+                        <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                             class="w-full h-full object-cover" alt="Enactus ISIMG" loading="lazy">
+                    </div>
+                    <span class="logo-text text-base">ENACTUS <span class="highlight">ISIMG</span></span>
+                </div>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                    A student-powered entrepreneurship organization driving innovation and social impact in Gabès, Tunisia.
+                </p>
+            </div>
+
+            <!-- Quick links -->
+            <div>
+                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Quick Links</h3>
+                <nav aria-label="Footer navigation">
+                    <ul class="space-y-3">
+                        <li><a href="#about"    class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">About</a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Projects</a></li>
+                        <li><a href="#events"   class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Events</a></li>
+                        <li><a href="#team"     class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Team</a></li>
+                        <li><a href="#contact"  class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Join Us</a></li>
+                        <li><a href="login.html" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Member Portal</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Contact & social -->
+            <div>
+                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Connect</h3>
+                <div class="space-y-3 mb-6">
+                    <p class="text-gray-400 text-sm flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                        ISIMG, Gabès, Tunisia
+                    </p>
+                    <p class="text-gray-400 text-sm flex items-center gap-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                        enactus.isimg@gmail.com
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Facebook">
+                        <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Instagram">
+                        <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="LinkedIn">
+                        <i data-lucide="linkedin" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-[10px] font-black uppercase tracking-widest">
+            <p>© <span id="footer-year"></span> Enactus ISIMG. All Rights Reserved.</p>
+            <p>Made with <span class="text-yellow">♥</span> in Gabès, Tunisia</p>
+        </div>
+    </div>
+</footer>
+
+
+<!-- ══ UNIFIED MODAL ═══════════════════════════ -->
+<div id="unifiedModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle"
+     onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+
+        <!-- Project content -->
+        <div id="projectContent" class="hidden">
+            <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4"></div>
+            <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" id="modalTitle"></h3>
+            <div class="space-y-4 text-gray-500 text-sm leading-relaxed">
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
+                    </div>
+                    <p id="projProb"></p>
+                </div>
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-blue-400"></i>
+                    </div>
+                    <p id="projSol"></p>
+                </div>
+                <div class="bg-yellow/10 border border-yellow/20 p-5 rounded-2xl flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-yellow-600"></i>
+                    </div>
+                    <p id="projImpact" class="font-semibold text-gray-700"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member content -->
+        <div id="memberContent" class="hidden text-center">
+            <img id="mImg" src="" class="w-36 h-36 object-cover rounded-[2rem] mx-auto mb-5 border-4 border-yellow shadow-lg" alt="">
+            <h3 id="mName" class="text-3xl font-black font-heading uppercase mb-1"></h3>
+            <p  id="mRole" class="text-yellow font-black uppercase tracking-widest text-[9px] mb-6"></p>
+            <div class="flex justify-center gap-3">
+                <a id="mFB" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Facebook profile">
+                    <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
+                </a>
+                <a id="mIG" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Instagram profile">
+                    <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+
+        <button onclick="closeModal()" class="mt-8 w-full py-4 border-2 border-gray-100 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 hover:border-gray-200 transition-all">
+            Close ✕
+        </button>
+    </div>
+</div>
+
+<!-- ── BACK TO TOP ──────────────────────────── -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+        aria-label="Back to top">
+    <i data-lucide="arrow-up" class="w-5 h-5" aria-hidden="true"></i>
+</button>
+
+
+<!-- ══ SCRIPTS ═════════════════════════════════
+     Load order: AOS → Firebase → Config → Toast → Page logic
+═════════════════════════════════════════════ -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-<!-- Single init — no duplicate initializeApp() anywhere on this page -->
 <script src="js/firebase-config.js"></script>
 <script src="js/toast.js"></script>
 
 <script>
-    /* ── Init libraries ─────────────────────────── */
-    AOS.init({ duration: 800, offset: 100, once: true, easing: 'ease-out' });
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+AOS.init({ duration: 750, offset: 80, once: true, easing: 'ease-out-cubic' });
+lucide.createIcons();
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+
+/* ═══════════════════════════════════════════════
+   SCROLL: progress bar + navbar shrink + back-to-top
+═══════════════════════════════════════════════ */
+const progressBar = document.getElementById('progress-bar');
+const navbar      = document.getElementById('navbar');
+const backToTop   = document.getElementById('back-to-top');
+
+window.addEventListener('scroll', () => {
+    const scrolled  = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrolled / docHeight * 100) + '%';
+
+    // Navbar style on scroll
+    navbar.classList.toggle('scrolled', scrolled > 60);
+
+    // Back to top visibility
+    backToTop.classList.toggle('visible', scrolled > 400);
+}, { passive: true });
+
+
+/* ═══════════════════════════════════════════════
+   MOBILE MENU
+═══════════════════════════════════════════════ */
+let menuOpen = false;
+
+function toggleMobileMenu() {
+    const menu    = document.getElementById('mobileMenu');
+    const icon    = document.getElementById('menuIcon');
+    const btn     = document.getElementById('burgerBtn');
+
+    menuOpen = !menuOpen;
+    menu.classList.toggle('open', menuOpen);
+    icon.setAttribute('data-lucide', menuOpen ? 'x' : 'menu');
+    btn.setAttribute('aria-expanded', menuOpen);
     lucide.createIcons();
+}
 
-    /* ══ MOBILE MENU ══ */
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobileMenu');
-        const icon = document.getElementById('menuIcon');
-        menu.classList.toggle('hidden');
-        icon.setAttribute('data-lucide', menu.classList.contains('hidden') ? 'menu' : 'x');
-        lucide.createIcons();
-    }
 
-    /* ══ TEAM DATA ══ */
-    const leadership = [
-        { name: "Ghofran Chergui",  role: "President",       img: "enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg",       fb: "#", ig: "#" },
-        { name: "Azmi Ben Hassine", role: "Vice President",   img: "enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg",       fb: "#", ig: "#" },
-        { name: "Naceur Zidi",      role: "Media Coord",      img: "enactuss/9bd9521e-5ddf-413f-86f5-919e3a823d7d.jpg",       fb: "#", ig: "#" },
-        { name: "Moetez Maraach",   role: "Media Board",      img: "enactuss/78151529-6349-4654-84ec-3240848135d5.jpg",       fb: "#", ig: "#" },
-        { name: "Jihen Hamdi",      role: "HR Manager",       img: "enactuss/276d56ca-8b5d-4f8d-b8c9-dab7edaf6997.jpg",      fb: "#", ig: "#" },
-        { name: "Hela Lakhdhar",    role: "Project Manager",  img: "enactuss/34f1e12e-5d8e-48a7-9a3f-b013ad32380f.jpg",       fb: "#", ig: "#" },
-        { name: "Mohamed Amin",     role: "Graphic Design",   img: "enactuss/78762702-a127-4b64-aba9-c74281e5ac52.jpg",       fb: "#", ig: "#" },
-        { name: "Dhia Ben Salha",   role: "Marketing",        img: "enactuss/c64e3754-0679-4d72-8dc5-1a8e02362da0.jpg",       fb: "#", ig: "#" },
-        { name: "Nahla Ben Yahya",  role: "Event Manager",    img: "enactuss/nahla.jpg",                                      fb: "#", ig: "#" },
-        { name: "Hamza Miled",      role: "Finance",          img: "enactuss/e530bdbd-fa84-4d33-8ad1-afdae39da2d4.jpg",       fb: "#", ig: "#" }
-    ];
+/* ═══════════════════════════════════════════════
+   PASSWORD VISIBILITY TOGGLE
+═══════════════════════════════════════════════ */
+function togglePasswordVisibility() {
+    const pwField = document.getElementById('regPassword');
+    const eyeIcon = document.getElementById('pwEyeIcon');
+    const isText  = pwField.type === 'text';
+    pwField.type  = isText ? 'password' : 'text';
+    eyeIcon.setAttribute('data-lucide', isText ? 'eye' : 'eye-off');
+    lucide.createIcons();
+}
 
-    const enactors = [
-        { name: "Oumayma Ben Salem", role: "Active Member", img: "enactuss/481186204_1368665821238195_2840693725922138944_n.jpg", fb: "#", ig: "#" },
-        { name: "Arij Ganfoudi",     role: "Active Member", img: "enactuss/629262096_893302356808542_3688099736813211604_n.jpg",  fb: "#", ig: "#" },
-        { name: "Oussema Lbekri",    role: "Active Member", img: "enactuss/a875a8f7-fd52-49fe-abe8-04fbacfc7b13.jpg",             fb: "#", ig: "#" },
-        { name: "Ahlem Ben Moussa",  role: "Active Member", img: "enactuss/482250112_1018968886956683_7822444058078388185_n.jpg", fb: "#", ig: "#" },
-        { name: "Khadija Samir",     role: "Active Member", img: "enactuss/Capture d'écran 2026-02-21 010428.png",               fb: "#", ig: "#" }
-    ];
 
-    /* ══ TEAM GRID RENDERING — uses textContent, never innerHTML ══ */
-    function fillGrid(data, gridId) {
-        const grid = document.getElementById(gridId);
-        if (!grid) return;
+/* ═══════════════════════════════════════════════
+   TEAM DATA
+═══════════════════════════════════════════════ */
+const leadership = [
+    { name: "Ghofran Chergui",  role: "President",       img: "enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg",  fb: "#", ig: "#" },
+    { name: "Azmi Ben Hassine", role: "Vice President",   img: "enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg",  fb: "#", ig: "#" },
+    { name: "Naceur Zidi",      role: "Media Coord",      img: "enactuss/9bd9521e-5ddf-413f-86f5-919e3a823d7d.jpg",  fb: "#", ig: "#" },
+    { name: "Moetez Maraach",   role: "Media Board",      img: "enactuss/78151529-6349-4654-84ec-3240848135d5.jpg",  fb: "#", ig: "#" },
+    { name: "Jihen Hamdi",      role: "HR Manager",       img: "enactuss/276d56ca-8b5d-4f8d-b8c9-dab7edaf6997.jpg", fb: "#", ig: "#" },
+    { name: "Hela Lakhdhar",    role: "Project Manager",  img: "enactuss/34f1e12e-5d8e-48a7-9a3f-b013ad32380f.jpg",  fb: "#", ig: "#" },
+    { name: "Mohamed Amin",     role: "Graphic Design",   img: "enactuss/78762702-a127-4b64-aba9-c74281e5ac52.jpg",  fb: "#", ig: "#" },
+    { name: "Dhia Ben Salha",   role: "Marketing",        img: "enactuss/c64e3754-0679-4d72-8dc5-1a8e02362da0.jpg",  fb: "#", ig: "#" },
+    { name: "Nahla Ben Yahya",  role: "Event Manager",    img: "enactuss/nahla.jpg",                                 fb: "#", ig: "#" },
+    { name: "Hamza Miled",      role: "Finance",          img: "enactuss/e530bdbd-fa84-4d33-8ad1-afdae39da2d4.jpg",  fb: "#", ig: "#" }
+];
 
-        data.forEach(m => {
-            const div = document.createElement('div');
-            div.className = 'text-center cursor-pointer';
-            div.addEventListener('click', () => showMember(m));
+const enactors = [
+    { name: "Oumayma Ben Salem", role: "Active Member", img: "enactuss/481186204_1368665821238195_2840693725922138944_n.jpg", fb: "#", ig: "#" },
+    { name: "Arij Ganfoudi",     role: "Active Member", img: "enactuss/629262096_893302356808542_3688099736813211604_n.jpg",  fb: "#", ig: "#" },
+    { name: "Oussema Lbekri",    role: "Active Member", img: "enactuss/a875a8f7-fd52-49fe-abe8-04fbacfc7b13.jpg",             fb: "#", ig: "#" },
+    { name: "Ahlem Ben Moussa",  role: "Active Member", img: "enactuss/482250112_1018968886956683_7822444058078388185_n.jpg", fb: "#", ig: "#" },
+    { name: "Khadija Samir",     role: "Active Member", img: "enactuss/Capture d'écran 2026-02-21 010428.png",               fb: "#", ig: "#" }
+];
 
-            const imgWrapper = document.createElement('div');
-            imgWrapper.className = 'rounded-[2rem] overflow-hidden border-2 border-transparent hover:border-yellow transition-all mb-4 shadow-lg';
 
-            const img = document.createElement('img');
-            img.src       = m.img;
-            img.alt       = m.name;
-            img.className = 'w-full aspect-square object-cover';
-            img.loading   = 'lazy';
-            imgWrapper.appendChild(img);
+/* ═══════════════════════════════════════════════
+   TEAM GRID — safe DOM construction (no innerHTML)
+═══════════════════════════════════════════════ */
+function fillGrid(data, gridId) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
 
-            const name = document.createElement('p');
-            name.className   = 'text-[9px] font-black uppercase tracking-widest truncate px-2';
-            name.textContent = m.name;
-
-            div.appendChild(imgWrapper);
-            div.appendChild(name);
-            grid.appendChild(div);
+    data.forEach(m => {
+        const article = document.createElement('article');
+        article.className  = 'text-center cursor-pointer group focus-visible:outline-yellow';
+        article.tabIndex   = 0;
+        article.setAttribute('role', 'listitem');
+        article.addEventListener('click', () => showMember(m));
+        article.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showMember(m); }
         });
-    }
 
-    fillGrid(leadership, 'leadership-grid');
-    fillGrid(enactors,   'enactors-list');
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'rounded-[2rem] overflow-hidden border-2 border-transparent hover:border-yellow group-hover:border-yellow group-hover:shadow-lg transition-all duration-300 mb-3 aspect-square';
 
+        const img = document.createElement('img');
+        img.src       = m.img;
+        img.alt       = m.name + ', ' + m.role;
+        img.className = 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-500';
+        img.loading   = 'lazy';
+        imgWrapper.appendChild(img);
 
-    /* ══ PROJECTS DATA & MODAL ══ */
-    const projects = {
-        fytrlance: {
-            name:   "Fytrlance",
-            tag:    "Technology",
-            prob:   "Problem: High unemployment rates among tech students in Gabès who lack access to professional freelance markets.",
-            sol:    "Solution: A specialized platform that bridges the gap between ISIMG students and businesses, offering mentorship and real projects.",
-            impact: "Impact: Reducing youth unemployment and creating a professional portfolio for 50+ students."
-        },
-        bioverto: {
-            name:   "Bioverto",
-            tag:    "Environment",
-            prob:   "Problem: Chemical waste in household products and lack of organic alternatives in the local market.",
-            sol:    "Solution: Producing sustainable, 100% organic household solutions using local resources from the Gabès region.",
-            impact: "Impact: Promoting a healthy lifestyle and reducing toxic waste in 200+ households."
-        }
-    };
+        const name = document.createElement('p');
+        name.className   = 'text-[9px] font-black uppercase tracking-widest truncate px-1';
+        name.textContent = m.name;
 
-    function openProject(id) {
-        const p = projects[id];
-        if (!p) return;
-        document.getElementById('projTag').textContent    = p.tag;
-        document.getElementById('projName').textContent   = p.name;
-        document.getElementById('projProb').textContent   = p.prob;
-        document.getElementById('projSol').textContent    = p.sol;
-        document.getElementById('projImpact').textContent = p.impact;
-        document.getElementById('projectContent').classList.remove('hidden');
-        document.getElementById('memberContent').classList.add('hidden');
-        document.getElementById('unifiedModal').style.display = 'flex';
-    }
+        const roleEl = document.createElement('p');
+        roleEl.className   = 'text-[8px] font-semibold uppercase tracking-widest text-gray-400 truncate px-1 mt-0.5';
+        roleEl.textContent = m.role;
 
-    function showMember(m) {
-        document.getElementById('mImg').src          = m.img;
-        document.getElementById('mName').textContent = m.name;
-        document.getElementById('mRole').textContent = m.role;
-        document.getElementById('mFB').href          = m.fb || '#';
-        document.getElementById('mIG').href          = m.ig || '#';
-        document.getElementById('memberContent').classList.remove('hidden');
-        document.getElementById('projectContent').classList.add('hidden');
-        document.getElementById('unifiedModal').style.display = 'flex';
-        lucide.createIcons();
-    }
-
-    function closeModal() {
-        document.getElementById('unifiedModal').style.display = 'none';
-    }
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-    function toggleEnactors() {
-        const list = document.getElementById('enactors-list');
-        const isVisible = list.style.display === 'grid';
-        list.style.display = isVisible ? 'none' : 'grid';
-        if (!isVisible) list.scrollIntoView({ behavior: 'smooth' });
-    }
-
-
-    /* ══ REGISTRATION FORM ══ */
-    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const btn        = document.getElementById('submitBtn');
-        const fullName   = sanitize(document.getElementById('regName').value.trim());
-        const email      = document.getElementById('regEmail').value.trim();
-        const password   = document.getElementById('regPassword').value;
-        const motivation = sanitize(document.getElementById('regMotivation').value.trim());
-        const department = document.querySelector('input[name="dept"]:checked')?.value;
-
-        if (!fullName || !email || !password || !motivation || !department) {
-            Toast.warning('Please fill in all fields before submitting.');
-            return;
-        }
-        if (password.length < 6) {
-            Toast.warning('Password must be at least 6 characters.');
-            return;
-        }
-
-        btn.disabled    = true;
-        btn.textContent = 'Sending...';
-
-        try {
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-
-            await user.updateProfile({ displayName: fullName });
-            await user.sendEmailVerification();
-
-            /* role and status are ALWAYS set here in code — never from form input */
-            await db.collection('users').doc(user.uid).set({
-                uid:        user.uid,
-                fullName:   fullName,
-                email:      email,
-                department: department,
-                motivation: motivation,
-                role:       'member',   // ← always 'member', never admin
-                status:     'pending',  // ← always pending, admin must approve
-                points:     0,
-                level:      'Junior',
-                badges:     [],
-                createdAt:  firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            await auth.signOut();
-
-            Toast.success('Application submitted! Please check your email to verify your address before logging in.');
-            document.getElementById('registrationForm').reset();
-            setTimeout(() => window.location.href = 'login.html', 3000);
-
-        } catch (err) {
-            const errorMessages = {
-                'auth/email-already-in-use':    'An account with this email already exists. Try logging in instead.',
-                'auth/invalid-email':            'Please enter a valid email address.',
-                'auth/weak-password':            'Password is too weak. Use at least 6 characters.',
-                'auth/network-request-failed':   'Network error. Please check your connection and try again.'
-            };
-            Toast.error(errorMessages[err.code] || 'Registration failed: ' + err.message);
-
-        } finally {
-            btn.disabled    = false;
-            btn.textContent = 'Submit Application';
-        }
+        article.appendChild(imgWrapper);
+        article.appendChild(name);
+        article.appendChild(roleEl);
+        grid.appendChild(article);
     });
+}
+
+fillGrid(leadership, 'leadership-grid');
+fillGrid(enactors,   'enactors-list');
 
 
-    /* ══ ENACTOR OF THE MONTH ══ */
-    function loadEOM() {
-        db.collection('settings').doc('eom').onSnapshot(doc => {
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('eom-name').textContent = data.name || '';
-                document.getElementById('eom-desc').textContent = data.desc || '';
-                if (data.img) document.getElementById('eom-img').src = data.img;
-            }
-        }, err => {
-            console.warn('Could not load EOM data:', err.message);
+/* ═══════════════════════════════════════════════
+   PROJECTS DATA & MODAL
+═══════════════════════════════════════════════ */
+const projects = {
+    fytrlance: {
+        name:   "Fytrlance",
+        tag:    "Technology & Work",
+        prob:   "High unemployment rates among tech students in Gabès who lack access to professional freelance markets.",
+        sol:    "A specialized platform bridging the gap between ISIMG students and businesses, offering mentorship and real-world projects.",
+        impact: "Impact: Reducing youth unemployment and creating professional portfolios for 50+ students in the Gabès region."
+    },
+    bioverto: {
+        name:   "Bioverto",
+        tag:    "Eco-Wellness",
+        prob:   "Chemical waste in household products and a lack of organic alternatives in the local market.",
+        sol:    "Producing sustainable, 100% organic household solutions using local resources from the Gabès region.",
+        impact: "Impact: Promoting a healthy lifestyle and reducing toxic waste in 200+ households across Gabès."
+    }
+};
+
+function openProject(id) {
+    const p = projects[id];
+    if (!p) return;
+    document.getElementById('projTag').textContent    = p.tag;
+    document.getElementById('projName').textContent   = p.name;
+    document.getElementById('projProb').textContent   = p.prob;
+    document.getElementById('projSol').textContent    = p.sol;
+    document.getElementById('projImpact').textContent = p.impact;
+    document.getElementById('projectContent').classList.remove('hidden');
+    document.getElementById('memberContent').classList.add('hidden');
+    openModal();
+    lucide.createIcons();
+}
+
+function showMember(m) {
+    document.getElementById('mImg').src          = m.img;
+    document.getElementById('mImg').alt          = m.name;
+    document.getElementById('mName').textContent = m.name;
+    document.getElementById('mRole').textContent = m.role;
+    document.getElementById('mFB').href          = m.fb || '#';
+    document.getElementById('mIG').href          = m.ig || '#';
+    document.getElementById('memberContent').classList.remove('hidden');
+    document.getElementById('projectContent').classList.add('hidden');
+    openModal();
+    lucide.createIcons();
+}
+
+function openModal() {
+    const modal = document.getElementById('unifiedModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    const modal = document.getElementById('unifiedModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+
+/* ═══════════════════════════════════════════════
+   TOGGLE ENACTORS
+═══════════════════════════════════════════════ */
+function toggleEnactors() {
+    const list    = document.getElementById('enactors-list');
+    const btn     = document.getElementById('toggleEnactorsBtn');
+    const isShown = list.style.display === 'grid';
+
+    list.style.display = isShown ? 'none' : 'grid';
+    btn.setAttribute('aria-expanded', !isShown);
+
+    const btnLabel = btn.querySelector('p');
+    if (btnLabel) btnLabel.textContent = isShown ? 'Show All Enactors' : 'Hide Enactors';
+
+    if (!isShown) {
+        setTimeout(() => list.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════
+   REGISTRATION FORM
+═══════════════════════════════════════════════ */
+document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const btn        = document.getElementById('submitBtn');
+    const fullName   = sanitize(document.getElementById('regName').value.trim());
+    const email      = document.getElementById('regEmail').value.trim();
+    const password   = document.getElementById('regPassword').value;
+    const motivation = sanitize(document.getElementById('regMotivation').value.trim());
+    const department = document.querySelector('input[name="dept"]:checked')?.value;
+
+    if (!fullName || !email || !password || !motivation || !department) {
+        Toast.warning('Please fill in all fields before submitting.');
+        return;
+    }
+    if (password.length < 6) {
+        Toast.warning('Password must be at least 6 characters.');
+        return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Sending...';
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user           = userCredential.user;
+
+        await user.updateProfile({ displayName: fullName });
+        await user.sendEmailVerification();
+
+        /* Role and status are always set here — never from form input */
+        await db.collection('users').doc(user.uid).set({
+            uid:        user.uid,
+            fullName:   fullName,
+            email:      email,
+            department: department,
+            motivation: motivation,
+            role:       'member',   // always 'member'
+            status:     'pending',  // always pending until admin approves
+            points:     0,
+            level:      'Junior',
+            badges:     [],
+            createdAt:  firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        await auth.signOut();
+
+        Toast.success('Application submitted! Please check your email to verify your address before logging in.');
+        document.getElementById('registrationForm').reset();
+        setTimeout(() => window.location.href = 'login.html', 3000);
+
+    } catch (err) {
+        const errorMessages = {
+            'auth/email-already-in-use':  'An account with this email already exists. Try logging in instead.',
+            'auth/invalid-email':          'Please enter a valid email address.',
+            'auth/weak-password':          'Password is too weak. Use at least 6 characters.',
+            'auth/network-request-failed': 'Network error. Please check your connection and try again.'
+        };
+        Toast.error(errorMessages[err.code] || 'Registration failed: ' + err.message);
+
+    } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Submit Application →';
     }
-    loadEOM();
+});
 
 
-    /* ══ EVENTS TIMELINE ══ */
-    function loadTimeline() {
-        const container = document.getElementById('events-container');
+/* ═══════════════════════════════════════════════
+   ENACTOR OF THE MONTH — real-time from Firestore
+═══════════════════════════════════════════════ */
+function loadEOM() {
+    db.collection('settings').doc('eom').onSnapshot(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('eom-name').textContent = data.name || '';
+            document.getElementById('eom-desc').textContent = data.desc || '';
+            if (data.img) document.getElementById('eom-img').src = data.img;
+        }
+    }, err => console.warn('Could not load EOM data:', err.message));
+}
+loadEOM();
 
-        db.collection('events').orderBy('date', 'asc').onSnapshot(snapshot => {
-            container.innerHTML = '';
 
-            if (snapshot.empty) {
-                const empty = document.createElement('div');
-                empty.className   = 'text-center text-gray-400 uppercase tracking-widest text-xs py-10';
-                empty.textContent = 'No upcoming events scheduled yet. Check back soon!';
-                container.appendChild(empty);
-                return;
-            }
+/* ═══════════════════════════════════════════════
+   EVENTS TIMELINE — real-time from Firestore
+═══════════════════════════════════════════════ */
+function loadTimeline() {
+    const container = document.getElementById('events-container');
 
-            snapshot.forEach((doc, index) => {
-                const ev     = doc.data();
-                const isEven = index % 2 === 0;
+    db.collection('events').orderBy('date', 'asc').onSnapshot(snapshot => {
+        container.innerHTML = '';
 
-                const row = document.createElement('div');
-                row.className = `relative flex items-center justify-between md:justify-normal group ${isEven ? 'md:flex-row-reverse' : ''}`;
+        if (snapshot.empty) {
+            const empty       = document.createElement('div');
+            empty.className   = 'text-center text-gray-400 uppercase tracking-widest text-xs py-12';
+            empty.textContent = 'No upcoming events scheduled yet. Check back soon!';
+            container.appendChild(empty);
+            return;
+        }
 
-                const dot = document.createElement('div');
-                dot.className = 'absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-yellow rounded-full border-4 border-white shadow-sm z-10 hidden md:block';
-                row.appendChild(dot);
+        snapshot.forEach((doc, index) => {
+            const ev     = doc.data();
+            const isEven = index % 2 === 0;
 
-                const card = document.createElement('div');
-                card.className = 'w-full md:w-[45%] p-8 bg-gray-50 rounded-[2.5rem] hover:bg-black hover:text-white transition-all duration-500 shadow-sm group-hover:shadow-xl';
-                card.setAttribute('data-aos', isEven ? 'fade-left' : 'fade-right');
+            const row       = document.createElement('div');
+            row.className   = `relative flex items-center ${isEven ? 'md:flex-row-reverse justify-end' : 'justify-start'} group`;
+            row.setAttribute('role', 'listitem');
 
-                const dateEl = document.createElement('span');
-                dateEl.className   = 'text-[10px] font-black uppercase tracking-widest text-yellow group-hover:text-yellow-400';
-                dateEl.textContent = ev.date || '';
+            /* Timeline dot */
+            const dot       = document.createElement('div');
+            dot.className   = 'absolute left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-yellow rounded-full border-4 border-white shadow-md z-10 hidden md:block';
+            dot.setAttribute('aria-hidden', 'true');
+            row.appendChild(dot);
 
-                const titleEl = document.createElement('h4');
-                titleEl.className   = 'text-2xl font-black font-heading mt-2 uppercase';
-                titleEl.textContent = ev.title || '';
+            /* Card */
+            const card      = document.createElement('div');
+            card.className  = 'w-full md:w-[45%] p-8 bg-white rounded-[2.5rem] border-2 border-gray-100 hover:border-yellow hover:shadow-xl transition-all duration-400 cursor-default';
+            card.setAttribute('data-aos', isEven ? 'fade-left' : 'fade-right');
 
-                const descEl = document.createElement('p');
-                descEl.className   = 'mt-4 text-sm opacity-60 leading-relaxed';
-                descEl.textContent = ev.description || '';
+            const dateEl         = document.createElement('time');
+            dateEl.className     = 'text-[9px] font-black uppercase tracking-widest text-yellow';
+            dateEl.textContent   = ev.date || '';
 
-                card.appendChild(dateEl);
-                card.appendChild(titleEl);
-                card.appendChild(descEl);
-                row.appendChild(card);
-                container.appendChild(row);
-            });
+            const titleEl        = document.createElement('h4');
+            titleEl.className    = 'text-xl font-black font-heading mt-2 uppercase';
+            titleEl.textContent  = ev.title || '';
 
-        }, err => {
-            container.innerHTML = '';
-            const errEl = document.createElement('div');
-            errEl.className   = 'text-center text-gray-400 text-xs py-10';
-            errEl.textContent = 'Could not load events. Please try again later.';
-            container.appendChild(errEl);
-            console.warn('Timeline load error:', err.message);
+            const descEl         = document.createElement('p');
+            descEl.className     = 'mt-3 text-sm text-gray-500 leading-relaxed';
+            descEl.textContent   = ev.description || '';
+
+            card.appendChild(dateEl);
+            card.appendChild(titleEl);
+            card.appendChild(descEl);
+            row.appendChild(card);
+            container.appendChild(row);
         });
-    }
-    loadTimeline();
+
+    }, err => {
+        container.innerHTML = '';
+        const errEl         = document.createElement('div');
+        errEl.className     = 'text-center text-gray-400 text-xs py-10';
+        errEl.textContent   = 'Could not load events. Please try again later.';
+        container.appendChild(errEl);
+        console.warn('Timeline load error:', err.message);
+    });
+}
+loadTimeline();
 
 
-    /* ══ SANITIZE HELPER ══
-       Converts dangerous HTML characters to safe entities
-       before storing in Firestore — prevents stored XSS.
-    */
-    function sanitize(str) {
-        if (typeof str !== 'string') return '';
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
+/* ═══════════════════════════════════════════════
+   SANITIZE — prevents stored XSS in Firestore
+═══════════════════════════════════════════════ */
+function sanitize(str) {
+    if (typeof str !== 'string') return '';
+    const div       = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
 </script>
 
 </body>
