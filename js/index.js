@@ -30,8 +30,6 @@ const AUTH_ERRORS = {
 
 /* ─────────────────────────────────────────────
    DATA — Projects / Leadership / Enactors
-   Kept here so index.js is self-contained.
-   Social links should be updated when known.
 ───────────────────────────────────────────── */
 const PROJECTS = {
   fytrlance: {
@@ -73,8 +71,6 @@ const ENACTORS = [
 
 /* ─────────────────────────────────────────────
    SANITIZE
-   Escapes HTML special characters before storing
-   user input in Firestore — prevents stored XSS.
 ───────────────────────────────────────────── */
 function sanitize(str) {
   if (typeof str !== "string") return "";
@@ -85,8 +81,6 @@ function sanitize(str) {
 
 /* ─────────────────────────────────────────────
    VALIDATE URL
-   Returns true only for http/https URLs.
-   Used before assigning any URL to img.src or a.href.
 ───────────────────────────────────────────── */
 function isSafeUrl(url) {
   return /^https?:\/\//i.test(url ?? "");
@@ -96,7 +90,7 @@ function isSafeUrl(url) {
    NAVBAR — shrink on scroll
 ───────────────────────────────────────────── */
 function initNavbar() {
-  const nav = document.getElementById("navbar") || document.querySelector(".main-nav");
+  const nav = document.getElementById("navbar");
   if (!nav) return;
 
   const onScroll = () => {
@@ -104,61 +98,42 @@ function initNavbar() {
   };
 
   window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll(); // run once on load
+  onScroll();
 }
 
 /* ─────────────────────────────────────────────
    MOBILE MENU TOGGLE
+   FIX: Exposed as window.toggleMobileMenu so the
+   burger button's onclick attribute can call it.
 ───────────────────────────────────────────── */
-function initMobileMenu() {
+let _menuOpen = false;
+
+function toggleMobileMenu() {
   const btn  = document.getElementById("burgerBtn");
   const menu = document.getElementById("mobileMenu");
   const icon = document.getElementById("menuIcon");
   if (!btn || !menu) return;
 
-  let open = false;
+  _menuOpen = !_menuOpen;
+  menu.classList.toggle("open", _menuOpen);
+  btn.setAttribute("aria-expanded", _menuOpen);
+  if (icon) {
+    icon.setAttribute("data-lucide", _menuOpen ? "x" : "menu");
+    if (typeof lucide !== "undefined") lucide.createIcons();
+  }
+}
 
-  btn.addEventListener("click", () => {
-    open = !open;
-    menu.classList.toggle("open", open);
-    btn.setAttribute("aria-expanded", open);
-    if (icon) {
-      icon.setAttribute("data-lucide", open ? "x" : "menu");
-      if (typeof lucide !== "undefined") lucide.createIcons();
-    }
-  });
+/* Expose globally so HTML onclick="toggleMobileMenu()" works */
+window.toggleMobileMenu = toggleMobileMenu;
 
-  /* Close menu when a nav link is clicked */
-  menu.querySelectorAll("a").forEach(a => {
-    a.addEventListener("click", () => {
-      open = false;
-      menu.classList.remove("open");
-      btn.setAttribute("aria-expanded", false);
-      if (icon) {
-        icon.setAttribute("data-lucide", "menu");
-        if (typeof lucide !== "undefined") lucide.createIcons();
-      }
-    });
-  });
+function initMobileMenu() {
+  const btn = document.getElementById("burgerBtn");
+  if (!btn) return;
+  btn.addEventListener("click", toggleMobileMenu);
 }
 
 /* ─────────────────────────────────────────────
-   SMOOTH SCROLL — anchor links
-───────────────────────────────────────────── */
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener("click", function (e) {
-      const href   = this.getAttribute("href");
-      const target = document.querySelector(href);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  });
-}
-
-/* ─────────────────────────────────────────────
-   SCROLL PROGRESS BAR
+   PROGRESS BAR
 ───────────────────────────────────────────── */
 function initProgressBar() {
   const bar = document.getElementById("progress-bar");
@@ -189,54 +164,44 @@ function initBackToTop() {
 
 /* ─────────────────────────────────────────────
    FILL TEAM GRID
-   FIX: Original used innerHTML with m.img and m.name
-   directly — XSS risk if data is ever dynamic.
-   Now uses safe DOM construction throughout.
 ───────────────────────────────────────────── */
 function fillGrid(data, gridId) {
   const grid = document.getElementById(gridId);
   if (!grid) return;
 
   data.forEach(member => {
-    /* Wrapper article */
     const article = document.createElement("article");
     article.className = "text-center cursor-pointer group";
     article.setAttribute("role", "button");
     article.setAttribute("tabindex", "0");
     article.setAttribute("aria-label", `View ${member.name}, ${member.role}`);
 
-    /* Click + keyboard activation */
     const activate = () => showMember(member);
     article.addEventListener("click", activate);
     article.addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
     });
 
-    /* Avatar wrapper */
     const imgWrapper = document.createElement("div");
     imgWrapper.className = "rounded-[2rem] overflow-hidden border-2 border-transparent hover:border-yellow group-hover:border-yellow group-hover:shadow-lg transition-all duration-300 mb-3 aspect-square";
 
-    /* Image — src is a local path (not user input), safe to assign directly */
     const img     = document.createElement("img");
     img.src       = member.img;
     img.loading   = "lazy";
     img.className = "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500";
-    img.alt       = "";                        /* decorative — name below is the label */
+    img.alt       = "";
     img.onerror   = () => {
-      /* Fallback to generated avatar if image fails to load */
       img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=111&color=FFC222`;
     };
     imgWrapper.appendChild(img);
 
-    /* Name — textContent, never innerHTML */
     const nameEl       = document.createElement("p");
     nameEl.className   = "text-[9px] font-black uppercase tracking-widest truncate px-1";
-    nameEl.textContent = member.name;          /* ✅ textContent */
+    nameEl.textContent = member.name;
 
-    /* Role */
     const roleEl       = document.createElement("p");
     roleEl.className   = "text-[8px] font-semibold uppercase tracking-widest text-gray-400 truncate px-1 mt-0.5";
-    roleEl.textContent = member.role;          /* ✅ textContent */
+    roleEl.textContent = member.role;
 
     article.appendChild(imgWrapper);
     article.appendChild(nameEl);
@@ -247,9 +212,6 @@ function fillGrid(data, gridId) {
 
 /* ─────────────────────────────────────────────
    MODAL — open / close
-   FIX: Original used innerText directly on DOM
-   elements already in the modal — safe, but
-   now also locks body scroll and improves a11y.
 ───────────────────────────────────────────── */
 function openModal() {
   const modal = document.getElementById("unifiedModal");
@@ -267,10 +229,9 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-/* Expose globally — called from HTML onclick attributes */
+/* Expose globally */
 window.closeModal = closeModal;
 
-/* Escape key closes modal */
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeModal();
 });
@@ -282,7 +243,6 @@ function openProject(id) {
   const p = PROJECTS[id];
   if (!p) return;
 
-  /* All set via textContent — data is our own constants, not user input */
   const setTxt = (elId, val) => {
     const el = document.getElementById(elId);
     if (el) el.textContent = val;
@@ -301,16 +261,11 @@ function openProject(id) {
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
-/* Expose globally — called from HTML onclick attributes on project cards */
+/* Expose globally */
 window.openProject = openProject;
 
 /* ─────────────────────────────────────────────
    SHOW MEMBER MODAL
-   FIX: Original used innerText which is safe,
-   but also assigned m.img directly to img.src
-   without any validation. Local paths are fine,
-   but if data ever comes from Firestore this
-   would need the isSafeUrl() guard.
 ───────────────────────────────────────────── */
 function showMember(m) {
   const setTxt = (elId, val) => {
@@ -321,7 +276,6 @@ function showMember(m) {
   setTxt("mName", m.name);
   setTxt("mRole", m.role);
 
-  /* Image */
   const mImg = document.getElementById("mImg");
   if (mImg) {
     mImg.src = m.img;
@@ -331,15 +285,9 @@ function showMember(m) {
     };
   }
 
-  /* Social links — only set if non-empty and not a bare "#" placeholder */
   const setLink = (elId, href) => {
     const el = document.getElementById(elId);
     if (!el) return;
-    /*
-      If link is "#" it means it hasn't been filled in yet.
-      We keep it as "#" visually but could hide the icon instead.
-      If a real URL comes in, validate it's http/https.
-    */
     el.href = (href && href !== "#" && isSafeUrl(href)) ? href : "#";
   };
 
@@ -353,7 +301,6 @@ function showMember(m) {
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
 
-/* Expose globally — called from fillGrid click handlers */
 window.showMember = showMember;
 
 /* ─────────────────────────────────────────────
@@ -382,15 +329,12 @@ window.toggleEnactors = toggleEnactors;
 
 /* ─────────────────────────────────────────────
    FIRESTORE — ENACTOR OF THE MONTH
-   Real-time listener so it updates without a
-   page refresh if admin changes the EOM.
 ───────────────────────────────────────────── */
 function loadEOM() {
   db.collection("settings").doc("eom").onSnapshot(doc => {
     if (!doc.exists) return;
     const data = doc.data();
 
-    /* textContent — never innerHTML */
     const nameEl = document.getElementById("eom-name");
     const descEl = document.getElementById("eom-desc");
     const imgEl  = document.getElementById("eom-img");
@@ -400,15 +344,12 @@ function loadEOM() {
     if (imgEl && data.img && isSafeUrl(data.img)) imgEl.src = data.img;
 
   }, err => {
-    /* EOM is cosmetic — fail silently */
     console.warn("[loadEOM]", err.message);
   });
 }
 
 /* ─────────────────────────────────────────────
    FIRESTORE — EVENTS TIMELINE
-   Real-time listener — new events appear
-   immediately without a page refresh.
 ───────────────────────────────────────────── */
 function loadTimeline() {
   const container = document.getElementById("events-container");
@@ -418,7 +359,6 @@ function loadTimeline() {
     .orderBy("date", "asc")
     .onSnapshot(snapshot => {
 
-      /* Clear container safely */
       while (container.firstChild) container.removeChild(container.firstChild);
 
       if (snapshot.empty) {
@@ -433,36 +373,30 @@ function loadTimeline() {
         const ev     = doc.data();
         const isEven = index % 2 === 0;
 
-        /* Row */
         const row       = document.createElement("div");
         row.className   = `relative flex items-center ${isEven ? "md:flex-row-reverse justify-end" : "justify-start"} group`;
         row.setAttribute("role", "listitem");
 
-        /* Timeline dot */
         const dot       = document.createElement("div");
         dot.className   = "absolute left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-yellow rounded-full border-4 border-white shadow-md z-10 hidden md:block";
         dot.setAttribute("aria-hidden", "true");
         row.appendChild(dot);
 
-        /* Card */
         const card      = document.createElement("div");
         card.className  = "w-full md:w-[45%] p-8 bg-white rounded-[2.5rem] border-2 border-gray-100 hover:border-yellow hover:shadow-xl transition-all duration-300 cursor-default";
         card.setAttribute("data-aos", isEven ? "fade-left" : "fade-right");
 
-        /* Date */
         const dateEl        = document.createElement("time");
         dateEl.className    = "text-[9px] font-black uppercase tracking-widest text-yellow";
-        dateEl.textContent  = ev.date || "";   /* ✅ textContent */
+        dateEl.textContent  = ev.date || "";
 
-        /* Title */
         const titleEl       = document.createElement("h4");
         titleEl.className   = "text-xl font-black font-heading mt-2 uppercase";
-        titleEl.textContent = ev.title || "";  /* ✅ textContent */
+        titleEl.textContent = ev.title || "";
 
-        /* Description */
         const descEl        = document.createElement("p");
         descEl.className    = "mt-3 text-sm text-gray-500 leading-relaxed";
-        descEl.textContent  = ev.description || ""; /* ✅ textContent */
+        descEl.textContent  = ev.description || "";
 
         card.appendChild(dateEl);
         card.appendChild(titleEl);
@@ -471,7 +405,6 @@ function loadTimeline() {
         container.appendChild(row);
       });
 
-      /* Re-init AOS for newly added cards */
       if (typeof AOS !== "undefined") AOS.refresh();
 
     }, err => {
@@ -488,16 +421,6 @@ function loadTimeline() {
 
 /* ─────────────────────────────────────────────
    REGISTRATION FORM
-   FIX 1: alert() × 2  → Toast
-   FIX 2: No input validation at all
-   FIX 3: No loading state — double-submit possible
-   FIX 4: fullName and motivation not sanitized
-   FIX 5: No email trim
-   FIX 6: No department null-check (would throw if
-          no radio selected)
-   FIX 7: Missing points/level/badges fields in
-          Firestore document
-   FIX 8: No email verification sent
 ───────────────────────────────────────────── */
 function initRegistrationForm() {
   const form = document.getElementById("registrationForm");
@@ -506,14 +429,12 @@ function initRegistrationForm() {
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    /* ── Read inputs ──────────────────────────── */
     const fullName   = sanitize((document.getElementById("regName")?.value     ?? "").trim());
     const email      =          (document.getElementById("regEmail")?.value    ?? "").trim();
     const password   =          (document.getElementById("regPassword")?.value ?? "");
     const motivation = sanitize((document.getElementById("regMotivation")?.value ?? "").trim());
     const department = document.querySelector("input[name='dept']:checked")?.value ?? "";
 
-    /* ── Validate ─────────────────────────────── */
     if (!fullName || fullName.length < 3) {
       Toast.warning("Please enter your full name (at least 3 characters).");
       return;
@@ -535,35 +456,25 @@ function initRegistrationForm() {
       return;
     }
 
-    /* ── Lock submit button ───────────────────── */
     const btn = document.getElementById("submitBtn");
     if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
 
     try {
-      /* ── Create Auth account ──────────────────── */
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const user           = userCredential.user;
 
-      /* ── Set display name ─────────────────────── */
       await user.updateProfile({ displayName: fullName });
-
-      /* ── Send email verification ──────────────── */
       await user.sendEmailVerification();
 
-      /* ── Write Firestore document ─────────────── */
-      /*
-        SECURITY: role and status hardcoded here — never read from form.
-        This prevents privilege escalation attacks.
-      */
       await db.collection("users").doc(user.uid).set({
         uid:        user.uid,
-        fullName:   fullName,     // sanitized
+        fullName:   fullName,
         email:      email,
         department: department,
-        motivation: motivation,   // sanitized
+        motivation: motivation,
 
-        role:      "member",      // ← always "member"
-        status:    "pending",     // ← always "pending" until admin approves
+        role:      "member",
+        status:    "pending",
 
         points:    0,
         level:     "Junior",
@@ -573,10 +484,8 @@ function initRegistrationForm() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      /* ── Sign out — enforce email verification ─── */
       await auth.signOut();
 
-      /* ── Success ──────────────────────────────── */
       Toast.success("Application submitted! Check your email to verify your address before logging in.");
       form.reset();
 
@@ -588,7 +497,6 @@ function initRegistrationForm() {
       console.error("[registrationForm]", err.code, err.message);
 
     } finally {
-      /* Always restore button */
       if (btn) {
         btn.disabled    = false;
         btn.textContent = "Submit Application →";
@@ -602,22 +510,18 @@ function initRegistrationForm() {
 ───────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ── Libraries ───────────────────────────── */
-  if (typeof AOS     !== "undefined") AOS.init({ duration: 750, offset: 80, once: true, easing: "ease-out-cubic" });
-  if (typeof lucide  !== "undefined") lucide.createIcons();
+  if (typeof AOS    !== "undefined") AOS.init({ duration: 750, offset: 80, once: true, easing: "ease-out-cubic" });
+  if (typeof lucide !== "undefined") lucide.createIcons();
 
-  /* ── UI behaviours ───────────────────────── */
   initNavbar();
   initMobileMenu();
-  initSmoothScroll();
   initProgressBar();
   initBackToTop();
 
-  /* ── Team grids ──────────────────────────── */
   fillGrid(LEADERSHIP, "leadership-grid");
   fillGrid(ENACTORS,   "enactors-list");
 
-  /* ── Modal — close on overlay click ─────── */
+  /* Modal — close on overlay click */
   const modal = document.getElementById("unifiedModal");
   if (modal) {
     modal.addEventListener("click", e => {
@@ -625,14 +529,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ── Firestore live data ─────────────────── */
   loadEOM();
   loadTimeline();
 
-  /* ── Registration form ───────────────────── */
   initRegistrationForm();
 
-  /* ── Footer year ─────────────────────────── */
   const yearEl = document.getElementById("footer-year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 });

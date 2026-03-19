@@ -771,6 +771,22 @@
         }
         #sidebar-overlay.show { display: block; }
 
+        /* ── Dashboard grid — responsive ─────────── */
+        /* FIX: Original used an inline style="display:grid;grid-template-columns:1fr 320px"
+           on the dashboard grid which broke entirely on tablet/mobile.
+           Now uses a proper CSS class with a breakpoint. */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.25rem;
+            align-items: start;
+        }
+        @media (max-width: 1100px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* ── Responsive ──────────────────────────── */
         @media (max-width: 768px) {
             #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
@@ -859,7 +875,7 @@
     </nav>
 
     <div class="sidebar-footer">
-        <button class="nav-btn btn-danger" onclick="logout()" style="border:none;background:rgba(239,68,68,0.06);color:#ef4444;">
+        <button class="nav-btn btn-danger" onclick="logout()" style="border:none;background:rgba(239,68,68,0.06);color:#ef4444;" id="logoutBtn">
             <i data-lucide="log-out" style="width:16px;height:16px;" aria-hidden="true"></i>
             Sign Out
         </button>
@@ -896,7 +912,8 @@
 
         <!-- ══ DASHBOARD ══════════════════════════ -->
         <div id="dashboard" class="tab-panel active">
-            <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start;" class="dashboard-grid">
+            <!-- FIX: Replaced inline style grid with .dashboard-grid class for responsive behavior -->
+            <div class="dashboard-grid">
 
                 <!-- Left column -->
                 <div style="display:flex;flex-direction:column;gap:1.25rem;">
@@ -1103,645 +1120,97 @@
 
 
 <!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: Firebase → Config → Toast → Logic
+     Load order: Firebase → Config → Toast → auth-guard → member.js
+     FIX: Removed the large inline <script> block that duplicated all
+     logic from member.js, causing double auth listeners and double
+     Firestore subscriptions. All logic now lives in member.js.
 ═════════════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/toast.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/member.js"></script>
 
 <script>
+"use strict";
+
 /* ═══════════════════════════════════════════════
-   STATE
+   PAGE-LEVEL WIRING
+   member.js handles auth guard, profile rendering,
+   leaderboard, EOM, feed, projects, events, and
+   the settings update. We only wire the sidebar
+   toggle and tab switcher here.
 ═══════════════════════════════════════════════ */
-let userUID  = null;
-let userData = {};
 
 lucide.createIcons();
 
-
-/* ═══════════════════════════════════════════════
-   MOBILE SIDEBAR
-═══════════════════════════════════════════════ */
+/* Mobile sidebar */
 function toggleSidebar() {
-    const sidebar  = document.getElementById('sidebar');
-    const overlay  = document.getElementById('sidebar-overlay');
-    const btn      = document.getElementById('burger-btn');
-    const isOpen   = sidebar.classList.toggle('mobile-open');
-    overlay.classList.toggle('show', isOpen);
-    btn.setAttribute('aria-expanded', isOpen);
+    var sidebar = document.getElementById("sidebar");
+    var overlay = document.getElementById("sidebar-overlay");
+    var btn     = document.getElementById("burger-btn");
+    var isOpen  = sidebar.classList.toggle("mobile-open");
+    overlay.classList.toggle("show", isOpen);
+    btn.setAttribute("aria-expanded", isOpen);
 }
 function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('mobile-open');
-    document.getElementById('sidebar-overlay').classList.remove('show');
-    document.getElementById('burger-btn').setAttribute('aria-expanded', false);
+    document.getElementById("sidebar").classList.remove("mobile-open");
+    document.getElementById("sidebar-overlay").classList.remove("show");
+    document.getElementById("burger-btn").setAttribute("aria-expanded", "false");
 }
 
-
-/* ═══════════════════════════════════════════════
-   TAB SWITCHER
-═══════════════════════════════════════════════ */
-const tabTitles = {
-    dashboard: 'Dashboard',
-    missions:  'My Missions',
-    projects:  'Projects',
-    events:    'Events',
-    feed:      'Club Feed',
-    settings:  'Settings'
+/* Tab switcher
+   member.js re-exports switchTab as a global, but we define it here
+   for the inline onclick attributes in the HTML as well, so whichever
+   loads first wins without error. */
+var tabTitles = {
+    dashboard: "Dashboard",
+    missions:  "My Missions",
+    projects:  "Projects",
+    events:    "Events",
+    feed:      "Club Feed",
+    settings:  "Settings"
 };
 
 function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    if (btn) btn.classList.add('active');
-    document.getElementById('page-title').textContent = tabTitles[tabId] || tabId;
+    document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+    document.querySelectorAll(".nav-btn").forEach(function (b) { b.classList.remove("active"); });
+    var panel = document.getElementById(tabId);
+    if (panel) panel.classList.add("active");
+    if (btn)   btn.classList.add("active");
+    var titleEl = document.getElementById("page-title");
+    if (titleEl) titleEl.textContent = tabTitles[tabId] || tabId;
     closeSidebar();
 
-    /* Lazy-load tabs */
-    if (tabId === 'projects') loadProjects();
-    if (tabId === 'events')   loadEvents();
-    if (tabId === 'feed')     loadFeed();
-    if (tabId === 'missions') loadMissions('missions-list');
+    /* Trigger lazy loads if member.js has them */
+    if (tabId === "projects" && typeof loadProjects === "function") loadProjects();
+    if (tabId === "events"   && typeof loadEvents   === "function") loadEvents();
+    if (tabId === "feed"     && typeof loadFeed     === "function") loadFeed();
+    if (tabId === "missions" && typeof loadMissions === "function") loadMissions("missions-list");
 
     lucide.createIcons();
 }
 
-
-/* ═══════════════════════════════════════════════
-   AUTH GUARD + PROFILE LISTENER
-═══════════════════════════════════════════════ */
-auth.onAuthStateChanged(user => {
-    if (!user) { window.location.href = 'login.html'; return; }
-    userUID = user.uid;
-
-    /* Show auth user email in settings */
-    const emailEl = document.getElementById('settings-email');
-    if (emailEl) emailEl.textContent = user.email || '—';
-
-    /* Real-time profile listener */
-    db.collection('users').doc(user.uid).onSnapshot(doc => {
-        if (!doc.exists) return;
-        userData = doc.data();
-        updateUI(userData);
-    });
-
-    /* Load data for default tab */
-    loadLeaderboard();
-    loadEOM();
-    loadMissions('dash-missions-preview', true);
-    loadFeedPreview();
-});
-
-
-/* ═══════════════════════════════════════════════
-   UPDATE UI WITH PROFILE DATA
-═══════════════════════════════════════════════ */
-function updateUI(data) {
-    const name   = data.fullName   || 'Enactor';
-    const first  = name.split(' ')[0];
-    const dept   = data.department || 'Member';
-    const points = data.points     || 0;
-    const level  = computeLevel(points);
-    const xpPct  = computeXpPercent(points);
-
-    /* textContent — never innerHTML — for all user data */
-    setTxt('welcomeName',       first);
-    setTxt('sidebar-name',      name);
-    setTxt('sidebar-dept',      dept);
-    setTxt('dash-points',       points);
-    setTxt('dash-level',        level);
-    setTxt('dash-dept',         dept);
-    setTxt('topbar-points',     points);
-    setTxt('topbar-level',      level);
-    setTxt('xp-level-label',    level);
-    setTxt('xp-pts-label',      points + ' pts');
-    setTxt('settings-name-label', name);
-    setTxt('settings-dept-label', dept);
-    setTxt('settings-points',   points + ' pts');
-    setTxt('settings-level',    level);
-
-    /* Avatar */
-    const avatarUrl = data.profilePic || avatarFallback(name);
-    ['sidebar-avatar','topbar-avatar','settings-avatar-preview'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.src = avatarUrl;
-    });
-
-    /* Pre-fill settings form */
-    const editName = document.getElementById('editName');
-    if (editName && !editName.value) editName.value = name;
-    const editPic = document.getElementById('editPic');
-    if (editPic && !editPic.value && data.profilePic) editPic.value = data.profilePic;
-
-    /* XP bar */
-    const xpFill = document.getElementById('xp-fill');
-    if (xpFill) setTimeout(() => xpFill.style.width = xpPct + '%', 200);
-
-    /* Badges */
-    toggleBadge('badge-active', points >= 50);
-    toggleBadge('badge-expert', points >= 200);
-    toggleBadge('badge-legend', points >= 500);
+/* Logout — also defined in member.js but referenced by inline onclick */
+function logout() {
+    auth.signOut().then(function () { window.location.href = "index.html"; });
 }
 
-function setTxt(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
-}
-function toggleBadge(id, earned) {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('earned', earned);
-}
-function avatarFallback(name) {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=111&color=FFC222`;
-}
-
-
-/* ═══════════════════════════════════════════════
-   LEVEL SYSTEM
-═══════════════════════════════════════════════ */
-const LEVELS = [
-    { name: 'Junior',    min: 0   },
-    { name: 'Explorer',  min: 50  },
-    { name: 'Builder',   min: 150 },
-    { name: 'Innovator', min: 300 },
-    { name: 'Leader',    min: 500 },
-    { name: 'Champion',  min: 800 },
-];
-
-function computeLevel(pts) {
-    let level = LEVELS[0];
-    for (const l of LEVELS) { if (pts >= l.min) level = l; }
-    return level.name;
-}
-
-function computeXpPercent(pts) {
-    let current = LEVELS[0], next = LEVELS[1];
-    for (let i = 0; i < LEVELS.length - 1; i++) {
-        if (pts >= LEVELS[i].min && pts < LEVELS[i+1].min) {
-            current = LEVELS[i];
-            next    = LEVELS[i+1];
-            break;
-        }
-        if (pts >= LEVELS[LEVELS.length-1].min) return 100;
-    }
-    const range = next.min - current.min;
-    const prog  = pts - current.min;
-    return Math.min(100, Math.round((prog / range) * 100));
-}
-
-
-/* ═══════════════════════════════════════════════
-   MISSIONS
-═══════════════════════════════════════════════ */
-function loadMissions(containerId, previewOnly = false) {
-    if (!userUID) return;
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    db.collection('tasks').where('uid', '==', userUID).onSnapshot(snap => {
-        container.innerHTML = '';
-
-        /* Update sidebar badge */
-        const pending = snap.docs.filter(d => !d.data().completed).length;
-        const badge   = document.getElementById('badge-missions');
-        if (badge) {
-            badge.textContent = pending;
-            badge.classList.toggle('show', pending > 0);
-        }
-
-        const docs = previewOnly ? snap.docs.slice(0, 3) : snap.docs;
-
-        if (docs.length === 0) {
-            container.appendChild(makeEmpty('send', 'No missions yet. Check back soon!'));
-            return;
-        }
-
-        docs.forEach(doc => {
-            const t    = doc.data();
-            const card = makeMissionCard(doc.id, t);
-            container.appendChild(card);
-        });
-
-        lucide.createIcons();
-    });
-}
-
-function makeMissionCard(docId, t) {
-    const statusClass = t.completed ? 'done' : t.submitted ? 'reviewing' : '';
-    const card = document.createElement('div');
-    card.className = `mission-card ${statusClass}`;
-
-    /* Header row */
-    const header = document.createElement('div');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.625rem;';
-
-    const title = document.createElement('p');
-    title.className   = 'mission-title';
-    title.style.color = t.completed ? '#16a34a' : t.submitted ? '#ea580c' : 'var(--text)';
-    title.textContent = t.text || '';
-
-    const right = document.createElement('div');
-    right.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-shrink:0;';
-
-    if (t.points) {
-        const pts = document.createElement('span');
-        pts.className   = 'mission-pts';
-        pts.textContent = '+' + t.points + ' pts';
-        right.appendChild(pts);
-    }
-
-    const iconEl = document.createElement('i');
-    iconEl.setAttribute('data-lucide', t.completed ? 'check-circle-2' : t.submitted ? 'clock' : 'circle');
-    iconEl.style.cssText = `width:18px;height:18px;color:${t.completed ? '#22c55e' : t.submitted ? '#f97316' : '#d1d5db'};flex-shrink:0;`;
-    right.appendChild(iconEl);
-
-    header.appendChild(title);
-    header.appendChild(right);
-    card.appendChild(header);
-
-    /* Body */
-    if (!t.completed && !t.submitted) {
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:0.5rem;align-items:center;';
-
-        const input   = document.createElement('input');
-        input.type    = 'url';
-        input.id      = `link-${docId}`;
-        input.placeholder = 'Paste work link (Drive, Docs, Figma...)';
-        input.className   = 'link-input';
-
-        const btn = document.createElement('button');
-        btn.className   = 'btn btn-primary';
-        btn.textContent = 'Submit';
-        btn.addEventListener('click', () => submitTask(docId));
-
-        row.appendChild(input);
-        row.appendChild(btn);
-        card.appendChild(row);
-
-    } else if (t.submitted && !t.completed) {
-        const msg = document.createElement('p');
-        msg.style.cssText = 'font-size:0.72rem;font-weight:700;color:#ea580c;';
-        msg.textContent   = '⏳ Under review by admin...';
-        card.appendChild(msg);
-
-    } else if (t.completed) {
-        const msg = document.createElement('p');
-        msg.style.cssText = 'font-size:0.72rem;font-weight:700;color:#16a34a;';
-        msg.textContent   = '✓ Mission accomplished!';
-        card.appendChild(msg);
-    }
-
-    return card;
-}
-
-
-/* ═══════════════════════════════════════════════
-   SUBMIT TASK
-═══════════════════════════════════════════════ */
-async function submitTask(id) {
-    const input = document.getElementById(`link-${id}`);
-    const link  = input ? input.value.trim() : '';
-
-    if (!link) {
-        Toast.warning('Please paste your work link before submitting.');
-        return;
-    }
-    if (!/^https?:\/\//i.test(link)) {
-        Toast.warning('Please enter a valid URL starting with https://');
-        return;
-    }
-
-    try {
-        await db.collection('tasks').doc(id).update({
-            workLink:  link,
-            submitted: true,
-            status:    'pending_review'
-        });
-        confetti({ particleCount: 80, spread: 50, origin: { y: 0.6 } });
-        Toast.success('Work submitted! 🎉 Waiting for admin review.');
-    } catch (err) {
-        Toast.error('Could not submit. Please try again.');
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   PROJECTS
-═══════════════════════════════════════════════ */
-function loadProjects() {
-    const grid = document.getElementById('projects-grid');
-    grid.innerHTML = '';
-
-    db.collection('projects').onSnapshot(snap => {
-        grid.innerHTML = '';
-
-        if (snap.empty) {
-            grid.appendChild(makeEmpty('folder-kanban', 'No projects yet.'));
-            return;
-        }
-
-        snap.forEach(doc => {
-            const p    = doc.data();
-            const pct  = Math.min(100, Math.max(0, p.progress || 0));
-            const card = document.createElement('div');
-            card.className = 'project-card';
-
-            const name = document.createElement('p');
-            name.className   = 'project-name';
-            name.textContent = p.name || '';
-
-            const meta = document.createElement('div');
-            meta.style.cssText = 'display:flex;justify-content:space-between;font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:#4b5563;margin-bottom:0.5rem;';
-
-            const lbl = document.createElement('span');
-            lbl.textContent = 'Progress';
-
-            const pctEl = document.createElement('span');
-            pctEl.style.color  = 'var(--yellow)';
-            pctEl.textContent  = pct + '%';
-
-            meta.appendChild(lbl);
-            meta.appendChild(pctEl);
-
-            const track = document.createElement('div');
-            track.className = 'progress-track';
-
-            const fill = document.createElement('div');
-            fill.className  = 'progress-fill';
-            fill.style.width = '0%';
-            setTimeout(() => fill.style.width = pct + '%', 100);
-
-            track.appendChild(fill);
-
-            card.appendChild(name);
-            card.appendChild(meta);
-            card.appendChild(track);
-            grid.appendChild(card);
-        });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   EVENTS
-═══════════════════════════════════════════════ */
-function loadEvents() {
-    const list = document.getElementById('events-list');
-    list.innerHTML = '';
-
-    db.collection('events').orderBy('createdAt', 'desc').onSnapshot(snap => {
-        list.innerHTML = '';
-
-        if (snap.empty) {
-            list.appendChild(makeEmpty('calendar-days', 'No events scheduled yet.'));
-            return;
-        }
-
-        snap.forEach(doc => {
-            const e      = doc.data();
-            const parts  = (e.date || '').split(' ');
-            const card   = document.createElement('div');
-            card.className = 'event-card';
-
-            const dateBox  = document.createElement('div');
-            dateBox.className = 'event-date-box';
-
-            const day  = document.createElement('p');
-            day.className   = 'event-day';
-            day.textContent = parts[0] || '—';
-
-            const mon  = document.createElement('p');
-            mon.className   = 'event-month';
-            mon.textContent = parts[1] || '';
-
-            dateBox.appendChild(day);
-            dateBox.appendChild(mon);
-
-            const sep = document.createElement('div');
-            sep.style.cssText = 'width:1px;background:#e5e7eb;align-self:stretch;flex-shrink:0;';
-
-            const info  = document.createElement('div');
-            const title = document.createElement('p');
-            title.className   = 'event-title';
-            title.textContent = e.title || '';
-
-            const desc  = document.createElement('p');
-            desc.className   = 'event-desc';
-            desc.textContent = e.description || '';
-
-            info.appendChild(title);
-            info.appendChild(desc);
-            card.appendChild(dateBox);
-            card.appendChild(sep);
-            card.appendChild(info);
-            list.appendChild(card);
-        });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   CLUB FEED (full)
-═══════════════════════════════════════════════ */
-function loadFeed() {
-    const list = document.getElementById('feed-list');
-    if (!list) return;
-    list.innerHTML = '';
-
-    db.collection('news').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
-        list.innerHTML = '';
-
-        if (snap.empty) {
-            list.appendChild(makeEmpty('rss', 'No announcements yet.'));
-            return;
-        }
-
-        snap.forEach(doc => {
-            const n = doc.data();
-            list.appendChild(makeFeedCard(n));
-        });
-    });
-}
-
-/* Club feed preview (dashboard) */
-function loadFeedPreview() {
-    const container = document.getElementById('dash-feed-preview');
-    if (!container) return;
-
-    db.collection('news').orderBy('createdAt', 'desc').limit(2).onSnapshot(snap => {
-        container.innerHTML = '';
-
-        if (snap.empty) {
-            const p = document.createElement('p');
-            p.style.cssText = 'font-size:0.75rem;color:var(--text-muted);font-style:italic;';
-            p.textContent = 'No announcements yet.';
-            container.appendChild(p);
-            return;
-        }
-
-        snap.forEach(doc => container.appendChild(makeFeedCard(doc.data())));
-    });
-}
-
-function makeFeedCard(n) {
-    const card = document.createElement('div');
-    card.className = 'feed-card';
-    card.style.cssText = 'display:flex;gap:0.875rem;';
-
-    const dot = document.createElement('div');
-    dot.className = 'feed-dot';
-    dot.setAttribute('aria-hidden', 'true');
-
-    const body  = document.createElement('div');
-
-    const title = document.createElement('p');
-    title.style.cssText = 'font-weight:900;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:0.25rem;';
-    title.textContent   = n.title || '';
-
-    const desc  = document.createElement('p');
-    desc.style.cssText  = 'font-size:0.78rem;color:var(--text-muted);font-weight:600;line-height:1.5;';
-    desc.textContent    = n.desc || '';
-
-    body.appendChild(title);
-    body.appendChild(desc);
-    card.appendChild(dot);
-    card.appendChild(body);
-    return card;
-}
-
-
-/* ═══════════════════════════════════════════════
-   LEADERBOARD
-═══════════════════════════════════════════════ */
-function loadLeaderboard() {
-    const list = document.getElementById('leaderboard-list');
-    if (!list) return;
-
-    db.collection('users').orderBy('points', 'desc').limit(5).onSnapshot(snap => {
-        list.innerHTML = '';
-        let rank = 1;
-        const medals = ['🥇','🥈','🥉'];
-
-        snap.forEach(doc => {
-            const u     = doc.data();
-            const isMe  = doc.id === userUID;
-            const row   = document.createElement('div');
-            row.className = `lb-row${isMe ? ' me' : ''}`;
-
-            const rankEl  = document.createElement('span');
-            rankEl.className   = 'lb-rank';
-            rankEl.textContent = medals[rank-1] || rank;
-            rankEl.style.color = rank === 1 ? 'var(--yellow)' : rank <= 3 ? '#9ca3af' : '#4b5563';
-
-            const avatar  = document.createElement('img');
-            avatar.src    = u.profilePic || avatarFallback(u.fullName || 'U');
-            avatar.alt    = u.fullName || '';
-            avatar.className = 'lb-avatar';
-
-            const name    = document.createElement('span');
-            name.className   = 'lb-name';
-            name.textContent = u.fullName || 'Enactor';
-
-            const pts     = document.createElement('span');
-            pts.className = `lb-pts${rank === 1 ? ' top' : ''}`;
-            pts.textContent = (u.points || 0) + ' pts';
-
-            row.appendChild(rankEl);
-            row.appendChild(avatar);
-            row.appendChild(name);
-            row.appendChild(pts);
-            list.appendChild(row);
-
-            /* EOM from leaderboard top 1 (fallback) */
-            if (rank === 1) {
-                const eomName = document.getElementById('eom-name');
-                if (eomName && eomName.textContent === 'Loading...') {
-                    setTxt('eom-name', u.fullName || '');
-                    const eomImg = document.getElementById('eom-img');
-                    if (eomImg && u.profilePic) eomImg.src = u.profilePic;
-                }
-            }
-
-            rank++;
-        });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   ENACTOR OF THE MONTH (from Firestore settings)
-═══════════════════════════════════════════════ */
-function loadEOM() {
-    db.collection('settings').doc('eom').onSnapshot(doc => {
-        if (!doc.exists) return;
-        const d = doc.data();
-        if (d.name) setTxt('eom-name', d.name);
-        if (d.desc) setTxt('eom-desc', d.desc);
-        const img = document.getElementById('eom-img');
-        if (img && d.img) img.src = d.img;
-    }, err => console.warn('EOM load error:', err.message));
-}
-
-
-/* ═══════════════════════════════════════════════
-   UPDATE PROFILE
-═══════════════════════════════════════════════ */
-async function updateProfile() {
-    const newName = document.getElementById('editName').value.trim();
-    const newPic  = document.getElementById('editPic').value.trim();
-
-    if (!newName) {
-        Toast.warning('Display name is required.');
-        return;
-    }
-
-    try {
-        const update = { fullName: newName };
-        if (newPic) update.profilePic = newPic;
-        await db.collection('users').doc(userUID).update(update);
-        Toast.success('Profile updated!');
-    } catch (err) {
-        Toast.error('Could not update profile. Please try again.');
-        console.error(err);
-    }
-}
-
+/* Avatar preview (settings tab) */
 function previewAvatar(url) {
-    const preview = document.getElementById('settings-avatar-preview');
+    var preview = document.getElementById("settings-avatar-preview");
     if (preview && /^https?:\/\//i.test(url)) preview.src = url;
 }
 
-
-/* ═══════════════════════════════════════════════
-   LOGOUT
-═══════════════════════════════════════════════ */
-function logout() {
-    auth.signOut().then(() => window.location.href = 'index.html');
-}
-
-
-/* ═══════════════════════════════════════════════
-   HELPER — Empty state element
-═══════════════════════════════════════════════ */
-function makeEmpty(icon, msg) {
-    const wrap = document.createElement('div');
-    wrap.className = 'empty-state';
-
-    const iconEl = document.createElement('div');
-    iconEl.innerHTML = `<i data-lucide="${icon}" style="width:40px;height:40px;margin:0 auto;display:block;opacity:0.25;color:#9ca3af;"></i>`;
-
-    const p = document.createElement('p');
-    p.textContent = msg;
-
-    wrap.appendChild(iconEl);
-    wrap.appendChild(p);
-    setTimeout(() => lucide.createIcons(), 0);
-    return wrap;
+/* updateProfile — delegated to member.js if available */
+function updateProfile() {
+    if (typeof window._updateProfile === "function") {
+        window._updateProfile();
+    }
 }
 </script>
+
 </body>
 </html>

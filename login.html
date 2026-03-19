@@ -558,7 +558,6 @@
                                required aria-required="true"
                                style="padding-right:2.75rem;">
                         <button type="button" id="pwToggle" class="pw-toggle"
-                                onclick="togglePw()"
                                 aria-label="Toggle password visibility">
                             <i data-lucide="eye" id="pwIcon" style="width:16px;height:16px;" aria-hidden="true"></i>
                         </button>
@@ -595,214 +594,39 @@
 
 
 <!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: Firebase SDKs → Config → Toast → Logic
+     Load order: Firebase SDKs → Config → Toast → auth-guard → login.js
+     FIX: Removed the large inline <script> block that duplicated
+     all logic from login.js, causing double auth listeners and
+     double form submit handlers. All logic is now in login.js.
 ═════════════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/toast.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/login.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════
-   INIT
+   PAGE-LEVEL ADDITIONS
+   login.js handles: form submit, forgot password,
+   password toggle, and checkExistingSession().
+   We only add the EOM brand panel load here since
+   it is cosmetic and specific to this page's UI.
 ═══════════════════════════════════════════════ */
-lucide.createIcons();
-
-
-/* ═══════════════════════════════════════════════
-   LOAD EOM FROM FIRESTORE (brand panel)
-═══════════════════════════════════════════════ */
-db.collection('settings').doc('eom').get().then(doc => {
-    if (!doc.exists) return;
-    const d = doc.data();
-    if (d.name) document.getElementById('brand-eom-name').textContent = d.name;
-    if (d.img)  document.getElementById('brand-eom-img').src  = d.img;
-}).catch(() => { /* silently fail — EOM panel is cosmetic */ });
-
-
-/* ═══════════════════════════════════════════════
-   AUTO-REDIRECT IF ALREADY LOGGED IN
-═══════════════════════════════════════════════ */
-auth.onAuthStateChanged(async (user) => {
-    if (!user) return;
-    try {
-        const doc = await db.collection('users').doc(user.uid).get();
-        if (!doc.exists) return;
-        const data = doc.data();
-        if (data.role === 'admin') {
-            window.location.href = 'admin.html';
-        } else if (data.status === 'approved' || data.status === 'interview') {
-            window.location.href = 'member.html';
-        }
-    } catch (err) {
-        console.warn('Session check failed:', err.message);
-    }
-});
-
-
-/* ═══════════════════════════════════════════════
-   PASSWORD VISIBILITY TOGGLE
-═══════════════════════════════════════════════ */
-function togglePw() {
-    const field = document.getElementById('loginPassword');
-    const icon  = document.getElementById('pwIcon');
-    const isText = field.type === 'text';
-    field.type = isText ? 'password' : 'text';
-    icon.setAttribute('data-lucide', isText ? 'eye' : 'eye-off');
+document.addEventListener("DOMContentLoaded", function () {
     lucide.createIcons();
-    document.getElementById('pwToggle').setAttribute('aria-label',
-        isText ? 'Show password' : 'Hide password'
-    );
-}
 
-
-/* ═══════════════════════════════════════════════
-   STATUS MESSAGE HELPER
-═══════════════════════════════════════════════ */
-function showStatusMsg(type, html) {
-    const el = document.getElementById('statusMsg');
-    el.className = `status-msg ${type}`;
-    el.innerHTML = html; /* Trusted string — set by us, not user input */
-    el.style.display = 'block';
-}
-function hideStatusMsg() {
-    document.getElementById('statusMsg').style.display = 'none';
-}
-
-
-/* ═══════════════════════════════════════════════
-   SET BUTTON LOADING STATE
-═══════════════════════════════════════════════ */
-function setLoading(isLoading) {
-    const btn     = document.getElementById('loginBtn');
-    const btnText = document.getElementById('btnText');
-    const btnIcon = document.getElementById('btnIcon');
-
-    btn.disabled = isLoading;
-
-    if (isLoading) {
-        btnText.textContent = 'Authenticating';
-        btnIcon.outerHTML   = `<span class="spinner" id="btnIcon"></span>`;
-    } else {
-        btnText.textContent = 'Sign In';
-        /* Restore icon element */
-        const spinner = document.getElementById('btnIcon');
-        if (spinner) {
-            const newIcon = document.createElement('i');
-            newIcon.setAttribute('data-lucide', 'log-in');
-            newIcon.id = 'btnIcon';
-            newIcon.style.cssText = 'width:15px;height:15px;';
-            newIcon.setAttribute('aria-hidden', 'true');
-            spinner.replaceWith(newIcon);
-            lucide.createIcons();
-        }
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   LOGIN FORM SUBMIT
-═══════════════════════════════════════════════ */
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    hideStatusMsg();
-
-    const email    = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!email || !password) {
-        Toast.warning('Please enter your email and password.');
-        return;
-    }
-
-    setLoading(true);
-
-    try {
-        /* Step 1: Firebase Auth */
-        const credential = await auth.signInWithEmailAndPassword(email, password);
-        const uid        = credential.user.uid;
-
-        /* Step 2: Fetch Firestore profile */
-        const userDoc = await db.collection('users').doc(uid).get();
-
-        if (!userDoc.exists) {
-            Toast.error('Profile not found. Please contact the admin.');
-            await auth.signOut();
-            return;
-        }
-
-        const userData = userDoc.data();
-
-        /* Step 3: Route by role / status */
-        if (userData.role === 'admin') {
-            Toast.success('Welcome back, Admin!');
-            setTimeout(() => window.location.href = 'admin.html', 700);
-            return;
-        }
-
-        if (userData.status === 'approved' || userData.status === 'interview') {
-            const firstName = userData.fullName
-                ? userData.fullName.split(' ')[0]
-                : 'Enactor';
-            Toast.success(`Welcome back, ${firstName}! 🎉`);
-            setTimeout(() => window.location.href = 'member.html', 700);
-            return;
-        }
-
-        /* Pending or rejected — sign out and show inline status */
-        await auth.signOut();
-
-        if (userData.status === 'pending') {
-            showStatusMsg('pending',
-                '⏳ <strong>Application under review.</strong> Our HR team will reach out soon. Hang tight!'
-            );
-        } else {
-            showStatusMsg('rejected',
-                '❌ <strong>Your application was not approved.</strong> Please contact us at <a href="mailto:enactus.isimg@gmail.com" style="text-decoration:underline;">enactus.isimg@gmail.com</a> for more information.'
-            );
-        }
-
-    } catch (err) {
-        const messages = {
-            'auth/user-not-found':        'No account found with this email address.',
-            'auth/wrong-password':         'Incorrect password. Please try again.',
-            'auth/invalid-email':          'Please enter a valid email address.',
-            'auth/invalid-credential':     'Invalid email or password. Please check and try again.',
-            'auth/too-many-requests':      'Too many failed attempts. Please wait a few minutes before trying again.',
-            'auth/user-disabled':          'This account has been disabled. Please contact the admin.',
-            'auth/network-request-failed': 'Network error. Please check your internet connection.',
-        };
-        Toast.error(messages[err.code] || 'Login failed. Please try again.');
-
-    } finally {
-        setLoading(false);
-    }
-});
-
-
-/* ═══════════════════════════════════════════════
-   FORGOT PASSWORD
-═══════════════════════════════════════════════ */
-document.getElementById('forgotBtn').addEventListener('click', async () => {
-    const email = document.getElementById('loginEmail').value.trim();
-
-    if (!email) {
-        Toast.warning('Enter your email address above, then click "Forgot password?".');
-        return;
-    }
-
-    try {
-        await auth.sendPasswordResetEmail(email);
-        Toast.success('Reset link sent! Check your inbox (and spam folder).');
-    } catch (err) {
-        const isNotFound = err.code === 'auth/user-not-found' || err.code === 'auth/invalid-email';
-        Toast.error(
-            isNotFound
-                ? 'No account found with that email address.'
-                : 'Could not send reset email. Please try again.'
-        );
-    }
+    /* Load EOM for the brand panel (cosmetic — fail silently) */
+    db.collection("settings").doc("eom").get().then(function (doc) {
+        if (!doc.exists) return;
+        var d = doc.data();
+        var nameEl = document.getElementById("brand-eom-name");
+        var imgEl  = document.getElementById("brand-eom-img");
+        if (nameEl && d.name) nameEl.textContent = d.name;
+        if (imgEl  && d.img && /^https?:\/\//i.test(d.img)) imgEl.src = d.img;
+    }).catch(function () { /* silently fail */ });
 });
 </script>
 
