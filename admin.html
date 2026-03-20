@@ -137,10 +137,9 @@
             border-radius: 999px;
             font-size: 0.6rem;
             font-weight: 900;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
-            display: none;
         }
         .nav-item .nav-badge.visible { display: flex; }
 
@@ -541,7 +540,7 @@
         <!-- Mobile burger -->
         <button id="burgerBtn" onclick="toggleSidebar()"
                 style="background:none;border:none;cursor:pointer;color:#e5e7eb;display:none;"
-                class="md:hidden" aria-label="Toggle menu">
+                class="md:hidden" aria-label="Toggle menu" aria-expanded="false">
             <i data-lucide="menu" class="w-5 h-5" aria-hidden="true"></i>
         </button>
 
@@ -598,7 +597,7 @@
                         <i data-lucide="users" style="width:18px;height:18px;color:var(--yellow);" aria-hidden="true"></i>
                     </div>
                     <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Members</p>
-                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Manage applications & status</p>
+                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Manage applications &amp; status</p>
                 </button>
                 <button class="card" onclick="showSection('tasks', document.querySelector('[data-section=tasks]'))" style="cursor:pointer;text-align:left;border:none;">
                     <div style="width:36px;height:36px;background:rgba(34,197,94,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
@@ -640,10 +639,10 @@
                 </div>
                 <!-- Filter tabs -->
                 <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="filterMembers('all')"     id="filter-all"      style="font-size:0.6rem;">All</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('pending')" id="filter-pending"  style="font-size:0.6rem;">Pending</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('approved')"id="filter-approved" style="font-size:0.6rem;">Approved</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('rejected')"id="filter-rejected" style="font-size:0.6rem;">Rejected</button>
+                    <button class="btn btn-primary" onclick="filterMembers('all')"      id="filter-all"      style="font-size:0.6rem;">All</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('pending')"  id="filter-pending"  style="font-size:0.6rem;">Pending</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('approved')" id="filter-approved" style="font-size:0.6rem;">Approved</button>
+                    <button class="btn btn-dark"    onclick="filterMembers('rejected')" id="filter-rejected" style="font-size:0.6rem;">Rejected</button>
                 </div>
             </div>
             <div id="membersList" class="space-y-3">
@@ -805,25 +804,27 @@
 
 
 <!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: Firebase → Config → Toast → Logic
+     Load order: Firebase → Config → Toast → auth-guard → Logic
 ═════════════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/toast.js"></script>
+<script src="js/auth-guard.js"></script>
 
 <script>
+"use strict";
+
 /* ═══════════════════════════════════════════════
-   INIT
+   INIT — lucide icons + mobile burger visibility
 ═══════════════════════════════════════════════ */
 lucide.createIcons();
 
-/* Mobile burger button visibility */
-const burgerBtn = document.getElementById('burgerBtn');
-if (window.innerWidth <= 768) burgerBtn.style.display = 'flex';
-window.addEventListener('resize', () => {
-    burgerBtn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+var burgerBtn = document.getElementById("burgerBtn");
+if (window.innerWidth <= 768) burgerBtn.style.display = "flex";
+window.addEventListener("resize", function () {
+    burgerBtn.style.display = window.innerWidth <= 768 ? "flex" : "none";
 });
 
 
@@ -831,42 +832,34 @@ window.addEventListener('resize', () => {
    SIDEBAR TOGGLE
 ═══════════════════════════════════════════════ */
 function toggleSidebar() {
-    const sidebar  = document.getElementById('sidebar');
-    const overlay  = document.getElementById('sidebar-overlay');
-    const isOpen   = sidebar.classList.toggle('mobile-open');
-    overlay.classList.toggle('visible', isOpen);
-    burgerBtn.setAttribute('aria-expanded', isOpen);
+    var sidebar  = document.getElementById("sidebar");
+    var overlay  = document.getElementById("sidebar-overlay");
+    var isOpen   = sidebar.classList.toggle("mobile-open");
+    overlay.classList.toggle("visible", isOpen);
+    burgerBtn.setAttribute("aria-expanded", isOpen);
 }
 function closeSidebar() {
-    document.getElementById('sidebar').classList.remove('mobile-open');
-    document.getElementById('sidebar-overlay').classList.remove('visible');
+    document.getElementById("sidebar").classList.remove("mobile-open");
+    document.getElementById("sidebar-overlay").classList.remove("visible");
 }
 
 
 /* ═══════════════════════════════════════════════
    AUTH GUARD — admin only
+   FIX: Was using inline auth.onAuthStateChanged;
+   now correctly uses AuthGuard.requireAdmin().
 ═══════════════════════════════════════════════ */
-auth.onAuthStateChanged(async (user) => {
-    if (!user) { window.location.href = 'login.html'; return; }
-
-    try {
-        const doc = await db.collection('users').doc(user.uid).get();
-        if (!doc.exists || doc.data().role !== 'admin') {
-            window.location.href = 'member.html';
-            return;
-        }
-        initAdminPanel();
-    } catch (err) {
-        console.error('Auth guard error:', err);
-        window.location.href = 'login.html';
-    }
+document.addEventListener("DOMContentLoaded", function () {
+    AuthGuard.requireAdmin(function (user, data) {
+        initAdminPanel(user, data);
+    });
 });
 
 
 /* ═══════════════════════════════════════════════
    PANEL INIT
 ═══════════════════════════════════════════════ */
-function initAdminPanel() {
+function initAdminPanel(user, data) {
     loadStats();
     loadMemberDropdowns();
     loadSubmissions();
@@ -877,35 +870,29 @@ function initAdminPanel() {
 /* ═══════════════════════════════════════════════
    SECTION SWITCHER
 ═══════════════════════════════════════════════ */
-const sectionTitles = {
-    overview:  'Overview',
-    reviews:   'Submissions',
-    members:   'Members',
-    tasks:     'Assign Mission',
-    projects:  'Hub Projects',
-    calendar:  'Events Planner',
-    eom:       'Enactor of Month',
-    broadcast: 'Broadcast'
+var sectionTitles = {
+    overview:  "Overview",
+    reviews:   "Submissions",
+    members:   "Members",
+    tasks:     "Assign Mission",
+    projects:  "Hub Projects",
+    calendar:  "Events Planner",
+    eom:       "Enactor of Month",
+    broadcast: "Broadcast"
 };
 
 function showSection(id, btn) {
-    /* Hide all panels */
-    document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
-    /* Deactivate all nav items */
-    document.querySelectorAll('.nav-item').forEach(l => {
-        l.classList.remove('active');
-        l.removeAttribute('aria-current');
+    document.querySelectorAll(".section-panel").forEach(function (s) { s.classList.remove("active"); });
+    document.querySelectorAll(".nav-item").forEach(function (l) {
+        l.classList.remove("active");
+        l.removeAttribute("aria-current");
     });
 
-    /* Activate target */
-    const panel = document.getElementById(id + 'Section');
-    if (panel) panel.classList.add('active');
-    if (btn)   { btn.classList.add('active'); btn.setAttribute('aria-current', 'page'); }
+    var panel = document.getElementById(id + "Section");
+    if (panel) panel.classList.add("active");
+    if (btn)   { btn.classList.add("active"); btn.setAttribute("aria-current", "page"); }
 
-    /* Update topbar title */
-    document.getElementById('topbar-title').textContent = sectionTitles[id] || id;
-
-    /* Close mobile sidebar */
+    document.getElementById("topbar-title").textContent = sectionTitles[id] || id;
     closeSidebar();
 }
 
@@ -914,63 +901,72 @@ function showSection(id, btn) {
    LIVE STATS (Overview)
 ═══════════════════════════════════════════════ */
 function loadStats() {
-    /* Members stats */
-    db.collection('users').onSnapshot(snap => {
-        let total = 0, pending = 0, approved = 0;
-        snap.forEach(doc => {
-            const u = doc.data();
-            if (u.role === 'admin') return;
+    db.collection("users").onSnapshot(function (snap) {
+        var total = 0, pending = 0, approved = 0;
+        snap.forEach(function (doc) {
+            var u = doc.data();
+            if (u.role === "admin") return;
             total++;
-            if (u.status === 'pending')  pending++;
-            if (u.status === 'approved') approved++;
+            if (u.status === "pending")  pending++;
+            if (u.status === "approved") approved++;
         });
-        document.getElementById('stat-total').textContent    = total;
-        document.getElementById('stat-pending').textContent  = pending;
-        document.getElementById('stat-approved').textContent = approved;
+        document.getElementById("stat-total").textContent    = total;
+        document.getElementById("stat-pending").textContent  = pending;
+        document.getElementById("stat-approved").textContent = approved;
 
-        /* Update badge */
-        const badge = document.getElementById('badge-members');
+        var badge = document.getElementById("badge-members");
         badge.textContent = pending;
-        badge.classList.toggle('visible', pending > 0);
+        badge.classList.toggle("visible", pending > 0);
     });
 
-    /* Submissions stats */
-    db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
-        document.getElementById('stat-submissions').textContent = snap.size;
-        const badge = document.getElementById('badge-reviews');
+    db.collection("tasks").where("status", "==", "pending_review").onSnapshot(function (snap) {
+        document.getElementById("stat-submissions").textContent = snap.size;
+        var badge = document.getElementById("badge-reviews");
         badge.textContent = snap.size;
-        badge.classList.toggle('visible', snap.size > 0);
+        badge.classList.toggle("visible", snap.size > 0);
     });
 }
 
 
 /* ═══════════════════════════════════════════════
    MEMBER DROPDOWNS (Assign Mission + EOM)
+   FIX: Store UID as option value; look up Firestore
+   data on submit instead of relying on dataset.img
+   from the DOM (which bypassed URL validation).
 ═══════════════════════════════════════════════ */
-function loadMemberDropdowns() {
-    db.collection('users').where('status', '==', 'approved').onSnapshot(snap => {
-        const taskSelect = document.getElementById('taskMember');
-        const eomSelect  = document.getElementById('eomMember');
 
-        [taskSelect, eomSelect].forEach(sel => {
-            sel.innerHTML = '';
-            const placeholder = document.createElement('option');
-            placeholder.value       = '';
-            placeholder.textContent = '— Choose Member —';
+/* Cache of approved members: uid → {fullName, profilePic} */
+var _approvedMembersCache = {};
+
+function loadMemberDropdowns() {
+    db.collection("users").where("status", "==", "approved").onSnapshot(function (snap) {
+        var taskSelect = document.getElementById("taskMember");
+        var eomSelect  = document.getElementById("eomMember");
+
+        _approvedMembersCache = {};
+
+        [taskSelect, eomSelect].forEach(function (sel) {
+            sel.innerHTML = "";
+            var placeholder       = document.createElement("option");
+            placeholder.value     = "";
+            placeholder.textContent = "— Choose Member —";
             sel.appendChild(placeholder);
         });
 
-        snap.forEach(doc => {
-            const u = doc.data();
-            if (u.role === 'admin') return;
+        snap.forEach(function (doc) {
+            var u = doc.data();
+            if (u.role === "admin") return;
 
-            [taskSelect, eomSelect].forEach(sel => {
-                const opt         = document.createElement('option');
-                opt.value         = doc.id;
-                opt.textContent   = `${u.fullName || 'Unknown'} · ${u.department || 'No Dept'}`;
-                /* Store extra data for EOM */
-                opt.dataset.name  = u.fullName  || '';
-                opt.dataset.img   = u.profilePic || '';
+            /* Cache member data for later lookup */
+            _approvedMembersCache[doc.id] = {
+                fullName:   u.fullName   || "Unknown",
+                profilePic: u.profilePic || ""
+            };
+
+            [taskSelect, eomSelect].forEach(function (sel) {
+                var opt         = document.createElement("option");
+                opt.value       = doc.id;
+                opt.textContent = (u.fullName || "Unknown") + " · " + (u.department || "No Dept");
                 sel.appendChild(opt);
             });
         });
@@ -982,52 +978,56 @@ function loadMemberDropdowns() {
    REVIEW SUBMISSIONS
 ═══════════════════════════════════════════════ */
 function loadSubmissions() {
-    const list = document.getElementById('submissionsList');
+    var list = document.getElementById("submissionsList");
 
-    db.collection('tasks').where('status', '==', 'pending_review').onSnapshot(snap => {
-        list.innerHTML = '';
+    db.collection("tasks").where("status", "==", "pending_review").onSnapshot(function (snap) {
+        list.innerHTML = "";
 
         if (snap.empty) {
-            list.appendChild(makeEmptyState('clipboard-check', 'No submissions to review right now.'));
+            list.appendChild(makeEmptyState("clipboard-check", "No submissions to review right now."));
             return;
         }
 
-        snap.forEach(doc => {
-            const t = doc.data();
-            db.collection('users').doc(t.uid).get().then(uDoc => {
+        snap.forEach(function (doc) {
+            var t = doc.data();
+            db.collection("users").doc(t.uid).get().then(function (uDoc) {
                 if (!uDoc.exists) return;
-                const u = uDoc.data();
+                var u = uDoc.data();
 
-                const card = document.createElement('div');
-                card.className = 'record-card';
+                var card = document.createElement("div");
+                card.className = "record-card";
 
-                /* Left */
-                const left = document.createElement('div');
-                left.style.cssText = 'display:flex;align-items:center;gap:1rem;flex:1;min-width:0;';
+                var left = document.createElement("div");
+                left.style.cssText = "display:flex;align-items:center;gap:1rem;flex:1;min-width:0;";
 
-                const avatar  = document.createElement('img');
-                avatar.src    = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName||'U')}&background=1a1a1a&color=FFC222`;
-                avatar.alt    = u.fullName || '';
-                avatar.className = 'member-avatar';
+                var avatar  = document.createElement("img");
+                avatar.src  = u.profilePic && /^https?:\/\//i.test(u.profilePic)
+                    ? u.profilePic
+                    : "https://ui-avatars.com/api/?name=" + encodeURIComponent(u.fullName || "U") + "&background=1a1a1a&color=FFC222";
+                avatar.alt  = u.fullName || "";
+                avatar.className = "member-avatar";
 
-                const info = document.createElement('div');
-                info.style.minWidth = '0';
+                var info = document.createElement("div");
+                info.style.minWidth = "0";
 
-                const nameEl  = document.createElement('p');
-                nameEl.style.cssText = 'font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--yellow);margin-bottom:0.2rem;';
-                nameEl.textContent = u.fullName || '';
+                var nameEl  = document.createElement("p");
+                nameEl.style.cssText = "font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--yellow);margin-bottom:0.2rem;";
+                nameEl.textContent   = u.fullName || "";
 
-                const taskEl  = document.createElement('p');
-                taskEl.style.cssText = 'font-weight:700;font-size:0.9rem;color:#e5e7eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-                taskEl.textContent = t.text || '';
+                var taskEl  = document.createElement("p");
+                taskEl.style.cssText = "font-weight:700;font-size:0.9rem;color:#e5e7eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;";
+                taskEl.textContent   = t.text || "";
 
-                const safeLink = /^https?:\/\//i.test(t.workLink || '') ? t.workLink : '#';
-                const linkEl   = document.createElement('a');
-                linkEl.href    = safeLink;
-                linkEl.target  = '_blank';
-                linkEl.rel     = 'noopener noreferrer';
-                linkEl.style.cssText = 'font-size:0.7rem;color:#3b82f6;font-weight:700;';
-                linkEl.textContent   = safeLink !== '#' ? '↗ View submitted work' : 'No link provided';
+                /* FIX: Validate work link before creating anchor */
+                var safeLink = /^https?:\/\//i.test(t.workLink || "") ? t.workLink : null;
+                var linkEl   = document.createElement("a");
+                if (safeLink) {
+                    linkEl.href   = safeLink;
+                    linkEl.target = "_blank";
+                    linkEl.rel    = "noopener noreferrer";
+                }
+                linkEl.style.cssText = "font-size:0.7rem;color:#3b82f6;font-weight:700;";
+                linkEl.textContent   = safeLink ? "↗ View submitted work" : "No link provided";
 
                 info.appendChild(nameEl);
                 info.appendChild(taskEl);
@@ -1035,19 +1035,22 @@ function loadSubmissions() {
                 left.appendChild(avatar);
                 left.appendChild(info);
 
-                /* Actions */
-                const actions = document.createElement('div');
-                actions.style.cssText = 'display:flex;gap:0.5rem;flex-shrink:0;';
+                var actions = document.createElement("div");
+                actions.style.cssText = "display:flex;gap:0.5rem;flex-shrink:0;";
 
-                const approveBtn = document.createElement('button');
-                approveBtn.className   = 'btn btn-success';
-                approveBtn.innerHTML   = `<i data-lucide="check" style="width:14px;height:14px;"></i> Approve`;
-                approveBtn.addEventListener('click', () => approveWork(doc.id, t.uid, t.points));
+                var approveBtn = document.createElement("button");
+                approveBtn.className = "btn btn-success";
+                approveBtn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> Approve';
+                (function (docId, uid, points) {
+                    approveBtn.addEventListener("click", function () { approveWork(docId, uid, points); });
+                })(doc.id, t.uid, t.points);
 
-                const rejectBtn = document.createElement('button');
-                rejectBtn.className   = 'btn btn-danger';
-                rejectBtn.innerHTML   = `<i data-lucide="x" style="width:14px;height:14px;"></i> Reject`;
-                rejectBtn.addEventListener('click', () => rejectWork(doc.id));
+                var rejectBtn = document.createElement("button");
+                rejectBtn.className = "btn btn-danger";
+                rejectBtn.innerHTML = '<i data-lucide="x" style="width:14px;height:14px;"></i> Reject';
+                (function (docId) {
+                    rejectBtn.addEventListener("click", function () { rejectWork(docId); });
+                })(doc.id);
 
                 actions.appendChild(approveBtn);
                 actions.appendChild(rejectBtn);
@@ -1066,92 +1069,93 @@ function loadSubmissions() {
 /* ═══════════════════════════════════════════════
    MEMBERS LIST
 ═══════════════════════════════════════════════ */
-let _allMembersData = [];
+var _allMembersData = [];
 
 function loadMembersList() {
-    const list = document.getElementById('membersList');
-
-    db.collection('users').onSnapshot(snap => {
+    db.collection("users").onSnapshot(function (snap) {
         _allMembersData = [];
-        snap.forEach(doc => {
-            const u = doc.data();
-            if (u.role === 'admin') return;
-            _allMembersData.push({ id: doc.id, ...u });
+        snap.forEach(function (doc) {
+            var u = doc.data();
+            if (u.role === "admin") return;
+            _allMembersData.push(Object.assign({ id: doc.id }, u));
         });
         renderMembersList(_allMembersData);
     });
 }
 
 function filterMembers(status) {
-    /* Update filter buttons */
-    ['all','pending','approved','rejected'].forEach(s => {
-        const btn = document.getElementById('filter-' + s);
-        btn.className = s === status ? 'btn btn-primary' : 'btn btn-dark';
-        btn.style.fontSize = '0.6rem';
+    ["all", "pending", "approved", "rejected"].forEach(function (s) {
+        var btn = document.getElementById("filter-" + s);
+        btn.className = s === status ? "btn btn-primary" : "btn btn-dark";
+        btn.style.fontSize = "0.6rem";
     });
 
-    const filtered = status === 'all' ? _allMembersData : _allMembersData.filter(u => u.status === status);
+    var filtered = status === "all" ? _allMembersData : _allMembersData.filter(function (u) { return u.status === status; });
     renderMembersList(filtered);
 }
 
 function renderMembersList(members) {
-    const list = document.getElementById('membersList');
-    list.innerHTML = '';
+    var list = document.getElementById("membersList");
+    list.innerHTML = "";
 
     if (!members.length) {
-        list.appendChild(makeEmptyState('users', 'No members found.'));
+        list.appendChild(makeEmptyState("users", "No members found."));
         return;
     }
 
-    members.forEach(u => {
-        const card     = document.createElement('div');
-        const statusCl = u.status === 'approved' ? 'approved' : u.status === 'rejected' ? 'rejected' : 'pending';
-        card.className = `record-card ${statusCl}`;
+    members.forEach(function (u) {
+        var card     = document.createElement("div");
+        var statusCl = u.status === "approved" ? "approved" : u.status === "rejected" ? "rejected" : "pending";
+        card.className = "record-card " + statusCl;
 
-        /* Info */
-        const info = document.createElement('div');
-        info.style.cssText = 'display:flex;align-items:center;gap:0.875rem;flex:1;min-width:0;';
+        var info = document.createElement("div");
+        info.style.cssText = "display:flex;align-items:center;gap:0.875rem;flex:1;min-width:0;";
 
-        const avatar  = document.createElement('img');
-        avatar.src    = u.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.fullName||'U')}&background=1a1a1a&color=FFC222`;
-        avatar.alt    = u.fullName || '';
-        avatar.className = 'member-avatar';
+        var avatar  = document.createElement("img");
+        avatar.src  = u.profilePic && /^https?:\/\//i.test(u.profilePic)
+            ? u.profilePic
+            : "https://ui-avatars.com/api/?name=" + encodeURIComponent(u.fullName || "U") + "&background=1a1a1a&color=FFC222";
+        avatar.alt  = u.fullName || "";
+        avatar.className = "member-avatar";
 
-        const details = document.createElement('div');
-        details.style.minWidth = '0';
+        var details = document.createElement("div");
+        details.style.minWidth = "0";
 
-        const nameEl = document.createElement('p');
-        nameEl.style.cssText = 'font-weight:900;font-size:0.85rem;color:#e5e7eb;';
-        nameEl.textContent = u.fullName || 'Unknown';
+        var nameEl = document.createElement("p");
+        nameEl.style.cssText = "font-weight:900;font-size:0.85rem;color:#e5e7eb;";
+        nameEl.textContent   = u.fullName || "Unknown";
 
-        const deptEl = document.createElement('p');
-        deptEl.style.cssText = 'font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;';
-        deptEl.textContent = `${u.department || 'N/A'} · ${u.points || 0} pts`;
+        var deptEl = document.createElement("p");
+        deptEl.style.cssText = "font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;";
+        deptEl.textContent   = (u.department || "N/A") + " · " + (u.points || 0) + " pts";
 
-        const badge = document.createElement('span');
-        badge.className   = `status-badge ${statusCl}`;
-        badge.textContent = u.status || 'pending';
+        var badge = document.createElement("span");
+        badge.className   = "status-badge " + statusCl;
+        badge.textContent = u.status || "pending";
 
         details.appendChild(nameEl);
         details.appendChild(deptEl);
         info.appendChild(avatar);
         info.appendChild(details);
 
-        /* Actions */
-        const actions = document.createElement('div');
-        actions.style.cssText = 'display:flex;align-items:center;gap:0.5rem;flex-shrink:0;';
+        var actions = document.createElement("div");
+        actions.style.cssText = "display:flex;align-items:center;gap:0.5rem;flex-shrink:0;";
         actions.appendChild(badge);
 
-        if (u.status === 'pending') {
-            const approveBtn = document.createElement('button');
-            approveBtn.className   = 'btn btn-success';
-            approveBtn.innerHTML   = `<i data-lucide="check" style="width:13px;height:13px;"></i> Approve`;
-            approveBtn.addEventListener('click', () => approveMember(u.id));
+        if (u.status === "pending") {
+            var approveBtn = document.createElement("button");
+            approveBtn.className = "btn btn-success";
+            approveBtn.innerHTML = '<i data-lucide="check" style="width:13px;height:13px;"></i> Approve';
+            (function (uid) {
+                approveBtn.addEventListener("click", function () { approveMember(uid); });
+            })(u.id);
 
-            const rejectBtn = document.createElement('button');
-            rejectBtn.className   = 'btn btn-danger';
-            rejectBtn.innerHTML   = `<i data-lucide="x" style="width:13px;height:13px;"></i> Reject`;
-            rejectBtn.addEventListener('click', () => rejectMember(u.id));
+            var rejectBtn = document.createElement("button");
+            rejectBtn.className = "btn btn-danger";
+            rejectBtn.innerHTML = '<i data-lucide="x" style="width:13px;height:13px;"></i> Reject';
+            (function (uid) {
+                rejectBtn.addEventListener("click", function () { rejectMember(uid); });
+            })(u.id);
 
             actions.appendChild(approveBtn);
             actions.appendChild(rejectBtn);
@@ -1170,25 +1174,25 @@ function renderMembersList(members) {
    APPROVE / REJECT WORK
 ═══════════════════════════════════════════════ */
 async function approveWork(tId, uId, taskPoints) {
-    const pts = parseInt(taskPoints) || 50;
+    var pts = parseInt(taskPoints) || 50;
     try {
-        await db.collection('tasks').doc(tId).update({ status: 'approved', completed: true });
-        const userRef = db.collection('users').doc(uId);
-        const user    = await userRef.get();
+        await db.collection("tasks").doc(tId).update({ status: "approved", completed: true });
+        var userRef = db.collection("users").doc(uId);
+        var user    = await userRef.get();
         await userRef.update({ points: (user.data().points || 0) + pts });
-        Toast.success(`Mission validated! +${pts} points awarded.`);
+        Toast.success("Mission validated! +" + pts + " points awarded.");
     } catch (err) {
-        Toast.error('Could not approve work. Please try again.');
+        Toast.error("Could not approve work. Please try again.");
         console.error(err);
     }
 }
 
 async function rejectWork(id) {
     try {
-        await db.collection('tasks').doc(id).update({ status: 'live', submitted: false });
-        Toast.warning('Work rejected. Member can re-submit.');
+        await db.collection("tasks").doc(id).update({ status: "live", submitted: false });
+        Toast.warning("Work rejected. Member can re-submit.");
     } catch (err) {
-        Toast.error('Could not reject work. Please try again.');
+        Toast.error("Could not reject work. Please try again.");
         console.error(err);
     }
 }
@@ -1199,20 +1203,20 @@ async function rejectWork(id) {
 ═══════════════════════════════════════════════ */
 async function approveMember(uid) {
     try {
-        await db.collection('users').doc(uid).update({ status: 'approved' });
-        Toast.success('Member approved and activated!');
+        await db.collection("users").doc(uid).update({ status: "approved" });
+        Toast.success("Member approved and activated!");
     } catch (err) {
-        Toast.error('Could not approve member.');
+        Toast.error("Could not approve member.");
         console.error(err);
     }
 }
 
 async function rejectMember(uid) {
     try {
-        await db.collection('users').doc(uid).update({ status: 'rejected' });
-        Toast.warning('Member application rejected.');
+        await db.collection("users").doc(uid).update({ status: "rejected" });
+        Toast.warning("Member application rejected.");
     } catch (err) {
-        Toast.error('Could not reject member.');
+        Toast.error("Could not reject member.");
         console.error(err);
     }
 }
@@ -1222,30 +1226,30 @@ async function rejectMember(uid) {
    ASSIGN TASK
 ═══════════════════════════════════════════════ */
 async function assignTask() {
-    const uid    = document.getElementById('taskMember').value;
-    const text   = document.getElementById('taskText').value.trim();
-    const points = parseInt(document.getElementById('taskPoints').value) || 50;
+    var uid    = document.getElementById("taskMember").value;
+    var text   = document.getElementById("taskText").value.trim();
+    var points = parseInt(document.getElementById("taskPoints").value) || 50;
 
     if (!uid || !text) {
-        Toast.warning('Please select a member and write the mission description.');
+        Toast.warning("Please select a member and write the mission description.");
         return;
     }
 
     try {
-        await db.collection('tasks').add({
-            uid,
-            text,
-            points:     Math.min(500, Math.max(1, points)),
-            completed:  false,
-            submitted:  false,
-            status:     'live',
-            createdAt:  firebase.firestore.FieldValue.serverTimestamp()
+        await db.collection("tasks").add({
+            uid:       uid,
+            text:      text,
+            points:    Math.min(500, Math.max(1, points)),
+            completed: false,
+            submitted: false,
+            status:    "live",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        Toast.success('Mission deployed successfully!');
-        document.getElementById('taskText').value   = '';
-        document.getElementById('taskPoints').value = '50';
+        Toast.success("Mission deployed successfully!");
+        document.getElementById("taskText").value   = "";
+        document.getElementById("taskPoints").value = "50";
     } catch (err) {
-        Toast.error('Could not deploy mission. Please try again.');
+        Toast.error("Could not deploy mission. Please try again.");
         console.error(err);
     }
 }
@@ -1255,23 +1259,23 @@ async function assignTask() {
    UPDATE PROJECT
 ═══════════════════════════════════════════════ */
 async function updateProject() {
-    const name     = document.getElementById('pName').value.trim();
-    const progress = parseInt(document.getElementById('pProgress').value, 10);
+    var name     = document.getElementById("pName").value.trim();
+    var progress = parseInt(document.getElementById("pProgress").value, 10);
 
     if (!name || isNaN(progress)) {
-        Toast.warning('Please enter a project name and a valid progress value (0–100).');
+        Toast.warning("Please enter a project name and a valid progress value (0–100).");
         return;
     }
 
     try {
-        await db.collection('projects').doc(name.toLowerCase().replace(/\s+/g, '-')).set({
-            name,
-            progress: Math.min(100, Math.max(0, progress)),
+        await db.collection("projects").doc(name.toLowerCase().replace(/\s+/g, "-")).set({
+            name:      name,
+            progress:  Math.min(100, Math.max(0, progress)),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-        Toast.success('Project progress updated in the hub!');
+        Toast.success("Project progress updated in the hub!");
     } catch (err) {
-        Toast.error('Could not update project.');
+        Toast.error("Could not update project.");
         console.error(err);
     }
 }
@@ -1281,26 +1285,26 @@ async function updateProject() {
    ADD EVENT
 ═══════════════════════════════════════════════ */
 async function addEvent() {
-    const date  = document.getElementById('eDate').value.trim();
-    const title = document.getElementById('eTitle').value.trim();
-    const desc  = document.getElementById('eDesc').value.trim();
+    var date  = document.getElementById("eDate").value.trim();
+    var title = document.getElementById("eTitle").value.trim();
+    var desc  = document.getElementById("eDesc").value.trim();
 
     if (!date || !title) {
-        Toast.warning('Event date and title are required.');
+        Toast.warning("Event date and title are required.");
         return;
     }
 
     try {
-        await db.collection('events').add({
-            date,
-            title,
+        await db.collection("events").add({
+            date:        date,
+            title:       title,
             description: desc,
             createdAt:   firebase.firestore.FieldValue.serverTimestamp()
         });
-        Toast.success('Event published to the public timeline!');
-        ['eDate','eTitle','eDesc'].forEach(id => document.getElementById(id).value = '');
+        Toast.success("Event published to the public timeline!");
+        ["eDate", "eTitle", "eDesc"].forEach(function (id) { document.getElementById(id).value = ""; });
     } catch (err) {
-        Toast.error('Could not publish event.');
+        Toast.error("Could not publish event.");
         console.error(err);
     }
 }
@@ -1308,29 +1312,40 @@ async function addEvent() {
 
 /* ═══════════════════════════════════════════════
    SET ENACTOR OF THE MONTH
+   FIX: Was reading dataset.img from <option> element,
+   which bypassed URL validation. Now looks up the
+   cached member data (from _approvedMembersCache)
+   and validates the profilePic URL before saving.
 ═══════════════════════════════════════════════ */
 async function setEOM() {
-    const select = document.getElementById('eomMember');
-    const uid    = select.value;
-    const desc   = document.getElementById('eomDesc').value.trim();
+    var select = document.getElementById("eomMember");
+    var uid    = select.value;
+    var desc   = document.getElementById("eomDesc").value.trim();
 
     if (!uid || !desc) {
-        Toast.warning('Please select a member and write an achievement description.');
+        Toast.warning("Please select a member and write an achievement description.");
         return;
     }
 
-    const selectedOption = select.options[select.selectedIndex];
-    const name           = selectedOption.dataset.name  || '';
-    const img            = selectedOption.dataset.img   || '';
+    var memberData = _approvedMembersCache[uid] || {};
+    var name       = memberData.fullName   || "";
+    /* FIX: Validate profilePic URL — only save if it is a real http/https URL */
+    var img        = /^https?:\/\//i.test(memberData.profilePic || "")
+        ? memberData.profilePic
+        : "";
 
     try {
-        await db.collection('settings').doc('eom').set({ uid, name, desc, img,
+        await db.collection("settings").doc("eom").set({
+            uid:       uid,
+            name:      name,
+            desc:      desc,
+            img:       img,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        Toast.success(`${name} is now Enactor of the Month!`);
-        document.getElementById('eomDesc').value = '';
+        Toast.success(name + " is now Enactor of the Month!");
+        document.getElementById("eomDesc").value = "";
     } catch (err) {
-        Toast.error('Could not update Enactor of the Month.');
+        Toast.error("Could not update Enactor of the Month.");
         console.error(err);
     }
 }
@@ -1340,24 +1355,25 @@ async function setEOM() {
    PUBLISH BROADCAST
 ═══════════════════════════════════════════════ */
 async function publishNews() {
-    const title = document.getElementById('nTitle').value.trim();
-    const desc  = document.getElementById('nDesc').value.trim();
+    var title = document.getElementById("nTitle").value.trim();
+    var desc  = document.getElementById("nDesc").value.trim();
 
     if (!title || !desc) {
-        Toast.warning('Title and message content are both required.');
+        Toast.warning("Title and message content are both required.");
         return;
     }
 
     try {
-        await db.collection('news').add({
-            title, desc,
+        await db.collection("news").add({
+            title:     title,
+            desc:      desc,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        Toast.success('Broadcast sent to all members!');
-        document.getElementById('nTitle').value = '';
-        document.getElementById('nDesc').value  = '';
+        Toast.success("Broadcast sent to all members!");
+        document.getElementById("nTitle").value = "";
+        document.getElementById("nDesc").value  = "";
     } catch (err) {
-        Toast.error('Could not broadcast. Please try again.');
+        Toast.error("Could not broadcast. Please try again.");
         console.error(err);
     }
 }
@@ -1367,7 +1383,7 @@ async function publishNews() {
    LOGOUT
 ═══════════════════════════════════════════════ */
 function logout() {
-    auth.signOut().then(() => window.location.href = 'login.html');
+    auth.signOut().then(function () { window.location.href = "login.html"; });
 }
 
 
@@ -1375,19 +1391,19 @@ function logout() {
    HELPER — Empty state DOM element
 ═══════════════════════════════════════════════ */
 function makeEmptyState(icon, message) {
-    const div = document.createElement('div');
-    div.className = 'empty-state';
+    var div = document.createElement("div");
+    div.className = "empty-state";
 
-    const svg = document.createElement('div');
-    svg.innerHTML = `<i data-lucide="${icon}" style="width:48px;height:48px;margin:0 auto;display:block;opacity:0.3;color:#9ca3af;"></i>`;
+    var svg = document.createElement("div");
+    svg.innerHTML = '<i data-lucide="' + icon + '" style="width:48px;height:48px;margin:0 auto;display:block;opacity:0.3;color:#9ca3af;"></i>';
 
-    const p = document.createElement('p');
+    var p = document.createElement("p");
     p.textContent = message;
 
     div.appendChild(svg);
     div.appendChild(p);
 
-    setTimeout(() => lucide.createIcons(), 0);
+    setTimeout(function () { lucide.createIcons(); }, 0);
     return div;
 }
 </script>

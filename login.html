@@ -7,11 +7,10 @@
     <meta name="robots" content="noindex, nofollow">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ── Variables ──────────────────────────── */
         :root {
             --yellow:     #FFC222;
             --yellow-dim: rgba(255,194,34,0.12);
@@ -20,8 +19,6 @@
             --surface-2:  #1a1a1a;
             --border:     rgba(255,255,255,0.08);
         }
-
-        /* ── Reset & base ───────────────────────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { height: 100%; }
         body {
@@ -31,16 +28,11 @@
             background: var(--black);
             overflow-x: hidden;
         }
-        .font-heading { font-family: 'Montserrat', sans-serif; }
 
-        /* ── Layout ─────────────────────────────── */
-        .login-wrapper {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
-        }
+        /* ── Layout ── */
+        .login-wrapper { display: flex; width: 100%; min-height: 100vh; }
 
-        /* ── LEFT — brand panel ──────────────────── */
+        /* ── Brand panel (left) ── */
         .brand-panel {
             flex: 0 0 45%;
             background: var(--surface);
@@ -52,408 +44,151 @@
             position: relative;
             overflow: hidden;
         }
-
-        /* Ambient glow */
         .brand-panel::before {
             content: '';
-            position: absolute;
-            top: -80px;
-            right: -80px;
-            width: 400px;
-            height: 400px;
-            background: var(--yellow);
-            opacity: 0.04;
-            border-radius: 50%;
-            filter: blur(80px);
-            pointer-events: none;
+            position: absolute; top: -80px; right: -80px;
+            width: 400px; height: 400px;
+            background: var(--yellow); opacity: 0.04;
+            border-radius: 50%; filter: blur(80px); pointer-events: none;
         }
         .brand-panel::after {
             content: '';
-            position: absolute;
-            bottom: -60px;
-            left: -60px;
-            width: 280px;
-            height: 280px;
-            background: var(--yellow);
-            opacity: 0.03;
-            border-radius: 50%;
-            filter: blur(60px);
-            pointer-events: none;
+            position: absolute; bottom: -60px; left: -60px;
+            width: 280px; height: 280px;
+            background: var(--yellow); opacity: 0.03;
+            border-radius: 50%; filter: blur(60px); pointer-events: none;
         }
-
-        /* Grid texture on brand panel */
         .brand-grid {
-            position: absolute;
-            inset: 0;
+            position: absolute; inset: 0;
             background-image:
                 linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
-            pointer-events: none;
+            background-size: 40px 40px; pointer-events: none;
         }
-
-        .brand-top {
-            position: relative;
-            z-index: 10;
-        }
+        .brand-top { position: relative; z-index: 10; animation: fadeInUp 0.6s ease-out 0.1s both; }
 
         .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: #6b7280;
-            text-decoration: none;
-            transition: color 0.2s;
-            margin-bottom: 3rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.12em; color: #6b7280; text-decoration: none;
+            transition: color 0.2s; margin-bottom: 3rem;
         }
         .back-link:hover { color: var(--yellow); }
 
         .logo-badge {
-            width: 64px;
-            height: 64px;
-            border-radius: 1.25rem;
-            overflow: hidden;
+            width: 64px; height: 64px; border-radius: 1.25rem; overflow: hidden;
             border: 2px solid rgba(255,194,34,0.3);
             box-shadow: 0 0 0 6px rgba(255,194,34,0.05);
             margin-bottom: 2rem;
         }
-        .logo-badge img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
+        .logo-badge img { width: 100%; height: 100%; object-fit: cover; }
 
         .brand-heading {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
+            font-family: 'Montserrat', sans-serif; font-weight: 900;
             font-size: clamp(2.5rem, 4vw, 3.75rem);
-            line-height: 0.95;
-            text-transform: uppercase;
-            letter-spacing: -0.03em;
-            color: #fff;
-            margin-bottom: 1.25rem;
+            line-height: 0.95; text-transform: uppercase;
+            letter-spacing: -0.03em; color: #fff; margin-bottom: 1.25rem;
         }
         .brand-heading span { color: var(--yellow); }
 
-        .brand-subtitle {
-            color: #4b5563;
-            font-size: 0.9rem;
-            font-weight: 600;
-            line-height: 1.6;
-            max-width: 280px;
-        }
+        .brand-subtitle { color: #4b5563; font-size: 0.9rem; font-weight: 600; line-height: 1.6; max-width: 280px; }
 
-        /* Stats row */
+        .enactor-card {
+            position: relative; z-index: 10;
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: 1rem; padding: 0.75rem 1rem;
+            margin-top: 1.5rem; width: fit-content;
+        }
+        .enactor-avatar { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(255,194,34,0.3); }
+        .enactor-label { font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: var(--yellow); }
+        .enactor-name  { font-size: 0.8rem; font-weight: 700; color: #e5e7eb; }
+
         .brand-stats {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            gap: 2rem;
-            padding-top: 2rem;
+            position: relative; z-index: 10;
+            display: flex; gap: 2rem; padding-top: 2rem;
             border-top: 1px solid var(--border);
         }
-        .brand-stat-value {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 1.75rem;
-            color: var(--yellow);
-            line-height: 1;
-        }
-        .brand-stat-label {
-            font-size: 0.55rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #4b5563;
-            margin-top: 0.25rem;
-        }
+        .brand-stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.75rem; color: var(--yellow); line-height: 1; }
+        .brand-stat-label { font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #4b5563; margin-top: 0.25rem; }
 
-        /* Floating enactor card */
-        .enactor-card {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            padding: 0.75rem 1rem;
-            margin-top: 1.5rem;
-            width: fit-content;
-        }
-        .enactor-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1.5px solid rgba(255,194,34,0.3);
-        }
-        .enactor-label {
-            font-size: 0.55rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--yellow);
-        }
-        .enactor-name {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #e5e7eb;
-        }
-
-        /* ── RIGHT — form panel ───────────────────── */
+        /* ── Form panel (right) ── */
         .form-panel {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2.5rem 2rem;
-            background: #fff;
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 2.5rem 2rem; background: #fff;
         }
+        .form-box { width: 100%; max-width: 420px; animation: fadeInUp 0.5s ease-out both; }
 
-        .form-box {
-            width: 100%;
-            max-width: 420px;
-        }
+        .form-eyebrow { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #9ca3af; margin-bottom: 0.75rem; }
+        .form-title   { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: -0.02em; color: #0a0a0a; margin-bottom: 0.5rem; }
+        .form-desc    { color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 2.25rem; }
 
-        .form-eyebrow {
-            font-size: 0.6rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.3em;
-            color: #9ca3af;
-            margin-bottom: 0.75rem;
-        }
-
-        .form-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            color: #0a0a0a;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-desc {
-            color: #6b7280;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 2.25rem;
-        }
-
-        /* Input groups */
-        .input-wrap {
-            margin-bottom: 1.25rem;
-        }
-        .input-label {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #9ca3af;
-            margin-bottom: 0.5rem;
-        }
-        .input-field-wrap {
-            position: relative;
-        }
+        .input-wrap { margin-bottom: 1.25rem; }
+        .input-label { display: block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #9ca3af; margin-bottom: 0.5rem; }
+        .input-field-wrap { position: relative; }
         .input-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            color: #9ca3af;
-            pointer-events: none;
-            transition: color 0.2s;
+            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+            width: 16px; height: 16px; color: #9ca3af;
+            pointer-events: none; transition: color 0.2s;
         }
         .input-field {
-            width: 100%;
-            padding: 0.9rem 1rem 0.9rem 2.75rem;
-            background: #f7f7f5;
-            border: 2px solid transparent;
+            width: 100%; padding: 0.9rem 1rem 0.9rem 2.75rem;
+            background: #f7f7f5; border: 2px solid transparent;
             border-radius: 0.875rem;
             font-family: 'Source Sans 3', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #0a0a0a;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            font-size: 0.9rem; font-weight: 600; color: #0a0a0a;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
         .input-field::placeholder { color: #c4c4c4; }
-        .input-field:focus {
-            border-color: var(--yellow);
-            box-shadow: 0 0 0 4px rgba(255,194,34,0.12);
-            background: #fff;
-        }
+        .input-field:focus { border-color: var(--yellow); box-shadow: 0 0 0 4px rgba(255,194,34,0.12); background: #fff; }
         .input-field-wrap:focus-within .input-icon { color: var(--yellow); }
 
         .pw-toggle {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            color: #9ca3af;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+            width: 16px; height: 16px; color: #9ca3af;
+            cursor: pointer; background: none; border: none; padding: 0;
+            transition: color 0.2s; display: flex; align-items: center; justify-content: center;
         }
         .pw-toggle:hover { color: #0a0a0a; }
 
-        /* Forgot password */
-        .forgot-row {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 0.5rem;
-            margin-bottom: 1.75rem;
-        }
-        .forgot-btn {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: #9ca3af;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            transition: color 0.2s;
-        }
+        .forgot-row { display: flex; justify-content: flex-end; margin-top: 0.5rem; margin-bottom: 1.75rem; }
+        .forgot-btn { font-size: 0.72rem; font-weight: 700; color: #9ca3af; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.2s; }
         .forgot-btn:hover { color: var(--yellow); }
 
-        /* Submit button */
         .submit-btn {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            background: var(--black);
-            color: #fff;
-            border: 2px solid var(--black);
-            border-radius: 0.875rem;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.15s;
+            width: 100%; padding: 1rem 1.5rem;
+            background: var(--black); color: #fff;
+            border: 2px solid var(--black); border-radius: 0.875rem;
+            font-family: 'Montserrat', sans-serif; font-weight: 900;
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.15em;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            gap: 0.5rem; transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.15s;
         }
-        .submit-btn:hover {
-            background: var(--yellow);
-            color: var(--black);
-            border-color: var(--yellow);
-        }
+        .submit-btn:hover { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
         .submit-btn:active { transform: scale(0.98); }
-        .submit-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* Loading spinner */
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .spinner {
-            width: 16px; height: 16px;
-            border: 2px solid currentColor;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: inline-block;
-        }
+        .form-divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0; color: #d1d5db; font-size: 0.7rem; font-weight: 700; }
+        .form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
 
-        /* Divider */
-        .form-divider {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin: 1.5rem 0;
-            color: #d1d5db;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-        .form-divider::before,
-        .form-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e5e7eb;
-        }
-
-        /* Apply link */
-        .apply-row {
-            text-align: center;
-            font-size: 0.82rem;
-            color: #6b7280;
-            font-weight: 600;
-        }
-        .apply-row a {
-            color: var(--black);
-            font-weight: 900;
-            text-decoration: underline;
-            text-decoration-color: var(--yellow);
-            text-underline-offset: 3px;
-            transition: color 0.2s;
-        }
+        .apply-row { text-align: center; font-size: 0.82rem; color: #6b7280; font-weight: 600; }
+        .apply-row a { color: var(--black); font-weight: 900; text-decoration: underline; text-decoration-color: var(--yellow); text-underline-offset: 3px; transition: color 0.2s; }
         .apply-row a:hover { color: #d97706; }
 
-        /* Status message (pending / rejected) */
-        .status-msg {
-            display: none;
-            margin-top: 1.25rem;
-            padding: 1rem 1.25rem;
-            border-radius: 0.875rem;
-            font-size: 0.82rem;
-            font-weight: 600;
-            line-height: 1.5;
-        }
-        .status-msg.pending {
-            background: rgba(255,194,34,0.1);
-            border: 1px solid rgba(255,194,34,0.3);
-            color: #92400e;
-        }
-        .status-msg.rejected {
-            background: rgba(239,68,68,0.07);
-            border: 1px solid rgba(239,68,68,0.2);
-            color: #991b1b;
-        }
+        .status-msg { display: none; margin-top: 1.25rem; padding: 1rem 1.25rem; border-radius: 0.875rem; font-size: 0.82rem; font-weight: 600; line-height: 1.5; }
+        .status-msg.pending  { background: rgba(255,194,34,0.1); border: 1px solid rgba(255,194,34,0.3); color: #92400e; }
+        .status-msg.rejected { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); color: #991b1b; }
 
-        /* ── Focus visible ───────────────────────── */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
         :focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
 
-        /* ── Responsive: stack on mobile ─────────── */
         @media (max-width: 768px) {
             .brand-panel { display: none; }
             .form-panel  { background: #fafaf8; }
             .form-box    { max-width: 100%; }
         }
         @media (max-width: 480px) {
-            .form-panel  { padding: 2rem 1.5rem; }
-        }
-
-        /* ── Page entrance animation ──────────────── */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .form-box {
-            animation: fadeInUp 0.5s ease-out both;
-        }
-        .brand-top {
-            animation: fadeInUp 0.6s ease-out 0.1s both;
+            .form-panel { padding: 2rem 1.5rem; }
         }
     </style>
 </head>
@@ -461,31 +196,23 @@
 
 <div class="login-wrapper">
 
-    <!-- ══ LEFT — BRAND PANEL ══════════════════════ -->
+    <!-- ══ LEFT — BRAND PANEL ══ -->
     <div class="brand-panel" aria-hidden="true">
         <div class="brand-grid"></div>
 
         <div class="brand-top">
-            <!-- Back link -->
             <a href="index.html" class="back-link">
                 <i data-lucide="arrow-left" style="width:14px;height:14px;" aria-hidden="true"></i>
                 Back to Home
             </a>
 
-            <!-- Logo -->
             <div class="logo-badge">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Enactus ISIMG Logo">
+                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Enactus ISIMG">
             </div>
 
-            <!-- Heading -->
-            <h1 class="brand-heading">
-                Welcome<br><span>Back.</span>
-            </h1>
-            <p class="brand-subtitle">
-                Sign in to access the Enactus ISIMG member portal, track your missions, and stay connected.
-            </p>
+            <h1 class="brand-heading">Welcome<br><span>Back.</span></h1>
+            <p class="brand-subtitle">Sign in to access the Enactus ISIMG member portal, track your missions, and stay connected.</p>
 
-            <!-- Enactor of month preview card -->
             <div class="enactor-card">
                 <img id="brand-eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
                      alt="Enactor of the Month" class="enactor-avatar">
@@ -496,7 +223,6 @@
             </div>
         </div>
 
-        <!-- Bottom stats -->
         <div class="brand-stats">
             <div>
                 <p class="brand-stat-value">50+</p>
@@ -514,16 +240,17 @@
     </div>
 
 
-    <!-- ══ RIGHT — FORM PANEL ══════════════════════ -->
+    <!-- ══ RIGHT — FORM PANEL ══ -->
     <div class="form-panel" role="main">
         <div class="form-box">
 
-            <!-- Mobile logo (shown only on small screens via Tailwind) -->
+            <!-- Mobile logo -->
             <div class="mb-8 md:hidden flex items-center gap-3">
                 <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
-                     alt="Enactus ISIMG" class="w-10 h-10 rounded-xl object-cover border-2"
+                     alt="Enactus ISIMG"
+                     class="w-10 h-10 rounded-xl object-cover border-2"
                      style="border-color:var(--yellow);">
-                <span class="font-heading font-black text-base uppercase" style="letter-spacing:0.05em;">
+                <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:0.05em;">
                     ENACTUS <span style="color:var(--yellow);">ISIMG</span>
                 </span>
             </div>
@@ -542,8 +269,7 @@
                         <input type="email" id="loginEmail" class="input-field"
                                placeholder="name@example.com"
                                autocomplete="email"
-                               required aria-required="true"
-                               aria-describedby="emailError">
+                               required aria-required="true">
                     </div>
                 </div>
 
@@ -566,9 +292,7 @@
 
                 <!-- Forgot password -->
                 <div class="forgot-row">
-                    <button type="button" id="forgotBtn" class="forgot-btn">
-                        Forgot password?
-                    </button>
+                    <button type="button" id="forgotBtn" class="forgot-btn">Forgot password?</button>
                 </div>
 
                 <!-- Submit -->
@@ -577,7 +301,7 @@
                     <i data-lucide="log-in" id="btnIcon" style="width:15px;height:15px;" aria-hidden="true"></i>
                 </button>
 
-                <!-- Status message (pending / rejected) -->
+                <!-- Status message -->
                 <div id="statusMsg" class="status-msg" role="alert" aria-live="polite"></div>
 
             </form>
@@ -593,12 +317,7 @@
 </div>
 
 
-<!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: Firebase SDKs → Config → Toast → auth-guard → login.js
-     FIX: Removed the large inline <script> block that duplicated
-     all logic from login.js, causing double auth listeners and
-     double form submit handlers. All logic is now in login.js.
-═════════════════════════════════════════════ -->
+<!-- ══ SCRIPTS ══ -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -608,20 +327,14 @@
 <script src="js/login.js"></script>
 
 <script>
-/* ═══════════════════════════════════════════════
-   PAGE-LEVEL ADDITIONS
-   login.js handles: form submit, forgot password,
-   password toggle, and checkExistingSession().
-   We only add the EOM brand panel load here since
-   it is cosmetic and specific to this page's UI.
-═══════════════════════════════════════════════ */
+"use strict";
 document.addEventListener("DOMContentLoaded", function () {
     lucide.createIcons();
 
-    /* Load EOM for the brand panel (cosmetic — fail silently) */
+    /* Load EOM for the brand panel (cosmetic only) */
     db.collection("settings").doc("eom").get().then(function (doc) {
         if (!doc.exists) return;
-        var d = doc.data();
+        var d      = doc.data();
         var nameEl = document.getElementById("brand-eom-name");
         var imgEl  = document.getElementById("brand-eom-img");
         if (nameEl && d.name) nameEl.textContent = d.name;

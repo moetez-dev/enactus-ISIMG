@@ -3,1409 +3,987 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enactus ISIMG | Admin Terminal</title>
-    <meta name="robots" content="noindex, nofollow">
+    <title>Enactus ISIMG | Entrepreneurial Action</title>
+    <meta name="description" content="Enactus ISIMG — A premier laboratory for social innovation where technology meets entrepreneurial action in Gabès, Tunisia.">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ── Variables ──────────────────────────── */
+        /* ── CSS Variables ───────────────────────── */
         :root {
-            --yellow:      #FFC222;
-            --yellow-dim:  rgba(255,194,34,0.12);
-            --black:       #0a0a0a;
-            --surface:     #111111;
-            --surface-2:   #1a1a1a;
-            --surface-3:   #222222;
-            --border:      rgba(255,255,255,0.07);
-            --text-muted:  #6b7280;
-            --green:       #22c55e;
-            --red:         #ef4444;
-            --blue:        #3b82f6;
-            --sidebar-w:   260px;
+            --yellow: #FFC222;
+            --yellow-dark: #e6a800;
+            --yellow-light: #fff3cc;
+            --black: #0a0a0a;
+            --gray-soft: #f7f7f5;
         }
 
         /* ── Base ───────────────────────────────── */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
+        *, *::before, *::after { box-sizing: border-box; }
         body {
             font-family: 'Source Sans 3', sans-serif;
-            background: var(--black);
-            color: #e5e7eb;
-            min-height: 100vh;
-            display: flex;
             overflow-x: hidden;
+            background: #fff;
+            color: var(--black);
         }
         .font-heading { font-family: 'Montserrat', sans-serif; }
 
-        /* ── Scrollbar ──────────────────────────── */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+        /* ── Color Utilities ─────────────────────── */
+        .text-yellow   { color: var(--yellow); }
+        .bg-yellow     { background-color: var(--yellow); }
+        .border-yellow { border-color: var(--yellow); }
 
-        /* ── Sidebar ────────────────────────────── */
-        #sidebar {
-            width: var(--sidebar-w);
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0; left: 0;
-            height: 100vh;
-            z-index: 100;
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        #sidebar.collapsed { transform: translateX(calc(-1 * var(--sidebar-w))); }
-
-        .sidebar-logo {
-            padding: 1.75rem 1.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .sidebar-logo-icon {
-            width: 36px; height: 36px;
-            background: var(--yellow);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 1rem;
-            color: var(--black);
-            flex-shrink: 0;
-        }
-        .sidebar-logo-text {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
-        .sidebar-logo-text span { color: var(--yellow); }
-
-        .sidebar-section-label {
-            padding: 1.5rem 1.5rem 0.5rem;
-            font-size: 0.6rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            color: var(--text-muted);
-        }
-
-        .sidebar-nav { padding: 0 0.75rem; flex: 1; }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+        /* ── Smooth hover lift ───────────────────── */
+        .hover-lift {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            color: var(--text-muted);
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            position: relative;
         }
-        .nav-item:hover { background: var(--surface-2); color: #e5e7eb; }
-        .nav-item.active {
-            background: var(--yellow-dim);
-            color: var(--yellow);
-        }
-        .nav-item.active .nav-icon { color: var(--yellow); }
-        .nav-item .nav-badge {
-            margin-left: auto;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 5px;
-            background: var(--yellow);
-            color: var(--black);
-            border-radius: 999px;
-            font-size: 0.6rem;
-            font-weight: 900;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-item .nav-badge.visible { display: flex; }
-
-        .sidebar-footer {
-            padding: 1rem 0.75rem 1.5rem;
-            border-top: 1px solid var(--border);
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.12);
         }
 
-        /* ── Main content ───────────────────────── */
-        #main {
-            flex: 1;
-            margin-left: var(--sidebar-w);
-            transition: margin-left 0.35s cubic-bezier(0.4,0,0.2,1);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        /* ── Navigation ──────────────────────────── */
+        #navbar {
+            transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
         }
-        #main.expanded { margin-left: 0; }
-
-        /* ── Topbar ─────────────────────────────── */
-        #topbar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(10,10,10,0.85);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
-            padding: 0.875rem 1.75rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        #topbar-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-        .topbar-admin-chip {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--surface-2);
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            padding: 0.375rem 0.875rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--yellow);
-        }
-        .status-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--green);
-            animation: blink 2s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        #navbar.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
         }
 
-        /* ── Content area ───────────────────────── */
-        #content {
-            flex: 1;
-            padding: 2rem 1.75rem 3rem;
-            max-width: 1200px;
-            width: 100%;
+        /* ── Hero outline text ───────────────────── */
+        .outline-text {
+            -webkit-text-stroke: 2.5px var(--yellow);
+            color: transparent;
         }
 
-        /* ── Section panels ─────────────────────── */
-        .section-panel {
-            display: none;
-            animation: fadeSlideUp 0.3s ease-out both;
-        }
-        .section-panel.active { display: block; }
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Section headers ─────────────────────── */
-        .section-header {
-            margin-bottom: 2rem;
-        }
-        .section-header h2 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 1.75rem;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            color: #fff;
-        }
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
-            font-weight: 600;
-        }
-        .section-accent {
-            display: inline-block;
-            width: 3px;
-            height: 1.6rem;
-            border-radius: 2px;
-            margin-right: 0.75rem;
-            vertical-align: middle;
-        }
-
-        /* ── Stat cards ──────────────────────────── */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 1.25rem;
-            padding: 1.25rem 1.5rem;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-        .stat-card:hover { border-color: var(--yellow); transform: translateY(-2px); }
-        .stat-label {
-            font-size: 0.6rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-        .stat-value {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 2rem;
-            line-height: 1;
-            color: #fff;
-        }
-        .stat-value.yellow { color: var(--yellow); }
-        .stat-value.green  { color: var(--green); }
-        .stat-value.red    { color: var(--red); }
-
-        /* ── Cards ───────────────────────────────── */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 1.5rem;
-            padding: 1.75rem;
-            transition: border-color 0.2s;
-        }
-        .card:hover { border-color: rgba(255,255,255,0.12); }
-
-        /* ── Form inputs ─────────────────────────── */
-        .admin-input {
-            width: 100%;
-            padding: 0.9rem 1.1rem;
-            background: var(--surface-2);
-            border: 1.5px solid var(--border);
-            border-radius: 0.875rem;
-            color: #e5e7eb;
-            font-family: 'Source Sans 3', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .admin-input::placeholder { color: #4b5563; }
-        .admin-input:focus {
-            border-color: var(--yellow);
-            box-shadow: 0 0 0 3px rgba(255,194,34,0.1);
-        }
-        .admin-label {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-        }
-        .form-group { margin-bottom: 1.25rem; }
-
-        /* ── Buttons ─────────────────────────────── */
-        .btn {
+        /* ── Hero badge ──────────────────────────── */
+        .hero-badge {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.875rem;
-            font-weight: 900;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            white-space: nowrap;
+            gap: 0.75rem;
+            padding: 0.375rem 1.125rem;
+            background: white;
+            border: 1px solid #ececec;
+            border-radius: 9999px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 2rem;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary {
+        .pulse-dot {
+            width: 0.5rem; height: 0.5rem;
             background: var(--yellow);
-            color: var(--black);
+            border-radius: 50%;
+            animation: pulse-anim 2s infinite;
         }
-        .btn-primary:hover { background: #e6aa00; }
-        .btn-dark {
-            background: var(--surface-3);
-            color: #e5e7eb;
-            border: 1px solid var(--border);
-        }
-        .btn-dark:hover { background: var(--yellow); color: var(--black); }
-        .btn-success {
-            background: rgba(34,197,94,0.15);
-            color: var(--green);
-            border: 1px solid rgba(34,197,94,0.25);
-        }
-        .btn-success:hover { background: var(--green); color: white; }
-        .btn-danger {
-            background: rgba(239,68,68,0.1);
-            color: var(--red);
-            border: 1px solid rgba(239,68,68,0.2);
-        }
-        .btn-danger:hover { background: var(--red); color: white; }
-        .btn-full { width: 100%; }
-
-        /* ── Submission/Member cards ─────────────── */
-        .record-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 1.25rem;
-            padding: 1.25rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .record-card:hover { border-color: rgba(255,255,255,0.12); }
-        .record-card.pending { border-left: 3px solid var(--yellow); }
-        .record-card.approved { border-left: 3px solid var(--green); }
-        .record-card.rejected { border-left: 3px solid var(--red); }
-
-        .member-avatar {
-            width: 42px; height: 42px;
-            border-radius: 10px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        .status-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.55rem;
+        .badge-text {
+            font-size: 0.625rem;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.2em;
+            color: #6b7280;
         }
-        .status-badge.pending  { background: rgba(255,194,34,0.15); color: var(--yellow); }
-        .status-badge.approved { background: rgba(34,197,94,0.15);  color: var(--green); }
-        .status-badge.rejected { background: rgba(239,68,68,0.1);   color: var(--red); }
-
-        /* ── Empty state ─────────────────────────── */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted);
-        }
-        .empty-state svg {
-            width: 48px; height: 48px;
-            margin: 0 auto 1rem;
-            opacity: 0.3;
-        }
-        .empty-state p {
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+        @keyframes pulse-anim {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(1.5); opacity: 0.5; }
         }
 
-        /* ── Mobile sidebar overlay ──────────────── */
-        #sidebar-overlay {
+        /* ── Marquee / partner scroll ────────────── */
+        @keyframes marquee {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover { animation-play-state: paused; }
+
+        /* ── Modal ───────────────────────────────── */
+        .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 90;
-            backdrop-filter: blur(4px);
+            z-index: 200;
+            background: rgba(10,10,10,0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        #sidebar-overlay.visible { display: block; }
-
-        /* ── Responsive ──────────────────────────── */
-        @media (max-width: 768px) {
-            #sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
-            #sidebar.mobile-open { transform: translateX(0); }
-            #main { margin-left: 0; }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 38rem;
+            border-radius: 3.5rem;
+            padding: 2.75rem;
+            position: relative;
+            animation: modal-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.92) translateY(20px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* ── Focus visible ───────────────────────── */
-        :focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
-
-        /* ── Divider ─────────────────────────────── */
-        .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
-
-        /* ── Form max-width wrapper ───────────────── */
-        .form-container { max-width: 640px; }
-
-        /* ── Loading skeleton ────────────────────── */
-        .skeleton {
-            background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 0.75rem;
-            height: 80px;
+        /* ── Stat cards ──────────────────────────── */
+        .stat-card {
+            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
         }
-        @keyframes shimmer {
-            0%   { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .stat-card:hover { transform: scale(1.04); }
+
+        /* ── Section labels ──────────────────────── */
+        .section-label {
+            font-size: 0.625rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: #9ca3af;
+        }
+
+        /* ── Logo text ───────────────────────────── */
+        .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
+        .highlight  { color: var(--yellow); }
+
+        /* ── Input focus ring ────────────────────── */
+        .form-input {
+            width: 100%;
+            padding: 1.1rem 1.25rem;
+            background: #f7f7f5;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            font-family: 'Source Sans 3', sans-serif;
+        }
+        .form-input:focus {
+            border-color: var(--yellow);
+            box-shadow: 0 0 0 4px rgba(255,194,34,0.15);
+            background: #fff;
+        }
+
+        /* ── Enactors grid toggle ─────────────────── */
+        #enactors-list { display: none; }
+
+        /* ── Progress bar on scroll ──────────────── */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--yellow);
+            z-index: 9999;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Back to top ─────────────────────────── */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            background: var(--black);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border: none;
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #back-to-top:hover { background: var(--yellow); color: var(--black); }
+
+        /* ── Mobile menu transition ───────────────── */
+        #mobileMenu {
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        #mobileMenu.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* ── Grain overlay on hero ───────────────── */
+        .grain::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── Timeline connector line ─────────────── */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #e5e7eb 10%, #e5e7eb 90%, transparent);
+            transform: translateX(-50%);
+        }
+
+        /* ── Accessibility: focus-visible ─────────── */
+        :focus-visible {
+            outline: 2px solid var(--yellow);
+            outline-offset: 3px;
+        }
+
+        /* ── Custom scrollbar ─────────────────────── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+
+        /* ── Responsive typography tweaks ─────────── */
+        @media (max-width: 640px) {
+            .hero-h1 { font-size: clamp(3.5rem, 18vw, 6rem); }
+        }
+
+        /* ── Announcement bar ─────────────────────── */
+        #announcement-bar {
+            background: var(--black);
+            color: white;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 0.6rem 1rem;
+            position: relative;
+            z-index: 60;
         }
     </style>
 </head>
-<body>
+<body class="bg-white">
 
-<!-- ── SIDEBAR OVERLAY (mobile) ──────────────── -->
-<div id="sidebar-overlay" onclick="closeSidebar()" aria-hidden="true"></div>
+<!-- ── PROGRESS BAR ──────────────────────────── -->
+<div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
 
-<!-- ══ SIDEBAR ════════════════════════════════ -->
-<aside id="sidebar" role="navigation" aria-label="Admin navigation">
+<!-- ── ANNOUNCEMENT BAR ───────────────────────── -->
+<div id="announcement-bar">
+    <span>🏆 Limitl'ESS Champions 2025 &nbsp;·&nbsp; Social &amp; Solidarity Economy Excellence, Tunisia</span>
+</div>
 
-    <!-- Logo -->
-    <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">A</div>
-        <div class="sidebar-logo-text">
-            Admin<span> Panel</span>
-            <div style="font-size:0.55rem;color:#6b7280;font-weight:700;letter-spacing:0.15em;margin-top:1px;">ENACTUS ISIMG</div>
+<!-- ══ NAVIGATION ══════════════════════════════ -->
+<nav id="navbar" class="sticky top-0 w-full z-50 bg-white py-4">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2.5 group" aria-label="Enactus ISIMG home">
+            <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-yellow/30 group-hover:ring-yellow transition-all">
+                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                     class="w-full h-full object-cover" alt="Enactus ISIMG Logo" loading="eager">
+            </div>
+            <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-widest">
+            <a href="#about"    class="hover:text-yellow transition-colors duration-200">About</a>
+            <a href="#projects" class="hover:text-yellow transition-colors duration-200">Projects</a>
+            <a href="#events"   class="hover:text-yellow transition-colors duration-200">Events</a>
+            <a href="#team"     class="hover:text-yellow transition-colors duration-200">Team</a>
+            <div class="flex items-center gap-3 ml-2">
+                <a href="login.html" class="border-2 border-black text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest">Log in</a>
+                <a href="#contact"   class="bg-yellow text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest shadow-md shadow-yellow/30">Join Us</a>
+            </div>
         </div>
-    </div>
 
-    <!-- Nav -->
-    <p class="sidebar-section-label">Management</p>
-    <nav class="sidebar-nav" style="padding-bottom:0.5rem;">
-        <button class="nav-item active" onclick="showSection('overview', this)" data-section="overview" aria-current="page">
-            <i data-lucide="layout-dashboard" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Overview
-        </button>
-        <button class="nav-item" onclick="showSection('reviews', this)" data-section="reviews">
-            <i data-lucide="clipboard-check" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Submissions
-            <span class="nav-badge" id="badge-reviews">0</span>
-        </button>
-        <button class="nav-item" onclick="showSection('members', this)" data-section="members">
-            <i data-lucide="users" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Members
-            <span class="nav-badge" id="badge-members">0</span>
-        </button>
-
-        <p class="sidebar-section-label" style="padding-top:1.25rem;">Tools</p>
-        <button class="nav-item" onclick="showSection('tasks', this)" data-section="tasks">
-            <i data-lucide="send" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Assign Mission
-        </button>
-        <button class="nav-item" onclick="showSection('projects', this)" data-section="projects">
-            <i data-lucide="rocket" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Hub Projects
-        </button>
-        <button class="nav-item" onclick="showSection('calendar', this)" data-section="calendar">
-            <i data-lucide="calendar-plus" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Events Planner
-        </button>
-        <button class="nav-item" onclick="showSection('eom', this)" data-section="eom">
-            <i data-lucide="crown" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Enactor of Month
-        </button>
-        <button class="nav-item" onclick="showSection('broadcast', this)" data-section="broadcast">
-            <i data-lucide="megaphone" class="w-4 h-4 nav-icon" aria-hidden="true"></i>
-            Broadcast
-        </button>
-    </nav>
-
-    <!-- Footer -->
-    <div class="sidebar-footer">
-        <button onclick="logout()" class="nav-item" style="color:#ef4444;">
-            <i data-lucide="log-out" class="w-4 h-4" aria-hidden="true"></i>
-            Sign Out
-        </button>
-    </div>
-</aside>
-
-
-<!-- ══ MAIN ════════════════════════════════════ -->
-<main id="main">
-
-    <!-- Topbar -->
-    <header id="topbar" role="banner">
         <!-- Mobile burger -->
-        <button id="burgerBtn" onclick="toggleSidebar()"
-                style="background:none;border:none;cursor:pointer;color:#e5e7eb;display:none;"
-                class="md:hidden" aria-label="Toggle menu" aria-expanded="false">
-            <i data-lucide="menu" class="w-5 h-5" aria-hidden="true"></i>
+        <button id="burgerBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 hover:border-yellow transition-colors"
+                aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+            <i data-lucide="menu" id="menuIcon" class="w-5 h-5"></i>
         </button>
+    </div>
 
-        <span id="topbar-title">Overview</span>
-
-        <div class="topbar-admin-chip" role="status">
-            <span class="status-dot" aria-hidden="true"></span>
-            Admin · Online
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-100 px-6 pt-4 pb-6" role="navigation" aria-label="Mobile navigation">
+        <div class="flex flex-col space-y-1">
+            <a href="#about"    class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">About</a>
+            <a href="#projects" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Projects</a>
+            <a href="#events"   class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Events</a>
+            <a href="#team"     class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Team</a>
+            <div class="pt-3 flex flex-col gap-3">
+                <a href="login.html" class="border-2 border-black text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Log in</a>
+                <a href="#contact" class="bg-yellow text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Join Us</a>
+            </div>
         </div>
-    </header>
+    </div>
+</nav>
 
-    <!-- Content -->
-    <div id="content">
 
-        <!-- ══ OVERVIEW ════════════════════════════ -->
-        <section id="overviewSection" class="section-panel active">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:var(--yellow);"></span>Dashboard</h2>
-                <p>Welcome back, Admin. Here's what's happening.</p>
+<!-- ══ HERO ═══════════════════════════════════ -->
+<section class="relative min-h-[92vh] flex items-center overflow-hidden bg-[#fafaf8] grain">
+    <!-- Ambient blobs -->
+    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow opacity-[0.07] rounded-full blur-[140px] pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute bottom-0 -left-20 w-72 h-72 bg-yellow opacity-[0.05] rounded-full blur-[100px] pointer-events-none" aria-hidden="true"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 py-20">
+
+        <!-- Left copy -->
+        <div data-aos="fade-right" data-aos-duration="900">
+            <div class="hero-badge" role="status">
+                <span class="pulse-dot" aria-hidden="true"></span>
+                <span class="badge-text">Impact Chapter · Gabès, Tunisia</span>
             </div>
 
-            <!-- Stats row -->
-            <div class="stat-grid">
-                <div class="stat-card">
-                    <p class="stat-label">Total Members</p>
-                    <p class="stat-value" id="stat-total">—</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-label">Pending Review</p>
-                    <p class="stat-value yellow" id="stat-pending">—</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-label">Approved</p>
-                    <p class="stat-value green" id="stat-approved">—</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-label">Submissions</p>
-                    <p class="stat-value" id="stat-submissions">—</p>
-                </div>
+            <h1 class="hero-h1 text-[clamp(4rem,10vw,90px)] font-black font-heading leading-[0.85] mb-8 uppercase tracking-tighter">
+                Impact<br>
+                <span class="outline-text">Through</span><br>
+                Action.
+            </h1>
+
+            <p class="text-gray-500 text-lg font-medium mb-10 max-w-sm leading-relaxed">
+                A student-powered innovation lab turning ideas into real change — in Gabès and beyond.
+            </p>
+
+            <div class="flex flex-wrap gap-4">
+                <a href="#projects" class="bg-yellow text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300 shadow-lg shadow-yellow/25">
+                    Our Projects
+                </a>
+                <a href="#about" class="border-2 border-black text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
+                    Learn More
+                </a>
             </div>
 
-            <!-- Quick actions -->
-            <h3 style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--text-muted);margin-bottom:1rem;">Quick Actions</h3>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.875rem;">
-                <button class="card" onclick="showSection('reviews', document.querySelector('[data-section=reviews]'))" style="cursor:pointer;text-align:left;border:none;">
-                    <div style="width:36px;height:36px;background:rgba(59,130,246,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
-                        <i data-lucide="clipboard-check" style="width:18px;height:18px;color:#3b82f6;" aria-hidden="true"></i>
-                    </div>
-                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Review Work</p>
-                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Approve or reject submissions</p>
-                </button>
-                <button class="card" onclick="showSection('members', document.querySelector('[data-section=members]'))" style="cursor:pointer;text-align:left;border:none;">
-                    <div style="width:36px;height:36px;background:var(--yellow-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
-                        <i data-lucide="users" style="width:18px;height:18px;color:var(--yellow);" aria-hidden="true"></i>
-                    </div>
-                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Members</p>
-                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Manage applications &amp; status</p>
-                </button>
-                <button class="card" onclick="showSection('tasks', document.querySelector('[data-section=tasks]'))" style="cursor:pointer;text-align:left;border:none;">
-                    <div style="width:36px;height:36px;background:rgba(34,197,94,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
-                        <i data-lucide="send" style="width:18px;height:18px;color:var(--green);" aria-hidden="true"></i>
-                    </div>
-                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Assign Mission</p>
-                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Deploy tasks to enactors</p>
-                </button>
-                <button class="card" onclick="showSection('broadcast', document.querySelector('[data-section=broadcast]'))" style="cursor:pointer;text-align:left;border:none;">
-                    <div style="width:36px;height:36px;background:rgba(239,68,68,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
-                        <i data-lucide="megaphone" style="width:18px;height:18px;color:var(--red);" aria-hidden="true"></i>
-                    </div>
-                    <p style="font-weight:900;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#fff;margin-bottom:0.25rem;">Broadcast</p>
-                    <p style="font-size:0.72rem;color:var(--text-muted);font-weight:600;">Send club-wide announcements</p>
-                </button>
-            </div>
-        </section>
-
-
-        <!-- ══ REVIEW SUBMISSIONS ══════════════════ -->
-        <section id="reviewsSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:#3b82f6;"></span>Submissions</h2>
-                <p>Review and validate member work before awarding points.</p>
-            </div>
-            <div id="submissionsList" class="space-y-3">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
-        </section>
-
-
-        <!-- ══ MEMBERS ════════════════════════════ -->
-        <section id="membersSection" class="section-panel">
-            <div class="section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+            <!-- Mini stats row -->
+            <div class="flex gap-8 mt-14 pt-10 border-t border-gray-200">
                 <div>
-                    <h2><span class="section-accent" style="background:var(--yellow);"></span>Members</h2>
-                    <p>Manage member applications and statuses.</p>
+                    <span class="text-3xl font-black font-heading text-yellow">12+</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Projects</p>
                 </div>
-                <!-- Filter tabs -->
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="filterMembers('all')"      id="filter-all"      style="font-size:0.6rem;">All</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('pending')"  id="filter-pending"  style="font-size:0.6rem;">Pending</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('approved')" id="filter-approved" style="font-size:0.6rem;">Approved</button>
-                    <button class="btn btn-dark"    onclick="filterMembers('rejected')" id="filter-rejected" style="font-size:0.6rem;">Rejected</button>
+                <div class="w-px bg-gray-200"></div>
+                <div>
+                    <span class="text-3xl font-black font-heading">50+</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Enactors</p>
                 </div>
-            </div>
-            <div id="membersList" class="space-y-3">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
-        </section>
-
-
-        <!-- ══ ASSIGN MISSION ════════════════════ -->
-        <section id="tasksSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:var(--green);"></span>Assign Mission</h2>
-                <p>Deploy a task to a specific enactor.</p>
-            </div>
-            <div class="form-container">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="admin-label" for="taskMember">Target Enactor</label>
-                        <select id="taskMember" class="admin-input" aria-required="true"></select>
-                    </div>
-                    <div class="form-group">
-                        <label class="admin-label" for="taskText">Mission Description</label>
-                        <input type="text" id="taskText" class="admin-input" placeholder="e.g. Design 3 Instagram Posts for the launch" aria-required="true">
-                    </div>
-                    <div class="form-group">
-                        <label class="admin-label" for="taskPoints">Points Reward</label>
-                        <input type="number" id="taskPoints" class="admin-input" placeholder="50" value="50" min="1" max="500">
-                    </div>
-                    <hr class="divider">
-                    <button onclick="assignTask()" class="btn btn-primary btn-full">
-                        <i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i>
-                        Deploy Mission
-                    </button>
+                <div class="w-px bg-gray-200"></div>
+                <div>
+                    <span class="text-3xl font-black font-heading">1.2k</span>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Lives Impacted</p>
                 </div>
             </div>
-        </section>
+        </div>
 
-
-        <!-- ══ HUB PROJECTS ══════════════════════ -->
-        <section id="projectsSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:#22d3ee;"></span>Hub Projects</h2>
-                <p>Update project progress shown in the member portal.</p>
+        <!-- Right image -->
+        <div class="relative" data-aos="zoom-out" data-aos-duration="1100" data-aos-delay="100">
+            <div class="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl shadow-black/10 transform -rotate-2 hover:rotate-0 transition-transform duration-700">
+                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg"
+                     alt="Enactus ISIMG student team" class="w-full h-auto">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
-            <div class="form-container">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="admin-label" for="pName">Project Name</label>
-                        <input type="text" id="pName" class="admin-input" placeholder="e.g. Fytrlance" aria-required="true">
+
+            <!-- Floating badge -->
+            <div class="absolute -bottom-6 -left-6 bg-white text-black p-6 rounded-[2.5rem] shadow-2xl z-20 border-4 border-white hover:-translate-y-2 transition-transform duration-500">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl font-black text-yellow leading-none">22+</span>
+                    <p class="text-[9px] font-black uppercase tracking-widest leading-tight text-gray-500">Active<br>Enactors</p>
+                </div>
+            </div>
+
+            <!-- Award badge -->
+            <div class="absolute -top-4 -right-4 bg-yellow text-black p-4 rounded-[2rem] shadow-xl z-20 rotate-6 hover:rotate-0 transition-transform duration-500">
+                <i data-lucide="award" class="w-6 h-6" aria-hidden="true"></i>
+                <p class="text-[8px] font-black uppercase tracking-widest mt-1 leading-tight">Limitl'ESS<br>Champions</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ ABOUT ═══════════════════════════════════ -->
+<section id="about" class="py-32 bg-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+        <!-- Section header -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-10">
+            <div class="space-y-4" data-aos="fade-right">
+                <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 bg-yellow/15 text-yellow-700 rounded-full">
+                    <i data-lucide="calendar" class="w-3 h-3" aria-hidden="true"></i> Established 2025
+                </span>
+                <h2 class="text-5xl lg:text-6xl font-black font-heading uppercase tracking-tighter leading-none">
+                    Driven by <span class="text-yellow">Impact.</span>
+                </h2>
+            </div>
+            <p class="max-w-md text-gray-500 font-medium text-lg border-l-4 border-yellow pl-6" data-aos="fade-left" data-aos-delay="100">
+                Enactus ISIMG is a premier laboratory for social innovation where technology meets entrepreneurial action in Gabès.
+            </p>
+        </div>
+
+        <!-- Bento grid -->
+        <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Award card — tall left -->
+            <div class="lg:col-span-7 bg-black text-white p-10 lg:p-12 rounded-[3.5rem] relative overflow-hidden group shadow-xl min-h-[300px] flex flex-col justify-between" data-aos="zoom-in">
+                <div class="absolute -bottom-16 -right-16 w-56 h-56 bg-yellow/5 rounded-full" aria-hidden="true"></div>
+                <div class="w-14 h-14 bg-yellow rounded-2xl flex items-center justify-center text-black shadow-lg group-hover:rotate-12 transition-transform duration-500" aria-hidden="true">
+                    <i data-lucide="award" class="w-7 h-7"></i>
+                </div>
+                <div class="relative z-10">
+                    <h4 class="text-3xl lg:text-4xl font-black mb-3 font-heading uppercase">Limitl'ESS<br>Champion</h4>
+                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Recognized for excellence in Social and Solidarity Economy in Tunisia. A testament to our commitment to real change.</p>
+                </div>
+            </div>
+
+            <!-- Spirit card -->
+            <div class="lg:col-span-5 bg-[#fafaf8] p-10 rounded-[3.5rem] border-2 border-transparent hover:border-yellow transition-all duration-300 group min-h-[300px] flex flex-col justify-between" data-aos="fade-left" data-aos-delay="100">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-yellow shadow-sm group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
+                    <i data-lucide="zap" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h4 class="text-2xl font-black mb-3 font-heading uppercase">Our Spirit</h4>
+                    <p class="text-gray-500 text-sm leading-relaxed">We believe entrepreneurial action creates change. Our students build real solutions to real problems — with mentorship, community, and drive.</p>
+                </div>
+            </div>
+
+            <!-- Mission card — full width -->
+            <div class="lg:col-span-12 bg-yellow p-10 lg:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
+                <div class="flex-1">
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-3 block">Our Mission</span>
+                    <h4 class="text-3xl font-black font-heading uppercase leading-tight">Entrepreneurial Action.<br>Real Community Impact.</h4>
+                </div>
+                <div class="flex-1 grid grid-cols-3 gap-6 text-center">
+                    <div>
+                        <i data-lucide="lightbulb" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Innovate</p>
                     </div>
-                    <div class="form-group">
-                        <label class="admin-label" for="pProgress">Progress (0–100%)</label>
-                        <div style="display:flex;align-items:center;gap:0.75rem;">
-                            <input type="range" id="pProgressRange" min="0" max="100" value="0"
-                                   style="flex:1;accent-color:var(--yellow);"
-                                   oninput="document.getElementById('pProgress').value=this.value">
-                            <input type="number" id="pProgress" class="admin-input" style="width:80px;" placeholder="0" min="0" max="100"
-                                   oninput="document.getElementById('pProgressRange').value=this.value">
-                            <span style="font-weight:900;color:var(--text-muted);">%</span>
+                    <div>
+                        <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Collaborate</p>
+                    </div>
+                    <div>
+                        <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Impact</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ STATS + ENACTOR OF THE MONTH ══════════ -->
+<section class="py-20 bg-[#fafaf8]">
+    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-8">
+
+        <!-- Stats -->
+        <div class="lg:col-span-2 grid grid-cols-3 gap-6" role="list" aria-label="Impact statistics">
+            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Active Projects</p>
+            </div>
+            <div class="stat-card p-8 lg:p-10 bg-black text-white rounded-[2.5rem] text-center hover:bg-yellow hover:text-black transition-all group shadow-sm cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="100">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Enactors</p>
+            </div>
+            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="200">
+                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
+                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Impacted Lives</p>
+            </div>
+        </div>
+
+        <!-- Enactor of the Month -->
+        <div class="bg-yellow p-8 rounded-[2.5rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-5">
+                    <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
+                </div>
+                <div class="w-28 h-28 rounded-2xl overflow-hidden border-4 border-black/10 mb-5 group-hover:rotate-3 transition-transform duration-500">
+                    <img id="eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
+                         class="w-full h-full object-cover" alt="Enactor of the Month" loading="lazy">
+                </div>
+                <h4 id="eom-name" class="text-xl font-black font-heading uppercase">Moetez Maraach</h4>
+                <p  id="eom-desc" class="text-sm font-semibold opacity-70 mt-1.5 leading-snug">Outstanding leadership in the "Green Tech" event.</p>
+            </div>
+            <i data-lucide="award" class="absolute -bottom-8 -right-8 w-36 h-36 opacity-10 group-hover:rotate-12 transition-transform duration-700" aria-hidden="true"></i>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ PROJECTS ════════════════════════════════ -->
+<section id="projects" class="py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+            <div data-aos="fade-right">
+                <span class="section-label mb-3 block">What We Build</span>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Our <span class="text-yellow">Innovation</span></h2>
+            </div>
+            <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest" data-aos="fade-left">Click a project to learn more</p>
+        </div>
+
+        <!-- Project cards -->
+        <div class="grid md:grid-cols-2 gap-8 text-left">
+
+            <article class="hover-lift group cursor-pointer" id="proj-fytrlance" role="button" tabindex="0"
+                     aria-label="View Fytrlance project details" data-aos="fade-up">
+                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                    <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                         alt="Fytrlance — tech and work project" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                        <div>
+                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Tech &amp; Work</span>
+                            <h3 class="text-3xl font-black font-heading text-white uppercase">Fytrlance</h3>
+                            <p class="text-white/60 text-sm mt-1 font-medium">Freelance platform for ISIMG students</p>
                         </div>
                     </div>
-                    <hr class="divider">
-                    <button onclick="updateProject()" class="btn btn-primary btn-full">
-                        <i data-lucide="save" class="w-4 h-4" aria-hidden="true"></i>
-                        Save to Hub
-                    </button>
                 </div>
-            </div>
-        </section>
+            </article>
 
-
-        <!-- ══ EVENTS PLANNER ════════════════════ -->
-        <section id="calendarSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:#f97316;"></span>Events Planner</h2>
-                <p>Schedule events that appear on the public timeline.</p>
-            </div>
-            <div class="form-container">
-                <div class="card">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label class="admin-label" for="eDate">Date</label>
-                            <input type="text" id="eDate" class="admin-input" placeholder="e.g. 20 MAR 2026" aria-required="true">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label class="admin-label" for="eTitle">Event Name</label>
-                            <input type="text" id="eTitle" class="admin-input" placeholder="e.g. Green Tech Day" aria-required="true">
+            <article class="hover-lift group cursor-pointer" id="proj-bioverto" role="button" tabindex="0"
+                     aria-label="View Bioverto project details" data-aos="fade-up" data-aos-delay="100">
+                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                    <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                         alt="Bioverto — eco-wellness project" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                        <div>
+                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Eco-Wellness</span>
+                            <h3 class="text-3xl font-black font-heading text-white uppercase">Bioverto</h3>
+                            <p class="text-white/60 text-sm mt-1 font-medium">Organic household solutions from local resources</p>
                         </div>
                     </div>
-                    <div class="form-group" style="margin-top:1rem;">
-                        <label class="admin-label" for="eDesc">Event Details</label>
-                        <textarea id="eDesc" class="admin-input" style="height:100px;resize:vertical;" placeholder="Brief description of the event..."></textarea>
-                    </div>
-                    <hr class="divider">
-                    <button onclick="addEvent()" class="btn btn-primary btn-full">
-                        <i data-lucide="calendar-plus" class="w-4 h-4" aria-hidden="true"></i>
-                        Publish Event
-                    </button>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ EVENTS TIMELINE ═════════════════════════ -->
+<section id="events" class="py-32 bg-[#fafaf8] overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-20" data-aos="fade-up">
+            <span class="section-label mb-3 block">What's Happening</span>
+            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-2">Action <span class="text-yellow">Timeline</span></h2>
+        </div>
+
+        <div class="relative">
+            <div class="timeline-line hidden md:block" aria-hidden="true"></div>
+            <div id="events-container" class="space-y-14" role="list" aria-label="Events timeline">
+                <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-12" aria-live="polite">
+                    Loading our next big moves...
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
 
-        <!-- ══ ENACTOR OF THE MONTH ══════════════ -->
-        <section id="eomSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:var(--yellow);"></span>Enactor of the Month</h2>
-                <p>Set the featured member shown on the public homepage.</p>
+<!-- ══ TEAM ════════════════════════════════════ -->
+<section id="team" class="py-32 bg-black text-white">
+    <div class="max-w-7xl mx-auto px-6">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-20 gap-6">
+            <div>
+                <span class="section-label text-gray-600 mb-3 block">The People Behind It</span>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Leadership</h2>
             </div>
-            <div class="form-container">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="admin-label" for="eomMember">Select Member</label>
-                        <select id="eomMember" class="admin-input"></select>
+            <div class="flex items-center gap-4">
+                <div class="h-px w-24 bg-white/10 hidden md:block" aria-hidden="true"></div>
+                <span class="text-yellow font-black uppercase tracking-[0.3em] text-[10px]">The Board 2025</span>
+            </div>
+        </div>
+
+        <div id="leadership-grid" class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-20" role="list" aria-label="Leadership team"></div>
+
+        <!-- Toggle enactors -->
+        <div class="text-center border-t border-white/10 pt-16">
+            <button id="toggleEnactorsBtn" onclick="toggleEnactors()"
+                    class="group inline-flex flex-col items-center gap-3 focus-visible:outline-yellow"
+                    aria-expanded="false" aria-controls="enactors-list">
+                <div class="w-16 h-16 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-yellow group-hover:border-yellow transition-all duration-300">
+                    <i data-lucide="users" class="w-5 h-5 group-hover:text-black transition-colors" aria-hidden="true"></i>
+                </div>
+                <p class="text-[9px] font-black uppercase tracking-[0.5em] text-gray-500 group-hover:text-yellow transition-colors">Show All Enactors</p>
+            </button>
+        </div>
+
+        <div id="enactors-list" class="mt-16 grid grid-cols-2 md:grid-cols-6 gap-6" role="list" aria-label="All enactors"></div>
+    </div>
+</section>
+
+
+<!-- ══ JOIN US / REGISTRATION ══════════════════ -->
+<section id="contact" class="py-32 bg-yellow">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+
+            <!-- Left copy -->
+            <div class="lg:w-2/5" data-aos="fade-right">
+                <span class="section-label opacity-60 mb-4 block">Ready to Make an Impact?</span>
+                <h2 class="text-6xl lg:text-7xl font-black font-heading uppercase leading-[0.9] mb-6">Join<br>The Fam.</h2>
+                <p class="text-lg font-semibold opacity-75 mb-10 leading-relaxed">Be part of the innovation lab of ISIMG. Apply to join and start building solutions that matter.</p>
+
+                <!-- What you get -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">Access to real entrepreneurship projects</span>
                     </div>
-                    <div class="form-group">
-                        <label class="admin-label" for="eomDesc">Achievement Description</label>
-                        <input type="text" id="eomDesc" class="admin-input" placeholder="e.g. Outstanding leadership in the Green Tech event." aria-required="true">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">Mentorship from industry professionals</span>
                     </div>
-                    <hr class="divider">
-                    <button onclick="setEOM()" class="btn btn-primary btn-full">
-                        <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
-                        Set as Enactor of the Month
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">National &amp; international competitions</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-semibold text-sm">A community driven by purpose</span>
+                    </div>
                 </div>
             </div>
-        </section>
 
+            <!-- Form -->
+            <div class="lg:w-3/5 w-full" data-aos="fade-left" data-aos-delay="100">
+                <form id="registrationForm" class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-black/10 space-y-6" novalidate>
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="regName" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Full Name *</label>
+                            <input type="text" id="regName" required autocomplete="name" placeholder="Your full name" class="form-input" aria-required="true">
+                        </div>
+                        <div>
+                            <label for="regEmail" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Email *</label>
+                            <input type="email" id="regEmail" required autocomplete="email" placeholder="you@example.com" class="form-input" aria-required="true">
+                        </div>
+                    </div>
 
-        <!-- ══ BROADCAST ══════════════════════════ -->
-        <section id="broadcastSection" class="section-panel">
-            <div class="section-header">
-                <h2><span class="section-accent" style="background:var(--red);"></span>Broadcast</h2>
-                <p>Send a club-wide announcement to all members.</p>
-            </div>
-            <div class="form-container">
-                <div class="card">
-                    <div class="form-group">
-                        <label class="admin-label" for="nTitle">Announcement Title</label>
-                        <input type="text" id="nTitle" class="admin-input" placeholder="e.g. Important meeting this Friday" aria-required="true">
+                    <div>
+                        <label for="regPassword" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Portal Password * (min 6 chars)</label>
+                        <div class="relative">
+                            <input type="password" id="regPassword" required minlength="6" placeholder="Create a password" class="form-input pr-14" aria-required="true">
+                            <button type="button" id="togglePasswordBtn"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                                    aria-label="Toggle password visibility">
+                                <i data-lucide="eye" id="pwEyeIcon" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="admin-label" for="nDesc">Message</label>
-                        <textarea id="nDesc" class="admin-input" style="height:120px;resize:vertical;" placeholder="Write your announcement here..." aria-required="true"></textarea>
+
+                    <!-- Department -->
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3" id="dept-label">Choose Your Department *</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-labelledby="dept-label">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Projects" class="sr-only peer" checked>
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Projects</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Media" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Media</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="HR" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">HR</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="dept" value="Marketing" class="sr-only peer">
+                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Marketing</div>
+                            </label>
+                        </div>
                     </div>
-                    <hr class="divider">
-                    <button onclick="publishNews()" class="btn btn-primary btn-full">
-                        <i data-lucide="megaphone" class="w-4 h-4" aria-hidden="true"></i>
-                        Broadcast Globally
+
+                    <div>
+                        <label for="regMotivation" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Why Enactus ISIMG? *</label>
+                        <textarea id="regMotivation" required placeholder="Tell us your motivation..." class="form-input h-32 resize-none" aria-required="true"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                            class="w-full py-5 bg-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all duration-300 uppercase tracking-[0.2em] text-xs shadow-lg shadow-yellow/30 disabled:opacity-60 disabled:cursor-not-allowed">
+                        Submit Application →
                     </button>
+
+                    <p class="text-center text-[10px] text-gray-400 font-semibold">Your application will be reviewed by our HR team. You'll receive a confirmation email.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ PARTNERS SCROLL BANNER ══════════════════ -->
+<section class="py-16 bg-white overflow-hidden border-y border-gray-100" aria-label="Our partners">
+    <div class="mb-10 text-center">
+        <p class="section-label">Our Trusted Partners</p>
+    </div>
+    <div class="relative">
+        <div class="animate-marquee" aria-hidden="true">
+            <!-- Repeated twice for seamless loop -->
+            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Enactus">
+                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Partner">
+                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Sponsor">
+                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+            </div>
+            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity" aria-hidden="true">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ══ FOOTER ══════════════════════════════════ -->
+<footer class="bg-black text-white py-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
+
+            <!-- Brand -->
+            <div>
+                <div class="flex items-center gap-2.5 mb-5">
+                    <div class="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-yellow/30">
+                        <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                             class="w-full h-full object-cover" alt="Enactus ISIMG" loading="lazy">
+                    </div>
+                    <span class="logo-text text-base">ENACTUS <span class="highlight">ISIMG</span></span>
+                </div>
+                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                    A student-powered entrepreneurship organization driving innovation and social impact in Gabès, Tunisia.
+                </p>
+            </div>
+
+            <!-- Quick links -->
+            <div>
+                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Quick Links</h3>
+                <nav aria-label="Footer navigation">
+                    <ul class="space-y-3">
+                        <li><a href="#about"    class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">About</a></li>
+                        <li><a href="#projects" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Projects</a></li>
+                        <li><a href="#events"   class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Events</a></li>
+                        <li><a href="#team"     class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Team</a></li>
+                        <li><a href="#contact"  class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Join Us</a></li>
+                        <li><a href="login.html" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Member Portal</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Contact & social -->
+            <div>
+                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Connect</h3>
+                <div class="space-y-3 mb-6">
+                    <p class="text-gray-400 text-sm flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                        ISIMG, Gabès, Tunisia
+                    </p>
+                    <p class="text-gray-400 text-sm flex items-center gap-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                        enactus.isimg@gmail.com
+                    </p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Facebook">
+                        <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Instagram">
+                        <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="LinkedIn">
+                        <i data-lucide="linkedin" class="w-4 h-4" aria-hidden="true"></i>
+                    </a>
                 </div>
             </div>
-        </section>
+        </div>
 
-    </div><!-- /content -->
-</main><!-- /main -->
+        <!-- Bottom bar -->
+        <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-[10px] font-black uppercase tracking-widest">
+            <p>© <span id="footer-year"></span> Enactus ISIMG. All Rights Reserved.</p>
+            <p>Made with <span class="text-yellow">♥</span> in Gabès, Tunisia</p>
+        </div>
+    </div>
+</footer>
+
+
+<!-- ══ UNIFIED MODAL ═══════════════════════════ -->
+<div id="unifiedModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content" onclick="event.stopPropagation()">
+
+        <!-- Project content -->
+        <div id="projectContent" class="hidden">
+            <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4"></div>
+            <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" id="modalTitle"></h3>
+            <div class="space-y-4 text-gray-500 text-sm leading-relaxed">
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
+                    </div>
+                    <p id="projProb"></p>
+                </div>
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-blue-400"></i>
+                    </div>
+                    <p id="projSol"></p>
+                </div>
+                <div class="bg-yellow/10 border border-yellow/20 p-5 rounded-2xl flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-yellow-600"></i>
+                    </div>
+                    <p id="projImpact" class="font-semibold text-gray-700"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member content -->
+        <div id="memberContent" class="hidden text-center">
+            <img id="mImg" src="" class="w-36 h-36 object-cover rounded-[2rem] mx-auto mb-5 border-4 border-yellow shadow-lg" alt="">
+            <h3 id="mName" class="text-3xl font-black font-heading uppercase mb-1"></h3>
+            <p  id="mRole" class="text-yellow font-black uppercase tracking-widest text-[9px] mb-6"></p>
+            <div class="flex justify-center gap-3">
+                <a id="mFB" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Facebook profile">
+                    <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
+                </a>
+                <a id="mIG" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Instagram profile">
+                    <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+
+        <button onclick="closeModal()" class="mt-8 w-full py-4 border-2 border-gray-100 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 hover:border-gray-200 transition-all">
+            Close ✕
+        </button>
+    </div>
+</div>
+
+<!-- ── BACK TO TOP ──────────────────────────── -->
+<button id="back-to-top" aria-label="Back to top">
+    <i data-lucide="arrow-up" class="w-5 h-5" aria-hidden="true"></i>
+</button>
 
 
 <!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: Firebase → Config → Toast → auth-guard → Logic
+     Load order: AOS → Lucide → Firebase → Config → Toast → index.js
 ═════════════════════════════════════════════ -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script src="js/firebase-config.js"></script>
 <script src="js/toast.js"></script>
-<script src="js/auth-guard.js"></script>
+
+<!--
+    FIX: Removed the massive inline <script> block that duplicated all logic
+    from index.js and register.js. This caused double Firestore listeners,
+    double form submit handlers, and conflicting function definitions.
+    All logic now lives in the external JS files.
+-->
+<script src="js/index.js"></script>
 
 <script>
-"use strict";
-
 /* ═══════════════════════════════════════════════
-   INIT — lucide icons + mobile burger visibility
+   PAGE-LEVEL WIRING
+   index.js handles DOMContentLoaded, AOS, team grids,
+   Firestore data, and the registration form.
+   We only wire up the few things that reference
+   inline HTML onclick attributes here.
 ═══════════════════════════════════════════════ */
-lucide.createIcons();
 
-var burgerBtn = document.getElementById("burgerBtn");
-if (window.innerWidth <= 768) burgerBtn.style.display = "flex";
-window.addEventListener("resize", function () {
-    burgerBtn.style.display = window.innerWidth <= 768 ? "flex" : "none";
-});
-
-
-/* ═══════════════════════════════════════════════
-   SIDEBAR TOGGLE
-═══════════════════════════════════════════════ */
-function toggleSidebar() {
-    var sidebar  = document.getElementById("sidebar");
-    var overlay  = document.getElementById("sidebar-overlay");
-    var isOpen   = sidebar.classList.toggle("mobile-open");
-    overlay.classList.toggle("visible", isOpen);
-    burgerBtn.setAttribute("aria-expanded", isOpen);
-}
-function closeSidebar() {
-    document.getElementById("sidebar").classList.remove("mobile-open");
-    document.getElementById("sidebar-overlay").classList.remove("visible");
-}
-
-
-/* ═══════════════════════════════════════════════
-   AUTH GUARD — admin only
-   FIX: Was using inline auth.onAuthStateChanged;
-   now correctly uses AuthGuard.requireAdmin().
-═══════════════════════════════════════════════ */
+/* Password visibility toggle for the registration form.
+   Uses a unique ID (togglePasswordBtn) to avoid conflicts. */
 document.addEventListener("DOMContentLoaded", function () {
-    AuthGuard.requireAdmin(function (user, data) {
-        initAdminPanel(user, data);
+
+    /* Project card click / keyboard handlers */
+    var projFytrlance = document.getElementById("proj-fytrlance");
+    if (projFytrlance) {
+        projFytrlance.addEventListener("click", function () { openProject("fytrlance"); });
+        projFytrlance.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("fytrlance"); }
+        });
+    }
+
+    var projBioverto = document.getElementById("proj-bioverto");
+    if (projBioverto) {
+        projBioverto.addEventListener("click", function () { openProject("bioverto"); });
+        projBioverto.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("bioverto"); }
+        });
+    }
+
+    /* Password visibility toggle */
+    var toggleBtn = document.getElementById("togglePasswordBtn");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+            var pwField = document.getElementById("regPassword");
+            var eyeIcon = document.getElementById("pwEyeIcon");
+            if (!pwField) return;
+            var isText = pwField.type === "text";
+            pwField.type = isText ? "password" : "text";
+            if (eyeIcon) {
+                eyeIcon.setAttribute("data-lucide", isText ? "eye" : "eye-off");
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+        });
+    }
+
+    /* Mobile menu nav links — close menu on click */
+    var mobileLinks = document.querySelectorAll("#mobileMenu a");
+    mobileLinks.forEach(function (link) {
+        link.addEventListener("click", function () {
+            /* toggleMobileMenu is defined in index.js */
+            var menu = document.getElementById("mobileMenu");
+            var btn  = document.getElementById("burgerBtn");
+            var icon = document.getElementById("menuIcon");
+            if (!menu) return;
+            menu.classList.remove("open");
+            if (btn) btn.setAttribute("aria-expanded", "false");
+            if (icon) {
+                icon.setAttribute("data-lucide", "menu");
+                if (typeof lucide !== "undefined") lucide.createIcons();
+            }
+        });
     });
+
 });
-
-
-/* ═══════════════════════════════════════════════
-   PANEL INIT
-═══════════════════════════════════════════════ */
-function initAdminPanel(user, data) {
-    loadStats();
-    loadMemberDropdowns();
-    loadSubmissions();
-    loadMembersList();
-}
-
-
-/* ═══════════════════════════════════════════════
-   SECTION SWITCHER
-═══════════════════════════════════════════════ */
-var sectionTitles = {
-    overview:  "Overview",
-    reviews:   "Submissions",
-    members:   "Members",
-    tasks:     "Assign Mission",
-    projects:  "Hub Projects",
-    calendar:  "Events Planner",
-    eom:       "Enactor of Month",
-    broadcast: "Broadcast"
-};
-
-function showSection(id, btn) {
-    document.querySelectorAll(".section-panel").forEach(function (s) { s.classList.remove("active"); });
-    document.querySelectorAll(".nav-item").forEach(function (l) {
-        l.classList.remove("active");
-        l.removeAttribute("aria-current");
-    });
-
-    var panel = document.getElementById(id + "Section");
-    if (panel) panel.classList.add("active");
-    if (btn)   { btn.classList.add("active"); btn.setAttribute("aria-current", "page"); }
-
-    document.getElementById("topbar-title").textContent = sectionTitles[id] || id;
-    closeSidebar();
-}
-
-
-/* ═══════════════════════════════════════════════
-   LIVE STATS (Overview)
-═══════════════════════════════════════════════ */
-function loadStats() {
-    db.collection("users").onSnapshot(function (snap) {
-        var total = 0, pending = 0, approved = 0;
-        snap.forEach(function (doc) {
-            var u = doc.data();
-            if (u.role === "admin") return;
-            total++;
-            if (u.status === "pending")  pending++;
-            if (u.status === "approved") approved++;
-        });
-        document.getElementById("stat-total").textContent    = total;
-        document.getElementById("stat-pending").textContent  = pending;
-        document.getElementById("stat-approved").textContent = approved;
-
-        var badge = document.getElementById("badge-members");
-        badge.textContent = pending;
-        badge.classList.toggle("visible", pending > 0);
-    });
-
-    db.collection("tasks").where("status", "==", "pending_review").onSnapshot(function (snap) {
-        document.getElementById("stat-submissions").textContent = snap.size;
-        var badge = document.getElementById("badge-reviews");
-        badge.textContent = snap.size;
-        badge.classList.toggle("visible", snap.size > 0);
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   MEMBER DROPDOWNS (Assign Mission + EOM)
-   FIX: Store UID as option value; look up Firestore
-   data on submit instead of relying on dataset.img
-   from the DOM (which bypassed URL validation).
-═══════════════════════════════════════════════ */
-
-/* Cache of approved members: uid → {fullName, profilePic} */
-var _approvedMembersCache = {};
-
-function loadMemberDropdowns() {
-    db.collection("users").where("status", "==", "approved").onSnapshot(function (snap) {
-        var taskSelect = document.getElementById("taskMember");
-        var eomSelect  = document.getElementById("eomMember");
-
-        _approvedMembersCache = {};
-
-        [taskSelect, eomSelect].forEach(function (sel) {
-            sel.innerHTML = "";
-            var placeholder       = document.createElement("option");
-            placeholder.value     = "";
-            placeholder.textContent = "— Choose Member —";
-            sel.appendChild(placeholder);
-        });
-
-        snap.forEach(function (doc) {
-            var u = doc.data();
-            if (u.role === "admin") return;
-
-            /* Cache member data for later lookup */
-            _approvedMembersCache[doc.id] = {
-                fullName:   u.fullName   || "Unknown",
-                profilePic: u.profilePic || ""
-            };
-
-            [taskSelect, eomSelect].forEach(function (sel) {
-                var opt         = document.createElement("option");
-                opt.value       = doc.id;
-                opt.textContent = (u.fullName || "Unknown") + " · " + (u.department || "No Dept");
-                sel.appendChild(opt);
-            });
-        });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   REVIEW SUBMISSIONS
-═══════════════════════════════════════════════ */
-function loadSubmissions() {
-    var list = document.getElementById("submissionsList");
-
-    db.collection("tasks").where("status", "==", "pending_review").onSnapshot(function (snap) {
-        list.innerHTML = "";
-
-        if (snap.empty) {
-            list.appendChild(makeEmptyState("clipboard-check", "No submissions to review right now."));
-            return;
-        }
-
-        snap.forEach(function (doc) {
-            var t = doc.data();
-            db.collection("users").doc(t.uid).get().then(function (uDoc) {
-                if (!uDoc.exists) return;
-                var u = uDoc.data();
-
-                var card = document.createElement("div");
-                card.className = "record-card";
-
-                var left = document.createElement("div");
-                left.style.cssText = "display:flex;align-items:center;gap:1rem;flex:1;min-width:0;";
-
-                var avatar  = document.createElement("img");
-                avatar.src  = u.profilePic && /^https?:\/\//i.test(u.profilePic)
-                    ? u.profilePic
-                    : "https://ui-avatars.com/api/?name=" + encodeURIComponent(u.fullName || "U") + "&background=1a1a1a&color=FFC222";
-                avatar.alt  = u.fullName || "";
-                avatar.className = "member-avatar";
-
-                var info = document.createElement("div");
-                info.style.minWidth = "0";
-
-                var nameEl  = document.createElement("p");
-                nameEl.style.cssText = "font-size:0.65rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:var(--yellow);margin-bottom:0.2rem;";
-                nameEl.textContent   = u.fullName || "";
-
-                var taskEl  = document.createElement("p");
-                taskEl.style.cssText = "font-weight:700;font-size:0.9rem;color:#e5e7eb;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;";
-                taskEl.textContent   = t.text || "";
-
-                /* FIX: Validate work link before creating anchor */
-                var safeLink = /^https?:\/\//i.test(t.workLink || "") ? t.workLink : null;
-                var linkEl   = document.createElement("a");
-                if (safeLink) {
-                    linkEl.href   = safeLink;
-                    linkEl.target = "_blank";
-                    linkEl.rel    = "noopener noreferrer";
-                }
-                linkEl.style.cssText = "font-size:0.7rem;color:#3b82f6;font-weight:700;";
-                linkEl.textContent   = safeLink ? "↗ View submitted work" : "No link provided";
-
-                info.appendChild(nameEl);
-                info.appendChild(taskEl);
-                info.appendChild(linkEl);
-                left.appendChild(avatar);
-                left.appendChild(info);
-
-                var actions = document.createElement("div");
-                actions.style.cssText = "display:flex;gap:0.5rem;flex-shrink:0;";
-
-                var approveBtn = document.createElement("button");
-                approveBtn.className = "btn btn-success";
-                approveBtn.innerHTML = '<i data-lucide="check" style="width:14px;height:14px;"></i> Approve';
-                (function (docId, uid, points) {
-                    approveBtn.addEventListener("click", function () { approveWork(docId, uid, points); });
-                })(doc.id, t.uid, t.points);
-
-                var rejectBtn = document.createElement("button");
-                rejectBtn.className = "btn btn-danger";
-                rejectBtn.innerHTML = '<i data-lucide="x" style="width:14px;height:14px;"></i> Reject';
-                (function (docId) {
-                    rejectBtn.addEventListener("click", function () { rejectWork(docId); });
-                })(doc.id);
-
-                actions.appendChild(approveBtn);
-                actions.appendChild(rejectBtn);
-
-                card.appendChild(left);
-                card.appendChild(actions);
-                list.appendChild(card);
-
-                lucide.createIcons();
-            });
-        });
-    });
-}
-
-
-/* ═══════════════════════════════════════════════
-   MEMBERS LIST
-═══════════════════════════════════════════════ */
-var _allMembersData = [];
-
-function loadMembersList() {
-    db.collection("users").onSnapshot(function (snap) {
-        _allMembersData = [];
-        snap.forEach(function (doc) {
-            var u = doc.data();
-            if (u.role === "admin") return;
-            _allMembersData.push(Object.assign({ id: doc.id }, u));
-        });
-        renderMembersList(_allMembersData);
-    });
-}
-
-function filterMembers(status) {
-    ["all", "pending", "approved", "rejected"].forEach(function (s) {
-        var btn = document.getElementById("filter-" + s);
-        btn.className = s === status ? "btn btn-primary" : "btn btn-dark";
-        btn.style.fontSize = "0.6rem";
-    });
-
-    var filtered = status === "all" ? _allMembersData : _allMembersData.filter(function (u) { return u.status === status; });
-    renderMembersList(filtered);
-}
-
-function renderMembersList(members) {
-    var list = document.getElementById("membersList");
-    list.innerHTML = "";
-
-    if (!members.length) {
-        list.appendChild(makeEmptyState("users", "No members found."));
-        return;
-    }
-
-    members.forEach(function (u) {
-        var card     = document.createElement("div");
-        var statusCl = u.status === "approved" ? "approved" : u.status === "rejected" ? "rejected" : "pending";
-        card.className = "record-card " + statusCl;
-
-        var info = document.createElement("div");
-        info.style.cssText = "display:flex;align-items:center;gap:0.875rem;flex:1;min-width:0;";
-
-        var avatar  = document.createElement("img");
-        avatar.src  = u.profilePic && /^https?:\/\//i.test(u.profilePic)
-            ? u.profilePic
-            : "https://ui-avatars.com/api/?name=" + encodeURIComponent(u.fullName || "U") + "&background=1a1a1a&color=FFC222";
-        avatar.alt  = u.fullName || "";
-        avatar.className = "member-avatar";
-
-        var details = document.createElement("div");
-        details.style.minWidth = "0";
-
-        var nameEl = document.createElement("p");
-        nameEl.style.cssText = "font-weight:900;font-size:0.85rem;color:#e5e7eb;";
-        nameEl.textContent   = u.fullName || "Unknown";
-
-        var deptEl = document.createElement("p");
-        deptEl.style.cssText = "font-size:0.65rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;";
-        deptEl.textContent   = (u.department || "N/A") + " · " + (u.points || 0) + " pts";
-
-        var badge = document.createElement("span");
-        badge.className   = "status-badge " + statusCl;
-        badge.textContent = u.status || "pending";
-
-        details.appendChild(nameEl);
-        details.appendChild(deptEl);
-        info.appendChild(avatar);
-        info.appendChild(details);
-
-        var actions = document.createElement("div");
-        actions.style.cssText = "display:flex;align-items:center;gap:0.5rem;flex-shrink:0;";
-        actions.appendChild(badge);
-
-        if (u.status === "pending") {
-            var approveBtn = document.createElement("button");
-            approveBtn.className = "btn btn-success";
-            approveBtn.innerHTML = '<i data-lucide="check" style="width:13px;height:13px;"></i> Approve';
-            (function (uid) {
-                approveBtn.addEventListener("click", function () { approveMember(uid); });
-            })(u.id);
-
-            var rejectBtn = document.createElement("button");
-            rejectBtn.className = "btn btn-danger";
-            rejectBtn.innerHTML = '<i data-lucide="x" style="width:13px;height:13px;"></i> Reject';
-            (function (uid) {
-                rejectBtn.addEventListener("click", function () { rejectMember(uid); });
-            })(u.id);
-
-            actions.appendChild(approveBtn);
-            actions.appendChild(rejectBtn);
-        }
-
-        card.appendChild(info);
-        card.appendChild(actions);
-        list.appendChild(card);
-    });
-
-    lucide.createIcons();
-}
-
-
-/* ═══════════════════════════════════════════════
-   APPROVE / REJECT WORK
-═══════════════════════════════════════════════ */
-async function approveWork(tId, uId, taskPoints) {
-    var pts = parseInt(taskPoints) || 50;
-    try {
-        await db.collection("tasks").doc(tId).update({ status: "approved", completed: true });
-        var userRef = db.collection("users").doc(uId);
-        var user    = await userRef.get();
-        await userRef.update({ points: (user.data().points || 0) + pts });
-        Toast.success("Mission validated! +" + pts + " points awarded.");
-    } catch (err) {
-        Toast.error("Could not approve work. Please try again.");
-        console.error(err);
-    }
-}
-
-async function rejectWork(id) {
-    try {
-        await db.collection("tasks").doc(id).update({ status: "live", submitted: false });
-        Toast.warning("Work rejected. Member can re-submit.");
-    } catch (err) {
-        Toast.error("Could not reject work. Please try again.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   APPROVE / REJECT MEMBERS
-═══════════════════════════════════════════════ */
-async function approveMember(uid) {
-    try {
-        await db.collection("users").doc(uid).update({ status: "approved" });
-        Toast.success("Member approved and activated!");
-    } catch (err) {
-        Toast.error("Could not approve member.");
-        console.error(err);
-    }
-}
-
-async function rejectMember(uid) {
-    try {
-        await db.collection("users").doc(uid).update({ status: "rejected" });
-        Toast.warning("Member application rejected.");
-    } catch (err) {
-        Toast.error("Could not reject member.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   ASSIGN TASK
-═══════════════════════════════════════════════ */
-async function assignTask() {
-    var uid    = document.getElementById("taskMember").value;
-    var text   = document.getElementById("taskText").value.trim();
-    var points = parseInt(document.getElementById("taskPoints").value) || 50;
-
-    if (!uid || !text) {
-        Toast.warning("Please select a member and write the mission description.");
-        return;
-    }
-
-    try {
-        await db.collection("tasks").add({
-            uid:       uid,
-            text:      text,
-            points:    Math.min(500, Math.max(1, points)),
-            completed: false,
-            submitted: false,
-            status:    "live",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        Toast.success("Mission deployed successfully!");
-        document.getElementById("taskText").value   = "";
-        document.getElementById("taskPoints").value = "50";
-    } catch (err) {
-        Toast.error("Could not deploy mission. Please try again.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   UPDATE PROJECT
-═══════════════════════════════════════════════ */
-async function updateProject() {
-    var name     = document.getElementById("pName").value.trim();
-    var progress = parseInt(document.getElementById("pProgress").value, 10);
-
-    if (!name || isNaN(progress)) {
-        Toast.warning("Please enter a project name and a valid progress value (0–100).");
-        return;
-    }
-
-    try {
-        await db.collection("projects").doc(name.toLowerCase().replace(/\s+/g, "-")).set({
-            name:      name,
-            progress:  Math.min(100, Math.max(0, progress)),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        Toast.success("Project progress updated in the hub!");
-    } catch (err) {
-        Toast.error("Could not update project.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   ADD EVENT
-═══════════════════════════════════════════════ */
-async function addEvent() {
-    var date  = document.getElementById("eDate").value.trim();
-    var title = document.getElementById("eTitle").value.trim();
-    var desc  = document.getElementById("eDesc").value.trim();
-
-    if (!date || !title) {
-        Toast.warning("Event date and title are required.");
-        return;
-    }
-
-    try {
-        await db.collection("events").add({
-            date:        date,
-            title:       title,
-            description: desc,
-            createdAt:   firebase.firestore.FieldValue.serverTimestamp()
-        });
-        Toast.success("Event published to the public timeline!");
-        ["eDate", "eTitle", "eDesc"].forEach(function (id) { document.getElementById(id).value = ""; });
-    } catch (err) {
-        Toast.error("Could not publish event.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   SET ENACTOR OF THE MONTH
-   FIX: Was reading dataset.img from <option> element,
-   which bypassed URL validation. Now looks up the
-   cached member data (from _approvedMembersCache)
-   and validates the profilePic URL before saving.
-═══════════════════════════════════════════════ */
-async function setEOM() {
-    var select = document.getElementById("eomMember");
-    var uid    = select.value;
-    var desc   = document.getElementById("eomDesc").value.trim();
-
-    if (!uid || !desc) {
-        Toast.warning("Please select a member and write an achievement description.");
-        return;
-    }
-
-    var memberData = _approvedMembersCache[uid] || {};
-    var name       = memberData.fullName   || "";
-    /* FIX: Validate profilePic URL — only save if it is a real http/https URL */
-    var img        = /^https?:\/\//i.test(memberData.profilePic || "")
-        ? memberData.profilePic
-        : "";
-
-    try {
-        await db.collection("settings").doc("eom").set({
-            uid:       uid,
-            name:      name,
-            desc:      desc,
-            img:       img,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        Toast.success(name + " is now Enactor of the Month!");
-        document.getElementById("eomDesc").value = "";
-    } catch (err) {
-        Toast.error("Could not update Enactor of the Month.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   PUBLISH BROADCAST
-═══════════════════════════════════════════════ */
-async function publishNews() {
-    var title = document.getElementById("nTitle").value.trim();
-    var desc  = document.getElementById("nDesc").value.trim();
-
-    if (!title || !desc) {
-        Toast.warning("Title and message content are both required.");
-        return;
-    }
-
-    try {
-        await db.collection("news").add({
-            title:     title,
-            desc:      desc,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        Toast.success("Broadcast sent to all members!");
-        document.getElementById("nTitle").value = "";
-        document.getElementById("nDesc").value  = "";
-    } catch (err) {
-        Toast.error("Could not broadcast. Please try again.");
-        console.error(err);
-    }
-}
-
-
-/* ═══════════════════════════════════════════════
-   LOGOUT
-═══════════════════════════════════════════════ */
-function logout() {
-    auth.signOut().then(function () { window.location.href = "login.html"; });
-}
-
-
-/* ═══════════════════════════════════════════════
-   HELPER — Empty state DOM element
-═══════════════════════════════════════════════ */
-function makeEmptyState(icon, message) {
-    var div = document.createElement("div");
-    div.className = "empty-state";
-
-    var svg = document.createElement("div");
-    svg.innerHTML = '<i data-lucide="' + icon + '" style="width:48px;height:48px;margin:0 auto;display:block;opacity:0.3;color:#9ca3af;"></i>';
-
-    var p = document.createElement("p");
-    p.textContent = message;
-
-    div.appendChild(svg);
-    div.appendChild(p);
-
-    setTimeout(function () { lucide.createIcons(); }, 0);
-    return div;
-}
 </script>
+
 </body>
 </html>
