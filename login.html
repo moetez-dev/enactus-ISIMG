@@ -5,343 +5,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Enactus ISIMG</title>
     <meta name="robots" content="noindex, nofollow">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --yellow:     #FFC222;
-            --yellow-dim: rgba(255,194,34,0.12);
-            --black:      #0a0a0a;
-            --surface:    #111111;
-            --surface-2:  #1a1a1a;
-            --border:     rgba(255,255,255,0.08);
-        }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { height: 100%; }
-        body {
-            font-family: 'Source Sans 3', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            background: var(--black);
-            overflow-x: hidden;
-        }
-
-        /* ── Layout ── */
-        .login-wrapper { display: flex; width: 100%; min-height: 100vh; }
-
-        /* ── Brand panel (left) ── */
-        .brand-panel {
-            flex: 0 0 45%;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 2.5rem 3rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .brand-panel::before {
-            content: '';
-            position: absolute; top: -80px; right: -80px;
-            width: 400px; height: 400px;
-            background: var(--yellow); opacity: 0.04;
-            border-radius: 50%; filter: blur(80px); pointer-events: none;
-        }
-        .brand-panel::after {
-            content: '';
-            position: absolute; bottom: -60px; left: -60px;
-            width: 280px; height: 280px;
-            background: var(--yellow); opacity: 0.03;
-            border-radius: 50%; filter: blur(60px); pointer-events: none;
-        }
-        .brand-grid {
-            position: absolute; inset: 0;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 40px 40px; pointer-events: none;
-        }
-        .brand-top { position: relative; z-index: 10; animation: fadeInUp 0.6s ease-out 0.1s both; }
-
-        .back-link {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.12em; color: #6b7280; text-decoration: none;
-            transition: color 0.2s; margin-bottom: 3rem;
-        }
-        .back-link:hover { color: var(--yellow); }
-
-        .logo-badge {
-            width: 64px; height: 64px; border-radius: 1.25rem; overflow: hidden;
-            border: 2px solid rgba(255,194,34,0.3);
-            box-shadow: 0 0 0 6px rgba(255,194,34,0.05);
-            margin-bottom: 2rem;
-        }
-        .logo-badge img { width: 100%; height: 100%; object-fit: cover; }
-
-        .brand-heading {
-            font-family: 'Montserrat', sans-serif; font-weight: 900;
-            font-size: clamp(2.5rem, 4vw, 3.75rem);
-            line-height: 0.95; text-transform: uppercase;
-            letter-spacing: -0.03em; color: #fff; margin-bottom: 1.25rem;
-        }
-        .brand-heading span { color: var(--yellow); }
-
-        .brand-subtitle { color: #4b5563; font-size: 0.9rem; font-weight: 600; line-height: 1.6; max-width: 280px; }
-
-        .enactor-card {
-            position: relative; z-index: 10;
-            display: flex; align-items: center; gap: 0.75rem;
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: 1rem; padding: 0.75rem 1rem;
-            margin-top: 1.5rem; width: fit-content;
-        }
-        .enactor-avatar { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(255,194,34,0.3); }
-        .enactor-label { font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.15em; color: var(--yellow); }
-        .enactor-name  { font-size: 0.8rem; font-weight: 700; color: #e5e7eb; }
-
-        .brand-stats {
-            position: relative; z-index: 10;
-            display: flex; gap: 2rem; padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-        .brand-stat-value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.75rem; color: var(--yellow); line-height: 1; }
-        .brand-stat-label { font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #4b5563; margin-top: 0.25rem; }
-
-        /* ── Form panel (right) ── */
-        .form-panel {
-            flex: 1; display: flex; align-items: center; justify-content: center;
-            padding: 2.5rem 2rem; background: #fff;
-        }
-        .form-box { width: 100%; max-width: 420px; animation: fadeInUp 0.5s ease-out both; }
-
-        .form-eyebrow { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #9ca3af; margin-bottom: 0.75rem; }
-        .form-title   { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 2rem; text-transform: uppercase; letter-spacing: -0.02em; color: #0a0a0a; margin-bottom: 0.5rem; }
-        .form-desc    { color: #6b7280; font-size: 0.85rem; font-weight: 600; margin-bottom: 2.25rem; }
-
-        .input-wrap { margin-bottom: 1.25rem; }
-        .input-label { display: block; font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #9ca3af; margin-bottom: 0.5rem; }
-        .input-field-wrap { position: relative; }
-        .input-icon {
-            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
-            width: 16px; height: 16px; color: #9ca3af;
-            pointer-events: none; transition: color 0.2s;
-        }
-        .input-field {
-            width: 100%; padding: 0.9rem 1rem 0.9rem 2.75rem;
-            background: #f7f7f5; border: 2px solid transparent;
-            border-radius: 0.875rem;
-            font-family: 'Source Sans 3', sans-serif;
-            font-size: 0.9rem; font-weight: 600; color: #0a0a0a;
-            outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-        }
-        .input-field::placeholder { color: #c4c4c4; }
-        .input-field:focus { border-color: var(--yellow); box-shadow: 0 0 0 4px rgba(255,194,34,0.12); background: #fff; }
-        .input-field-wrap:focus-within .input-icon { color: var(--yellow); }
-
-        .pw-toggle {
-            position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
-            width: 16px; height: 16px; color: #9ca3af;
-            cursor: pointer; background: none; border: none; padding: 0;
-            transition: color 0.2s; display: flex; align-items: center; justify-content: center;
-        }
-        .pw-toggle:hover { color: #0a0a0a; }
-
-        .forgot-row { display: flex; justify-content: flex-end; margin-top: 0.5rem; margin-bottom: 1.75rem; }
-        .forgot-btn { font-size: 0.72rem; font-weight: 700; color: #9ca3af; background: none; border: none; cursor: pointer; padding: 0; transition: color 0.2s; }
-        .forgot-btn:hover { color: var(--yellow); }
-
-        .submit-btn {
-            width: 100%; padding: 1rem 1.5rem;
-            background: var(--black); color: #fff;
-            border: 2px solid var(--black); border-radius: 0.875rem;
-            font-family: 'Montserrat', sans-serif; font-weight: 900;
-            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.15em;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            gap: 0.5rem; transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.15s;
-        }
-        .submit-btn:hover { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
-        .submit-btn:active { transform: scale(0.98); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-        .form-divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0; color: #d1d5db; font-size: 0.7rem; font-weight: 700; }
-        .form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
-
-        .apply-row { text-align: center; font-size: 0.82rem; color: #6b7280; font-weight: 600; }
-        .apply-row a { color: var(--black); font-weight: 900; text-decoration: underline; text-decoration-color: var(--yellow); text-underline-offset: 3px; transition: color 0.2s; }
-        .apply-row a:hover { color: #d97706; }
-
-        .status-msg { display: none; margin-top: 1.25rem; padding: 1rem 1.25rem; border-radius: 0.875rem; font-size: 0.82rem; font-weight: 600; line-height: 1.5; }
-        .status-msg.pending  { background: rgba(255,194,34,0.1); border: 1px solid rgba(255,194,34,0.3); color: #92400e; }
-        .status-msg.rejected { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); color: #991b1b; }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        :focus-visible { outline: 2px solid var(--yellow); outline-offset: 3px; }
-
-        @media (max-width: 768px) {
-            .brand-panel { display: none; }
-            .form-panel  { background: #fafaf8; }
-            .form-box    { max-width: 100%; }
-        }
-        @media (max-width: 480px) {
-            .form-panel { padding: 2rem 1.5rem; }
-        }
+        :root{--yellow:#FFC222;--yellow-dim:rgba(255,194,34,0.12);--black:#0a0a0a;--surface:#111111;--surface-2:#1a1a1a;--border:rgba(255,255,255,0.08);}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{height:100%;}
+        body{font-family:'Source Sans 3',sans-serif;min-height:100vh;display:flex;background:var(--black);overflow-x:hidden;}
+        .login-wrapper{display:flex;width:100%;min-height:100vh;}
+        .brand-panel{flex:0 0 45%;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;padding:2.5rem 3rem;position:relative;overflow:hidden;}
+        .brand-panel::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:var(--yellow);opacity:0.04;border-radius:50%;filter:blur(80px);pointer-events:none;}
+        .brand-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+        .brand-top{position:relative;z-index:10;animation:fadeInUp 0.6s ease-out 0.1s both;}
+        .back-link{display:inline-flex;align-items:center;gap:0.5rem;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#6b7280;text-decoration:none;transition:color 0.2s;margin-bottom:3rem;}
+        .back-link:hover{color:var(--yellow);}
+        .logo-badge{width:64px;height:64px;border-radius:1.25rem;overflow:hidden;border:2px solid rgba(255,194,34,0.3);box-shadow:0 0 0 6px rgba(255,194,34,0.05);margin-bottom:2rem;}
+        .logo-badge img{width:100%;height:100%;object-fit:cover;}
+        .brand-heading{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(2.5rem,4vw,3.75rem);line-height:0.95;text-transform:uppercase;letter-spacing:-0.03em;color:#fff;margin-bottom:1.25rem;}
+        .brand-heading span{color:var(--yellow);}
+        .brand-subtitle{color:#4b5563;font-size:0.9rem;font-weight:600;line-height:1.6;max-width:280px;}
+        .enactor-card{position:relative;z-index:10;display:flex;align-items:center;gap:0.75rem;background:var(--surface-2);border:1px solid var(--border);border-radius:1rem;padding:0.75rem 1rem;margin-top:1.5rem;width:fit-content;}
+        .enactor-avatar{width:36px;height:36px;border-radius:8px;object-fit:cover;border:1.5px solid rgba(255,194,34,0.3);}
+        .enactor-label{font-size:0.55rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:var(--yellow);}
+        .enactor-name{font-size:0.8rem;font-weight:700;color:#e5e7eb;}
+        .brand-stats{position:relative;z-index:10;display:flex;gap:2rem;padding-top:2rem;border-top:1px solid var(--border);}
+        .brand-stat-value{font-family:'Montserrat',sans-serif;font-weight:900;font-size:1.75rem;color:var(--yellow);line-height:1;}
+        .brand-stat-label{font-size:0.55rem;font-weight:900;text-transform:uppercase;letter-spacing:0.2em;color:#4b5563;margin-top:0.25rem;}
+        .form-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:2.5rem 2rem;background:#fff;}
+        .form-box{width:100%;max-width:420px;animation:fadeInUp 0.5s ease-out both;}
+        .form-eyebrow{font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.3em;color:#9ca3af;margin-bottom:0.75rem;}
+        .form-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:2rem;text-transform:uppercase;letter-spacing:-0.02em;color:#0a0a0a;margin-bottom:0.5rem;}
+        .form-desc{color:#6b7280;font-size:0.85rem;font-weight:600;margin-bottom:2.25rem;}
+        .input-wrap{margin-bottom:1.25rem;}
+        .input-label{display:block;font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.2em;color:#9ca3af;margin-bottom:0.5rem;}
+        .input-field-wrap{position:relative;}
+        .input-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#9ca3af;pointer-events:none;transition:color 0.2s;}
+        .input-field{width:100%;padding:0.9rem 1rem 0.9rem 2.75rem;background:#f7f7f5;border:2px solid transparent;border-radius:0.875rem;font-family:'Source Sans 3',sans-serif;font-size:0.9rem;font-weight:600;color:#0a0a0a;outline:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;}
+        .input-field::placeholder{color:#c4c4c4;}
+        .input-field:focus{border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,194,34,0.12);background:#fff;}
+        .input-field-wrap:focus-within .input-icon{color:var(--yellow);}
+        .pw-toggle{position:absolute;right:1rem;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#9ca3af;cursor:pointer;background:none;border:none;padding:0;transition:color 0.2s;display:flex;align-items:center;justify-content:center;}
+        .pw-toggle:hover{color:#0a0a0a;}
+        .forgot-row{display:flex;justify-content:flex-end;margin-top:0.5rem;margin-bottom:1.75rem;}
+        .forgot-btn{font-size:0.72rem;font-weight:700;color:#9ca3af;background:none;border:none;cursor:pointer;padding:0;transition:color 0.2s;}
+        .forgot-btn:hover{color:var(--yellow);}
+        .submit-btn{width:100%;padding:1rem 1.5rem;background:var(--black);color:#fff;border:2px solid var(--black);border-radius:0.875rem;font-family:'Montserrat',sans-serif;font-weight:900;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:background 0.25s,color 0.25s,border-color 0.25s,transform 0.15s;}
+        .submit-btn:hover{background:var(--yellow);color:var(--black);border-color:var(--yellow);}
+        .submit-btn:active{transform:scale(0.98);}
+        .submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+        .form-divider{display:flex;align-items:center;gap:0.75rem;margin:1.5rem 0;color:#d1d5db;font-size:0.7rem;font-weight:700;}
+        .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:#e5e7eb;}
+        .apply-row{text-align:center;font-size:0.82rem;color:#6b7280;font-weight:600;}
+        .apply-row a{color:var(--black);font-weight:900;text-decoration:underline;text-decoration-color:var(--yellow);text-underline-offset:3px;transition:color 0.2s;}
+        .apply-row a:hover{color:#d97706;}
+        .status-msg{display:none;margin-top:1.25rem;padding:1rem 1.25rem;border-radius:0.875rem;font-size:0.82rem;font-weight:600;line-height:1.5;}
+        .status-msg.pending{background:rgba(255,194,34,0.1);border:1px solid rgba(255,194,34,0.3);color:#92400e;}
+        .status-msg.rejected{background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);color:#991b1b;}
+        @keyframes fadeInUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+        :focus-visible{outline:2px solid var(--yellow);outline-offset:3px;}
+        @media(max-width:768px){.brand-panel{display:none;}.form-panel{background:#fafaf8;}.form-box{max-width:100%;}}
+        @media(max-width:480px){.form-panel{padding:2rem 1.5rem;}}
     </style>
 </head>
 <body>
-
 <div class="login-wrapper">
-
-    <!-- ══ LEFT — BRAND PANEL ══ -->
     <div class="brand-panel" aria-hidden="true">
         <div class="brand-grid"></div>
-
         <div class="brand-top">
             <a href="index.html" class="back-link">
                 <i data-lucide="arrow-left" style="width:14px;height:14px;" aria-hidden="true"></i>
                 Back to Home
             </a>
-
             <div class="logo-badge">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Enactus ISIMG">
+                <img src="./enactuss/557778581_122142310376674747_6015000820039650429_n.jpg" alt="Enactus ISIMG">
             </div>
-
             <h1 class="brand-heading">Welcome<br><span>Back.</span></h1>
             <p class="brand-subtitle">Sign in to access the Enactus ISIMG member portal, track your missions, and stay connected.</p>
-
             <div class="enactor-card">
-                <img id="brand-eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
-                     alt="Enactor of the Month" class="enactor-avatar">
+                <img id="brand-eom-img" src="./enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
+                     alt="Enactor of the Month" class="enactor-avatar"
+                     onerror="this.src='https://ui-avatars.com/api/?name=EOM&background=222&color=FFC222&size=40'">
                 <div>
-                    <p class="enactor-label">⭐ Enactor of the Month</p>
+                    <p class="enactor-label">&#11088; Enactor of the Month</p>
                     <p class="enactor-name" id="brand-eom-name">Moetez Maraach</p>
                 </div>
             </div>
         </div>
-
         <div class="brand-stats">
-            <div>
-                <p class="brand-stat-value">50+</p>
-                <p class="brand-stat-label">Enactors</p>
-            </div>
-            <div>
-                <p class="brand-stat-value">12+</p>
-                <p class="brand-stat-label">Projects</p>
-            </div>
-            <div>
-                <p class="brand-stat-value">1.2k</p>
-                <p class="brand-stat-label">Lives Impacted</p>
-            </div>
+            <div><p class="brand-stat-value">50+</p><p class="brand-stat-label">Enactors</p></div>
+            <div><p class="brand-stat-value">12+</p><p class="brand-stat-label">Projects</p></div>
+            <div><p class="brand-stat-value">1.2k</p><p class="brand-stat-label">Lives Impacted</p></div>
         </div>
     </div>
 
-
-    <!-- ══ RIGHT — FORM PANEL ══ -->
     <div class="form-panel" role="main">
         <div class="form-box">
-
-            <!-- Mobile logo -->
-            <div class="mb-8 md:hidden flex items-center gap-3">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
-                     alt="Enactus ISIMG"
-                     class="w-10 h-10 rounded-xl object-cover border-2"
-                     style="border-color:var(--yellow);">
-                <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:0.05em;">
-                    ENACTUS <span style="color:var(--yellow);">ISIMG</span>
-                </span>
-            </div>
-
             <p class="form-eyebrow">Member Portal</p>
             <h2 class="form-title">Sign In</h2>
             <p class="form-desc">Enter your credentials to continue.</p>
-
             <form id="loginForm" novalidate>
-
-                <!-- Email -->
                 <div class="input-wrap">
                     <label class="input-label" for="loginEmail">Email Address</label>
                     <div class="input-field-wrap">
                         <i data-lucide="mail" class="input-icon" aria-hidden="true"></i>
-                        <input type="email" id="loginEmail" class="input-field"
-                               placeholder="name@example.com"
-                               autocomplete="email"
-                               required aria-required="true">
+                        <input type="email" id="loginEmail" class="input-field" placeholder="name@example.com" autocomplete="email" required aria-required="true">
                     </div>
                 </div>
-
-                <!-- Password -->
                 <div class="input-wrap">
                     <label class="input-label" for="loginPassword">Password</label>
                     <div class="input-field-wrap">
                         <i data-lucide="lock" class="input-icon" aria-hidden="true"></i>
-                        <input type="password" id="loginPassword" class="input-field"
-                               placeholder="••••••••"
-                               autocomplete="current-password"
-                               required aria-required="true"
-                               style="padding-right:2.75rem;">
-                        <button type="button" id="pwToggle" class="pw-toggle"
-                                aria-label="Toggle password visibility">
+                        <input type="password" id="loginPassword" class="input-field" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required aria-required="true" style="padding-right:2.75rem;">
+                        <button type="button" id="pwToggle" class="pw-toggle" aria-label="Toggle password visibility">
                             <i data-lucide="eye" id="pwIcon" style="width:16px;height:16px;" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-
-                <!-- Forgot password -->
                 <div class="forgot-row">
                     <button type="button" id="forgotBtn" class="forgot-btn">Forgot password?</button>
                 </div>
-
-                <!-- Submit -->
                 <button type="submit" id="loginBtn" class="submit-btn">
                     <span id="btnText">Sign In</span>
                     <i data-lucide="log-in" id="btnIcon" style="width:15px;height:15px;" aria-hidden="true"></i>
                 </button>
-
-                <!-- Status message -->
                 <div id="statusMsg" class="status-msg" role="alert" aria-live="polite"></div>
-
             </form>
-
             <div class="form-divider">or</div>
-
-            <p class="apply-row">
-                Don't have an account? <a href="index.html#contact">Apply Now →</a>
-            </p>
-
+            <p class="apply-row">Don't have an account? <a href="index.html#contact">Apply Now &rarr;</a></p>
         </div>
     </div>
 </div>
 
-
-<!-- ══ SCRIPTS ══ -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/toast.js"></script>
-<script src="js/auth-guard.js"></script>
-<script src="js/login.js"></script>
-
+<script src="./js/firebase-config.js"></script>
+<script src="./js/toast.js"></script>
+<script src="./js/auth-guard.js"></script>
+<script src="./js/login.js"></script>
 <script>
 "use strict";
 document.addEventListener("DOMContentLoaded", function () {
     lucide.createIcons();
-
-    /* Load EOM for the brand panel (cosmetic only) */
-    db.collection("settings").doc("eom").get().then(function (doc) {
-        if (!doc.exists) return;
-        var d      = doc.data();
-        var nameEl = document.getElementById("brand-eom-name");
-        var imgEl  = document.getElementById("brand-eom-img");
-        if (nameEl && d.name) nameEl.textContent = d.name;
-        if (imgEl  && d.img && /^https?:\/\//i.test(d.img)) imgEl.src = d.img;
-    }).catch(function () { /* silently fail */ });
+    if (typeof db !== "undefined") {
+        db.collection("settings").doc("eom").get().then(function (doc) {
+            if (!doc.exists) return;
+            var d = doc.data();
+            var nameEl = document.getElementById("brand-eom-name");
+            var imgEl  = document.getElementById("brand-eom-img");
+            if (nameEl && d.name) nameEl.textContent = d.name;
+            if (imgEl  && d.img && /^https?:\/\//i.test(d.img)) imgEl.src = d.img;
+        }).catch(function () {});
+    }
 });
 </script>
-
 </body>
 </html>
