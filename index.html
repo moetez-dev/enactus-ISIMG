@@ -1,989 +1,989 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enactus ISIMG | Entrepreneurial Action</title>
-    <meta name="description" content="Enactus ISIMG — A premier laboratory for social innovation where technology meets entrepreneurial action in Gabès, Tunisia.">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Enactus ISIMG | Entrepreneurial Action</title>
+        <meta name="description" content="Enactus ISIMG — A premier laboratory for social innovation where technology meets entrepreneurial action in Gabès, Tunisia.">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+        <script src="https://unpkg.com/lucide@latest"></script>
 
-    <style>
-        /* ── CSS Variables ───────────────────────── */
-        :root {
-            --yellow: #FFC222;
-            --yellow-dark: #e6a800;
-            --yellow-light: #fff3cc;
-            --black: #0a0a0a;
-            --gray-soft: #f7f7f5;
-        }
+        <style>
+            /* ── CSS Variables ───────────────────────── */
+            :root {
+                --yellow: #FFC222;
+                --yellow-dark: #e6a800;
+                --yellow-light: #fff3cc;
+                --black: #0a0a0a;
+                --gray-soft: #f7f7f5;
+            }
 
-        /* ── Base ───────────────────────────────── */
-        html { scroll-behavior: smooth; }
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: 'Source Sans 3', sans-serif;
-            overflow-x: hidden;
-            background: #fff;
-            color: var(--black);
-        }
-        .font-heading { font-family: 'Montserrat', sans-serif; }
+            /* ── Base ───────────────────────────────── */
+            html { scroll-behavior: smooth; }
+            *, *::before, *::after { box-sizing: border-box; }
+            body {
+                font-family: 'Source Sans 3', sans-serif;
+                overflow-x: hidden;
+                background: #fff;
+                color: var(--black);
+            }
+            .font-heading { font-family: 'Montserrat', sans-serif; }
 
-        /* ── Color Utilities ─────────────────────── */
-        .text-yellow   { color: var(--yellow); }
-        .bg-yellow     { background-color: var(--yellow); }
-        .border-yellow { border-color: var(--yellow); }
+            /* ── Color Utilities ─────────────────────── */
+            .text-yellow   { color: var(--yellow); }
+            .bg-yellow     { background-color: var(--yellow); }
+            .border-yellow { border-color: var(--yellow); }
 
-        /* ── Smooth hover lift ───────────────────── */
-        .hover-lift {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-            cursor: pointer;
-        }
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.12);
-        }
+            /* ── Smooth hover lift ───────────────────── */
+            .hover-lift {
+                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+                cursor: pointer;
+            }
+            .hover-lift:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 24px 48px rgba(0,0,0,0.12);
+            }
 
-        /* ── Navigation ──────────────────────────── */
-        #navbar {
-            transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
-        }
-        #navbar.scrolled {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 1px 0 rgba(0,0,0,0.06);
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-        }
+            /* ── Navigation ──────────────────────────── */
+            #navbar {
+                transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+            }
+            #navbar.scrolled {
+                background: rgba(255,255,255,0.95);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
 
-        /* ── Hero outline text ───────────────────── */
-        .outline-text {
-            -webkit-text-stroke: 2.5px var(--yellow);
-            color: transparent;
-        }
+            /* ── Hero outline text ───────────────────── */
+            .outline-text {
+                -webkit-text-stroke: 2.5px var(--yellow);
+                color: transparent;
+            }
 
-        /* ── Hero badge ──────────────────────────── */
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.375rem 1.125rem;
-            background: white;
-            border: 1px solid #ececec;
-            border-radius: 9999px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            margin-bottom: 2rem;
-        }
-        .pulse-dot {
-            width: 0.5rem; height: 0.5rem;
-            background: var(--yellow);
-            border-radius: 50%;
-            animation: pulse-anim 2s infinite;
-        }
-        .badge-text {
-            font-size: 0.625rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #6b7280;
-        }
-        @keyframes pulse-anim {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50%       { transform: scale(1.5); opacity: 0.5; }
-        }
+            /* ── Hero badge ──────────────────────────── */
+            .hero-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.375rem 1.125rem;
+                background: white;
+                border: 1px solid #ececec;
+                border-radius: 9999px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                margin-bottom: 2rem;
+            }
+            .pulse-dot {
+                width: 0.5rem; height: 0.5rem;
+                background: var(--yellow);
+                border-radius: 50%;
+                animation: pulse-anim 2s infinite;
+            }
+            .badge-text {
+                font-size: 0.625rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                color: #6b7280;
+            }
+            @keyframes pulse-anim {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50%       { transform: scale(1.5); opacity: 0.5; }
+            }
 
-        /* ── Marquee / partner scroll ────────────── */
-        @keyframes marquee {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-            display: flex;
-            width: max-content;
-            animation: marquee 30s linear infinite;
-        }
-        .animate-marquee:hover { animation-play-state: paused; }
+            /* ── Marquee / partner scroll ────────────── */
+            @keyframes marquee {
+                0%   { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+                display: flex;
+                width: max-content;
+                animation: marquee 30s linear infinite;
+            }
+            .animate-marquee:hover { animation-play-state: paused; }
 
-        /* ── Modal ───────────────────────────────── */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 200;
-            background: rgba(10,10,10,0.82);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 38rem;
-            border-radius: 3.5rem;
-            padding: 2.75rem;
-            position: relative;
-            animation: modal-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes modal-in {
-            from { opacity: 0; transform: scale(0.92) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
+            /* ── Modal ───────────────────────────────── */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 200;
+                background: rgba(10,10,10,0.82);
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .modal-overlay.active { display: flex; }
+            .modal-content {
+                background: white;
+                width: 100%;
+                max-width: 38rem;
+                border-radius: 3.5rem;
+                padding: 2.75rem;
+                position: relative;
+                animation: modal-in 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            }
+            @keyframes modal-in {
+                from { opacity: 0; transform: scale(0.92) translateY(20px); }
+                to   { opacity: 1; transform: scale(1) translateY(0); }
+            }
 
-        /* ── Stat cards ──────────────────────────── */
-        .stat-card {
-            transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
-        }
-        .stat-card:hover { transform: scale(1.04); }
+            /* ── Stat cards ──────────────────────────── */
+            .stat-card {
+                transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            }
+            .stat-card:hover { transform: scale(1.04); }
 
-        /* ── Section labels ──────────────────────── */
-        .section-label {
-            font-size: 0.625rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.4em;
-            color: #9ca3af;
-        }
+            /* ── Section labels ──────────────────────── */
+            .section-label {
+                font-size: 0.625rem;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 0.4em;
+                color: #9ca3af;
+            }
 
-        /* ── Logo text ───────────────────────────── */
-        .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
-        .highlight  { color: var(--yellow); }
+            /* ── Logo text ───────────────────────────── */
+            .logo-text { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.25rem; }
+            .highlight  { color: var(--yellow); }
 
-        /* ── Input focus ring ────────────────────── */
-        .form-input {
-            width: 100%;
-            padding: 1.1rem 1.25rem;
-            background: #f7f7f5;
-            border: 2px solid transparent;
-            border-radius: 1rem;
-            outline: none;
-            font-size: 0.95rem;
-            transition: border-color 0.25s, box-shadow 0.25s;
-            font-family: 'Source Sans 3', sans-serif;
-        }
-        .form-input:focus {
-            border-color: var(--yellow);
-            box-shadow: 0 0 0 4px rgba(255,194,34,0.15);
-            background: #fff;
-        }
+            /* ── Input focus ring ────────────────────── */
+            .form-input {
+                width: 100%;
+                padding: 1.1rem 1.25rem;
+                background: #f7f7f5;
+                border: 2px solid transparent;
+                border-radius: 1rem;
+                outline: none;
+                font-size: 0.95rem;
+                transition: border-color 0.25s, box-shadow 0.25s;
+                font-family: 'Source Sans 3', sans-serif;
+            }
+            .form-input:focus {
+                border-color: var(--yellow);
+                box-shadow: 0 0 0 4px rgba(255,194,34,0.15);
+                background: #fff;
+            }
 
-        /* ── Enactors grid toggle ─────────────────── */
-        #enactors-list { display: none; }
+            /* ── Enactors grid toggle ─────────────────── */
+            #enactors-list { display: none; }
 
-        /* ── Progress bar on scroll ──────────────── */
-        #progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: var(--yellow);
-            z-index: 9999;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
+            /* ── Progress bar on scroll ──────────────── */
+            #progress-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 3px;
+                background: var(--yellow);
+                z-index: 9999;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
 
-        /* ── Back to top ─────────────────────────── */
-        #back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 3rem;
-            height: 3rem;
-            background: var(--black);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            border: none;
-        }
-        #back-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        #back-to-top:hover { background: var(--yellow); color: var(--black); }
+            /* ── Back to top ─────────────────────────── */
+            #back-to-top {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                width: 3rem;
+                height: 3rem;
+                background: var(--black);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 100;
+                cursor: pointer;
+                opacity: 0;
+                transform: translateY(10px);
+                transition: opacity 0.3s, transform 0.3s;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                border: none;
+            }
+            #back-to-top.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            #back-to-top:hover { background: var(--yellow); color: var(--black); }
 
-        /* ── Mobile menu transition ───────────────── */
-        #mobileMenu {
-            transition: max-height 0.35s ease, opacity 0.3s ease;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        #mobileMenu.open {
-            max-height: 500px;
-            opacity: 1;
-        }
+            /* ── Mobile menu transition ───────────────── */
+            #mobileMenu {
+                transition: max-height 0.35s ease, opacity 0.3s ease;
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+            }
+            #mobileMenu.open {
+                max-height: 500px;
+                opacity: 1;
+            }
 
-        /* ── Grain overlay on hero ───────────────── */
-        .grain::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-        }
+            /* ── Grain overlay on hero ───────────────── */
+            .grain::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+                pointer-events: none;
+                z-index: 1;
+            }
 
-        /* ── Timeline connector line ─────────────── */
-        .timeline-line {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, #e5e7eb 10%, #e5e7eb 90%, transparent);
-            transform: translateX(-50%);
-        }
+            /* ── Timeline connector line ─────────────── */
+            .timeline-line {
+                position: absolute;
+                left: 50%;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background: linear-gradient(to bottom, transparent, #e5e7eb 10%, #e5e7eb 90%, transparent);
+                transform: translateX(-50%);
+            }
 
-        /* ── Accessibility: focus-visible ─────────── */
-        :focus-visible {
-            outline: 2px solid var(--yellow);
-            outline-offset: 3px;
-        }
+            /* ── Accessibility: focus-visible ─────────── */
+            :focus-visible {
+                outline: 2px solid var(--yellow);
+                outline-offset: 3px;
+            }
 
-        /* ── Custom scrollbar ─────────────────────── */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
+            /* ── Custom scrollbar ─────────────────────── */
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--yellow); }
 
-        /* ── Responsive typography tweaks ─────────── */
-        @media (max-width: 640px) {
-            .hero-h1 { font-size: clamp(3.5rem, 18vw, 6rem); }
-        }
+            /* ── Responsive typography tweaks ─────────── */
+            @media (max-width: 640px) {
+                .hero-h1 { font-size: clamp(3.5rem, 18vw, 6rem); }
+            }
 
-        /* ── Announcement bar ─────────────────────── */
-        #announcement-bar {
-            background: var(--black);
-            color: white;
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            padding: 0.6rem 1rem;
-            position: relative;
-            z-index: 60;
-        }
-    </style>
-</head>
-<body class="bg-white">
+            /* ── Announcement bar ─────────────────────── */
+            #announcement-bar {
+                background: var(--black);
+                color: white;
+                text-align: center;
+                font-size: 0.7rem;
+                font-weight: 700;
+                letter-spacing: 0.2em;
+                text-transform: uppercase;
+                padding: 0.6rem 1rem;
+                position: relative;
+                z-index: 60;
+            }
+        </style>
+    </head>
+    <body class="bg-white">
 
-<!-- ── PROGRESS BAR ──────────────────────────── -->
-<div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
+    <!-- ── PROGRESS BAR ──────────────────────────── -->
+    <div id="progress-bar" role="progressbar" aria-label="Page scroll progress"></div>
 
-<!-- ── ANNOUNCEMENT BAR ───────────────────────── -->
-<div id="announcement-bar">
-    <span>🏆 Limitl'ESS Champions 2025 &nbsp;·&nbsp; Social &amp; Solidarity Economy Excellence, Tunisia</span>
-</div>
-
-<!-- ══ NAVIGATION ══════════════════════════════ -->
-<nav id="navbar" class="sticky top-0 w-full z-50 bg-white py-4">
-    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-
-        <!-- Logo -->
-        <a href="#" class="flex items-center gap-2.5 group" aria-label="Enactus ISIMG home">
-            <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-yellow/30 group-hover:ring-yellow transition-all">
-                <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
-                     class="w-full h-full object-cover" alt="Enactus ISIMG Logo" loading="eager">
-            </div>
-            <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
-        </a>
-
-        <!-- Desktop nav -->
-        <div class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-widest">
-            <a href="#about"    class="hover:text-yellow transition-colors duration-200">About</a>
-            <a href="#projects" class="hover:text-yellow transition-colors duration-200">Projects</a>
-            <a href="#events"   class="hover:text-yellow transition-colors duration-200">Events</a>
-            <a href="#team"     class="hover:text-yellow transition-colors duration-200">Team</a>
-            <div class="flex items-center gap-3 ml-2">
-                <a href="login.html" class="border-2 border-black text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest">Log in</a>
-                <a href="#contact"   class="bg-yellow text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest shadow-md shadow-yellow/30">Join Us</a>
-            </div>
-        </div>
-
-        <!-- Mobile burger -->
-        <button id="burgerBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 hover:border-yellow transition-colors"
-                aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileMenu">
-            <i data-lucide="menu" id="menuIcon" class="w-5 h-5"></i>
-        </button>
+    <!-- ── ANNOUNCEMENT BAR ───────────────────────── -->
+    <div id="announcement-bar">
+        <span>🏆 Limitl'ESS Champions 2025 &nbsp;·&nbsp; Social &amp; Solidarity Economy Excellence, Tunisia</span>
     </div>
 
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-100 px-6 pt-4 pb-6" role="navigation" aria-label="Mobile navigation">
-        <div class="flex flex-col space-y-1">
-            <a href="#about"    class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">About</a>
-            <a href="#projects" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Projects</a>
-            <a href="#events"   class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Events</a>
-            <a href="#team"     class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Team</a>
-            <div class="pt-3 flex flex-col gap-3">
-                <a href="login.html" class="border-2 border-black text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Log in</a>
-                <a href="#contact" class="bg-yellow text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Join Us</a>
-            </div>
-        </div>
-    </div>
-</nav>
+    <!-- ══ NAVIGATION ══════════════════════════════ -->
+    <nav id="navbar" class="sticky top-0 w-full z-50 bg-white py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
 
-
-<!-- ══ HERO ═══════════════════════════════════ -->
-<section class="relative min-h-[92vh] flex items-center overflow-hidden bg-[#fafaf8] grain">
-    <!-- Ambient blobs -->
-    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow opacity-[0.07] rounded-full blur-[140px] pointer-events-none" aria-hidden="true"></div>
-    <div class="absolute bottom-0 -left-20 w-72 h-72 bg-yellow opacity-[0.05] rounded-full blur-[100px] pointer-events-none" aria-hidden="true"></div>
-
-    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 py-20">
-
-        <!-- Left copy -->
-        <div data-aos="fade-right" data-aos-duration="900">
-            <div class="hero-badge" role="status">
-                <span class="pulse-dot" aria-hidden="true"></span>
-                <span class="badge-text">Impact Chapter · Gabès, Tunisia</span>
-            </div>
-
-            <h1 class="hero-h1 text-[clamp(4rem,10vw,90px)] font-black font-heading leading-[0.85] mb-8 uppercase tracking-tighter">
-                Impact<br>
-                <span class="outline-text">Through</span><br>
-                Action.
-            </h1>
-
-            <p class="text-gray-500 text-lg font-medium mb-10 max-w-sm leading-relaxed">
-                A student-powered innovation lab turning ideas into real change — in Gabès and beyond.
-            </p>
-
-            <div class="flex flex-wrap gap-4">
-                <a href="#projects" class="bg-yellow text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300 shadow-lg shadow-yellow/25">
-                    Our Projects
-                </a>
-                <a href="#about" class="border-2 border-black text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
-                    Learn More
-                </a>
-            </div>
-
-            <!-- Mini stats row -->
-            <div class="flex gap-8 mt-14 pt-10 border-t border-gray-200">
-                <div>
-                    <span class="text-3xl font-black font-heading text-yellow">12+</span>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Projects</p>
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2.5 group" aria-label="Enactus ISIMG home">
+                <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-yellow/30 group-hover:ring-yellow transition-all">
+                    <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                        class="w-full h-full object-cover" alt="Enactus ISIMG Logo" loading="eager">
                 </div>
-                <div class="w-px bg-gray-200"></div>
-                <div>
-                    <span class="text-3xl font-black font-heading">50+</span>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Enactors</p>
-                </div>
-                <div class="w-px bg-gray-200"></div>
-                <div>
-                    <span class="text-3xl font-black font-heading">1.2k</span>
-                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Lives Impacted</p>
-                </div>
-            </div>
-        </div>
+                <span class="logo-text">ENACTUS <span class="highlight">ISIMG</span></span>
+            </a>
 
-        <!-- Right image -->
-        <div class="relative" data-aos="zoom-out" data-aos-duration="1100" data-aos-delay="100">
-            <div class="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl shadow-black/10 transform -rotate-2 hover:rotate-0 transition-transform duration-700">
-                <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg"
-                     alt="Enactus ISIMG student team" class="w-full h-auto">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-            </div>
-
-            <!-- Floating badge -->
-            <div class="absolute -bottom-6 -left-6 bg-white text-black p-6 rounded-[2.5rem] shadow-2xl z-20 border-4 border-white hover:-translate-y-2 transition-transform duration-500">
-                <div class="flex items-center gap-3">
-                    <span class="text-4xl font-black text-yellow leading-none">22+</span>
-                    <p class="text-[9px] font-black uppercase tracking-widest leading-tight text-gray-500">Active<br>Enactors</p>
+            <!-- Desktop nav -->
+            <div class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-widest">
+                <a href="#about"    class="hover:text-yellow transition-colors duration-200">About</a>
+                <a href="#projects" class="hover:text-yellow transition-colors duration-200">Projects</a>
+                <a href="#events"   class="hover:text-yellow transition-colors duration-200">Events</a>
+                <a href="#team"     class="hover:text-yellow transition-colors duration-200">Team</a>
+                <div class="flex items-center gap-3 ml-2">
+                    <a href="login.html" class="border-2 border-black text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest">Log in</a>
+                    <a href="#contact"   class="bg-yellow text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest shadow-md shadow-yellow/30">Join Us</a>
                 </div>
             </div>
 
-            <!-- Award badge -->
-            <div class="absolute -top-4 -right-4 bg-yellow text-black p-4 rounded-[2rem] shadow-xl z-20 rotate-6 hover:rotate-0 transition-transform duration-500">
-                <i data-lucide="award" class="w-6 h-6" aria-hidden="true"></i>
-                <p class="text-[8px] font-black uppercase tracking-widest mt-1 leading-tight">Limitl'ESS<br>Champions</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ ABOUT ═══════════════════════════════════ -->
-<section id="about" class="py-32 bg-white relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-
-        <!-- Section header -->
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-10">
-            <div class="space-y-4" data-aos="fade-right">
-                <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 bg-yellow/15 text-yellow-700 rounded-full">
-                    <i data-lucide="calendar" class="w-3 h-3" aria-hidden="true"></i> Established 2025
-                </span>
-                <h2 class="text-5xl lg:text-6xl font-black font-heading uppercase tracking-tighter leading-none">
-                    Driven by <span class="text-yellow">Impact.</span>
-                </h2>
-            </div>
-            <p class="max-w-md text-gray-500 font-medium text-lg border-l-4 border-yellow pl-6" data-aos="fade-left" data-aos-delay="100">
-                Enactus ISIMG is a premier laboratory for social innovation where technology meets entrepreneurial action in Gabès.
-            </p>
-        </div>
-
-        <!-- Bento grid -->
-        <div class="grid lg:grid-cols-12 gap-6">
-            <!-- Award card — tall left -->
-            <div class="lg:col-span-7 bg-black text-white p-10 lg:p-12 rounded-[3.5rem] relative overflow-hidden group shadow-xl min-h-[300px] flex flex-col justify-between" data-aos="zoom-in">
-                <div class="absolute -bottom-16 -right-16 w-56 h-56 bg-yellow/5 rounded-full" aria-hidden="true"></div>
-                <div class="w-14 h-14 bg-yellow rounded-2xl flex items-center justify-center text-black shadow-lg group-hover:rotate-12 transition-transform duration-500" aria-hidden="true">
-                    <i data-lucide="award" class="w-7 h-7"></i>
-                </div>
-                <div class="relative z-10">
-                    <h4 class="text-3xl lg:text-4xl font-black mb-3 font-heading uppercase">Limitl'ESS<br>Champion</h4>
-                    <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Recognized for excellence in Social and Solidarity Economy in Tunisia. A testament to our commitment to real change.</p>
-                </div>
-            </div>
-
-            <!-- Spirit card -->
-            <div class="lg:col-span-5 bg-[#fafaf8] p-10 rounded-[3.5rem] border-2 border-transparent hover:border-yellow transition-all duration-300 group min-h-[300px] flex flex-col justify-between" data-aos="fade-left" data-aos-delay="100">
-                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-yellow shadow-sm group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
-                    <i data-lucide="zap" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h4 class="text-2xl font-black mb-3 font-heading uppercase">Our Spirit</h4>
-                    <p class="text-gray-500 text-sm leading-relaxed">We believe entrepreneurial action creates change. Our students build real solutions to real problems — with mentorship, community, and drive.</p>
-                </div>
-            </div>
-
-            <!-- Mission card — full width -->
-            <div class="lg:col-span-12 bg-yellow p-10 lg:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
-                <div class="flex-1">
-                    <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-3 block">Our Mission</span>
-                    <h4 class="text-3xl font-black font-heading uppercase leading-tight">Entrepreneurial Action.<br>Real Community Impact.</h4>
-                </div>
-                <div class="flex-1 grid grid-cols-3 gap-6 text-center">
-                    <div>
-                        <i data-lucide="lightbulb" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
-                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Innovate</p>
-                    </div>
-                    <div>
-                        <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
-                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Collaborate</p>
-                    </div>
-                    <div>
-                        <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
-                        <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Impact</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ STATS + ENACTOR OF THE MONTH ══════════ -->
-<section class="py-20 bg-[#fafaf8]">
-    <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-8">
-
-        <!-- Stats -->
-        <div class="lg:col-span-2 grid grid-cols-3 gap-6" role="list" aria-label="Impact statistics">
-            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in">
-                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
-                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Active Projects</p>
-            </div>
-            <div class="stat-card p-8 lg:p-10 bg-black text-white rounded-[2.5rem] text-center hover:bg-yellow hover:text-black transition-all group shadow-sm cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="100">
-                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
-                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Enactors</p>
-            </div>
-            <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="200">
-                <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
-                <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Impacted Lives</p>
-            </div>
-        </div>
-
-        <!-- Enactor of the Month -->
-        <div class="bg-yellow p-8 rounded-[2.5rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
-            <div class="relative z-10">
-                <div class="flex items-center gap-2 mb-5">
-                    <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
-                    <span class="text-[9px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
-                </div>
-                <div class="w-28 h-28 rounded-2xl overflow-hidden border-4 border-black/10 mb-5 group-hover:rotate-3 transition-transform duration-500">
-                    <img id="eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
-                         class="w-full h-full object-cover" alt="Enactor of the Month" loading="lazy">
-                </div>
-                <h4 id="eom-name" class="text-xl font-black font-heading uppercase">Moetez Maraach</h4>
-                <p  id="eom-desc" class="text-sm font-semibold opacity-70 mt-1.5 leading-snug">Outstanding leadership in the "Green Tech" event.</p>
-            </div>
-            <i data-lucide="award" class="absolute -bottom-8 -right-8 w-36 h-36 opacity-10 group-hover:rotate-12 transition-transform duration-700" aria-hidden="true"></i>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ PROJECTS ════════════════════════════════ -->
-<section id="projects" class="py-32 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
-            <div data-aos="fade-right">
-                <span class="section-label mb-3 block">What We Build</span>
-                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Our <span class="text-yellow">Innovation</span></h2>
-            </div>
-            <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest" data-aos="fade-left">Click a project to learn more</p>
-        </div>
-
-        <!-- Project cards -->
-        <div class="grid md:grid-cols-2 gap-8 text-left">
-
-            <article class="hover-lift group cursor-pointer" id="proj-fytrlance" role="button" tabindex="0"
-                     aria-label="View Fytrlance project details" data-aos="fade-up">
-                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
-                    <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                         alt="Fytrlance — tech and work project" loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
-                        <div>
-                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Tech &amp; Work</span>
-                            <h3 class="text-3xl font-black font-heading text-white uppercase">Fytrlance</h3>
-                            <p class="text-white/60 text-sm mt-1 font-medium">Freelance platform for ISIMG students</p>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <article class="hover-lift group cursor-pointer" id="proj-bioverto" role="button" tabindex="0"
-                     aria-label="View Bioverto project details" data-aos="fade-up" data-aos-delay="100">
-                <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
-                    <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                         alt="Bioverto — eco-wellness project" loading="lazy">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
-                        <div>
-                            <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Eco-Wellness</span>
-                            <h3 class="text-3xl font-black font-heading text-white uppercase">Bioverto</h3>
-                            <p class="text-white/60 text-sm mt-1 font-medium">Organic household solutions from local resources</p>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ EVENTS TIMELINE ═════════════════════════ -->
-<section id="events" class="py-32 bg-[#fafaf8] overflow-hidden">
-    <div class="max-w-7xl mx-auto px-6">
-
-        <div class="text-center mb-20" data-aos="fade-up">
-            <span class="section-label mb-3 block">What's Happening</span>
-            <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-2">Action <span class="text-yellow">Timeline</span></h2>
-        </div>
-
-        <div class="relative">
-            <div class="timeline-line hidden md:block" aria-hidden="true"></div>
-            <div id="events-container" class="space-y-14" role="list" aria-label="Events timeline">
-                <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-12" aria-live="polite">
-                    Loading our next big moves...
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ TEAM ════════════════════════════════════ -->
-<section id="team" class="py-32 bg-black text-white">
-    <div class="max-w-7xl mx-auto px-6">
-
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-20 gap-6">
-            <div>
-                <span class="section-label text-gray-600 mb-3 block">The People Behind It</span>
-                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Leadership</h2>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="h-px w-24 bg-white/10 hidden md:block" aria-hidden="true"></div>
-                <span class="text-yellow font-black uppercase tracking-[0.3em] text-[10px]">The Board 2025</span>
-            </div>
-        </div>
-
-        <div id="leadership-grid" class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-20" role="list" aria-label="Leadership team"></div>
-
-        <!-- Toggle enactors -->
-        <div class="text-center border-t border-white/10 pt-16">
-            <button id="toggleEnactorsBtn" onclick="toggleEnactors()"
-                    class="group inline-flex flex-col items-center gap-3 focus-visible:outline-yellow"
-                    aria-expanded="false" aria-controls="enactors-list">
-                <div class="w-16 h-16 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-yellow group-hover:border-yellow transition-all duration-300">
-                    <i data-lucide="users" class="w-5 h-5 group-hover:text-black transition-colors" aria-hidden="true"></i>
-                </div>
-                <p class="text-[9px] font-black uppercase tracking-[0.5em] text-gray-500 group-hover:text-yellow transition-colors">Show All Enactors</p>
+            <!-- Mobile burger -->
+            <button id="burgerBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl border border-gray-100 hover:border-yellow transition-colors"
+                    aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileMenu">
+                <i data-lucide="menu" id="menuIcon" class="w-5 h-5"></i>
             </button>
         </div>
 
-        <div id="enactors-list" class="mt-16 grid grid-cols-2 md:grid-cols-6 gap-6" role="list" aria-label="All enactors"></div>
-    </div>
-</section>
+        <!-- Mobile menu -->
+        <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-100 px-6 pt-4 pb-6" role="navigation" aria-label="Mobile navigation">
+            <div class="flex flex-col space-y-1">
+                <a href="#about"    class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">About</a>
+                <a href="#projects" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Projects</a>
+                <a href="#events"   class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Events</a>
+                <a href="#team"     class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50 transition-colors">Team</a>
+                <div class="pt-3 flex flex-col gap-3">
+                    <a href="login.html" class="border-2 border-black text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Log in</a>
+                    <a href="#contact" class="bg-yellow text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Join Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
 
-<!-- ══ JOIN US / REGISTRATION ══════════════════ -->
-<section id="contact" class="py-32 bg-yellow">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+    <!-- ══ HERO ═══════════════════════════════════ -->
+    <section class="relative min-h-[92vh] flex items-center overflow-hidden bg-[#fafaf8] grain">
+        <!-- Ambient blobs -->
+        <div class="absolute -top-32 -right-32 w-[500px] h-[500px] bg-yellow opacity-[0.07] rounded-full blur-[140px] pointer-events-none" aria-hidden="true"></div>
+        <div class="absolute bottom-0 -left-20 w-72 h-72 bg-yellow opacity-[0.05] rounded-full blur-[100px] pointer-events-none" aria-hidden="true"></div>
+
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 py-20">
 
             <!-- Left copy -->
-            <div class="lg:w-2/5" data-aos="fade-right">
-                <span class="section-label opacity-60 mb-4 block">Ready to Make an Impact?</span>
-                <h2 class="text-6xl lg:text-7xl font-black font-heading uppercase leading-[0.9] mb-6">Join<br>The Fam.</h2>
-                <p class="text-lg font-semibold opacity-75 mb-10 leading-relaxed">Be part of the innovation lab of ISIMG. Apply to join and start building solutions that matter.</p>
+            <div data-aos="fade-right" data-aos-duration="900">
+                <div class="hero-badge" role="status">
+                    <span class="pulse-dot" aria-hidden="true"></span>
+                    <span class="badge-text">Impact Chapter · Gabès, Tunisia</span>
+                </div>
 
-                <!-- What you get -->
-                <div class="space-y-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </div>
-                        <span class="font-semibold text-sm">Access to real entrepreneurship projects</span>
+                <h1 class="hero-h1 text-[clamp(4rem,10vw,90px)] font-black font-heading leading-[0.85] mb-8 uppercase tracking-tighter">
+                    Impact<br>
+                    <span class="outline-text">Through</span><br>
+                    Action.
+                </h1>
+
+                <p class="text-gray-500 text-lg font-medium mb-10 max-w-sm leading-relaxed">
+                    A student-powered innovation lab turning ideas into real change — in Gabès and beyond.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <a href="#projects" class="bg-yellow text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300 shadow-lg shadow-yellow/25">
+                        Our Projects
+                    </a>
+                    <a href="#about" class="border-2 border-black text-black px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300">
+                        Learn More
+                    </a>
+                </div>
+
+                <!-- Mini stats row -->
+                <div class="flex gap-8 mt-14 pt-10 border-t border-gray-200">
+                    <div>
+                        <span class="text-3xl font-black font-heading text-yellow">12+</span>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Projects</p>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </div>
-                        <span class="font-semibold text-sm">Mentorship from industry professionals</span>
+                    <div class="w-px bg-gray-200"></div>
+                    <div>
+                        <span class="text-3xl font-black font-heading">50+</span>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Enactors</p>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </div>
-                        <span class="font-semibold text-sm">National &amp; international competitions</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                        </div>
-                        <span class="font-semibold text-sm">A community driven by purpose</span>
+                    <div class="w-px bg-gray-200"></div>
+                    <div>
+                        <span class="text-3xl font-black font-heading">1.2k</span>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-0.5">Lives Impacted</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Form -->
-            <div class="lg:w-3/5 w-full" data-aos="fade-left" data-aos-delay="100">
-                <form id="registrationForm" class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-black/10 space-y-6" novalidate>
-                    <div class="grid md:grid-cols-2 gap-5">
-                        <div>
-                            <label for="regName" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Full Name *</label>
-                            <input type="text" id="regName" required autocomplete="name" placeholder="Your full name" class="form-input" aria-required="true">
-                        </div>
-                        <div>
-                            <label for="regEmail" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Email *</label>
-                            <input type="email" id="regEmail" required autocomplete="email" placeholder="you@example.com" class="form-input" aria-required="true">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="regPassword" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Portal Password * (min 6 chars)</label>
-                        <div class="relative">
-                            <input type="password" id="regPassword" required minlength="6" placeholder="Create a password" class="form-input pr-14" aria-required="true">
-                            <button type="button" id="togglePasswordBtn"
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
-                                    aria-label="Toggle password visibility">
-                                <i data-lucide="eye" id="pwEyeIcon" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Department -->
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3" id="dept-label">Choose Your Department *</p>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-labelledby="dept-label">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="dept" value="Projects" class="sr-only peer" checked>
-                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Projects</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="dept" value="Media" class="sr-only peer">
-                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Media</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="dept" value="HR" class="sr-only peer">
-                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">HR</div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="dept" value="Marketing" class="sr-only peer">
-                                <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Marketing</div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="regMotivation" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Why Enactus ISIMG? *</label>
-                        <textarea id="regMotivation" required placeholder="Tell us your motivation..." class="form-input h-32 resize-none" aria-required="true"></textarea>
-                    </div>
-
-                    <button type="submit" id="submitBtn"
-                            class="w-full py-5 bg-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all duration-300 uppercase tracking-[0.2em] text-xs shadow-lg shadow-yellow/30 disabled:opacity-60 disabled:cursor-not-allowed">
-                        Submit Application →
-                    </button>
-
-                    <p class="text-center text-[10px] text-gray-400 font-semibold">Your application will be reviewed by our HR team. You'll receive a confirmation email.</p>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ PARTNERS SCROLL BANNER ══════════════════ -->
-<section class="py-16 bg-white overflow-hidden border-y border-gray-100" aria-label="Our partners">
-    <div class="mb-10 text-center">
-        <p class="section-label">Our Trusted Partners</p>
-    </div>
-    <div class="relative">
-        <div class="animate-marquee" aria-hidden="true">
-            <!-- Repeated twice for seamless loop -->
-            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Enactus">
-                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Partner">
-                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Sponsor">
-                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
-            </div>
-            <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity" aria-hidden="true">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
-                <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
-                <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
-                <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-
-<!-- ══ FOOTER ══════════════════════════════════ -->
-<footer class="bg-black text-white py-20">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
-
-            <!-- Brand -->
-            <div>
-                <div class="flex items-center gap-2.5 mb-5">
-                    <div class="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-yellow/30">
-                        <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
-                             class="w-full h-full object-cover" alt="Enactus ISIMG" loading="lazy">
-                    </div>
-                    <span class="logo-text text-base">ENACTUS <span class="highlight">ISIMG</span></span>
+            <!-- Right image -->
+            <div class="relative" data-aos="zoom-out" data-aos-duration="1100" data-aos-delay="100">
+                <div class="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl shadow-black/10 transform -rotate-2 hover:rotate-0 transition-transform duration-700">
+                    <img src="enactuss/558811326_122142516362674747_1770264375635943538_n.jpg"
+                        alt="Enactus ISIMG student team" class="w-full h-auto">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
-                <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
-                    A student-powered entrepreneurship organization driving innovation and social impact in Gabès, Tunisia.
+
+                <!-- Floating badge -->
+                <div class="absolute -bottom-6 -left-6 bg-white text-black p-6 rounded-[2.5rem] shadow-2xl z-20 border-4 border-white hover:-translate-y-2 transition-transform duration-500">
+                    <div class="flex items-center gap-3">
+                        <span class="text-4xl font-black text-yellow leading-none">22+</span>
+                        <p class="text-[9px] font-black uppercase tracking-widest leading-tight text-gray-500">Active<br>Enactors</p>
+                    </div>
+                </div>
+
+                <!-- Award badge -->
+                <div class="absolute -top-4 -right-4 bg-yellow text-black p-4 rounded-[2rem] shadow-xl z-20 rotate-6 hover:rotate-0 transition-transform duration-500">
+                    <i data-lucide="award" class="w-6 h-6" aria-hidden="true"></i>
+                    <p class="text-[8px] font-black uppercase tracking-widest mt-1 leading-tight">Limitl'ESS<br>Champions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ ABOUT ═══════════════════════════════════ -->
+    <section id="about" class="py-32 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+            <!-- Section header -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-20 gap-10">
+                <div class="space-y-4" data-aos="fade-right">
+                    <span class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 bg-yellow/15 text-yellow-700 rounded-full">
+                        <i data-lucide="calendar" class="w-3 h-3" aria-hidden="true"></i> Established 2025
+                    </span>
+                    <h2 class="text-5xl lg:text-6xl font-black font-heading uppercase tracking-tighter leading-none">
+                        Driven by <span class="text-yellow">Impact.</span>
+                    </h2>
+                </div>
+                <p class="max-w-md text-gray-500 font-medium text-lg border-l-4 border-yellow pl-6" data-aos="fade-left" data-aos-delay="100">
+                    Enactus ISIMG is a premier laboratory for social innovation where technology meets entrepreneurial action in Gabès.
                 </p>
             </div>
 
-            <!-- Quick links -->
-            <div>
-                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Quick Links</h3>
-                <nav aria-label="Footer navigation">
-                    <ul class="space-y-3">
-                        <li><a href="#about"    class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">About</a></li>
-                        <li><a href="#projects" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Projects</a></li>
-                        <li><a href="#events"   class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Events</a></li>
-                        <li><a href="#team"     class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Team</a></li>
-                        <li><a href="#contact"  class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Join Us</a></li>
-                        <li><a href="login.html" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Member Portal</a></li>
-                    </ul>
-                </nav>
+            <!-- Bento grid -->
+            <div class="grid lg:grid-cols-12 gap-6">
+                <!-- Award card — tall left -->
+                <div class="lg:col-span-7 bg-black text-white p-10 lg:p-12 rounded-[3.5rem] relative overflow-hidden group shadow-xl min-h-[300px] flex flex-col justify-between" data-aos="zoom-in">
+                    <div class="absolute -bottom-16 -right-16 w-56 h-56 bg-yellow/5 rounded-full" aria-hidden="true"></div>
+                    <div class="w-14 h-14 bg-yellow rounded-2xl flex items-center justify-center text-black shadow-lg group-hover:rotate-12 transition-transform duration-500" aria-hidden="true">
+                        <i data-lucide="award" class="w-7 h-7"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h4 class="text-3xl lg:text-4xl font-black mb-3 font-heading uppercase">Limitl'ESS<br>Champion</h4>
+                        <p class="text-gray-400 text-sm max-w-sm leading-relaxed">Recognized for excellence in Social and Solidarity Economy in Tunisia. A testament to our commitment to real change.</p>
+                    </div>
+                </div>
+
+                <!-- Spirit card -->
+                <div class="lg:col-span-5 bg-[#fafaf8] p-10 rounded-[3.5rem] border-2 border-transparent hover:border-yellow transition-all duration-300 group min-h-[300px] flex flex-col justify-between" data-aos="fade-left" data-aos-delay="100">
+                    <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-yellow shadow-sm group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
+                        <i data-lucide="zap" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-black mb-3 font-heading uppercase">Our Spirit</h4>
+                        <p class="text-gray-500 text-sm leading-relaxed">We believe entrepreneurial action creates change. Our students build real solutions to real problems — with mentorship, community, and drive.</p>
+                    </div>
+                </div>
+
+                <!-- Mission card — full width -->
+                <div class="lg:col-span-12 bg-yellow p-10 lg:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-10" data-aos="fade-up">
+                    <div class="flex-1">
+                        <span class="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-3 block">Our Mission</span>
+                        <h4 class="text-3xl font-black font-heading uppercase leading-tight">Entrepreneurial Action.<br>Real Community Impact.</h4>
+                    </div>
+                    <div class="flex-1 grid grid-cols-3 gap-6 text-center">
+                        <div>
+                            <i data-lucide="lightbulb" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                            <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Innovate</p>
+                        </div>
+                        <div>
+                            <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                            <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Collaborate</p>
+                        </div>
+                        <div>
+                            <i data-lucide="trending-up" class="w-8 h-8 mx-auto mb-2 opacity-70" aria-hidden="true"></i>
+                            <p class="text-[10px] font-black uppercase tracking-widest opacity-70">Impact</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ STATS + ENACTOR OF THE MONTH ══════════ -->
+    <section class="py-20 bg-[#fafaf8]">
+        <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-8">
+
+            <!-- Stats -->
+            <div class="lg:col-span-2 grid grid-cols-3 gap-6" role="list" aria-label="Impact statistics">
+                <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in">
+                    <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">12+</h3>
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Active Projects</p>
+                </div>
+                <div class="stat-card p-8 lg:p-10 bg-black text-white rounded-[2.5rem] text-center hover:bg-yellow hover:text-black transition-all group shadow-sm cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="100">
+                    <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">50+</h3>
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Enactors</p>
+                </div>
+                <div class="stat-card p-8 lg:p-10 bg-white rounded-[2.5rem] text-center hover:bg-yellow transition-all group shadow-sm border border-gray-100/80 cursor-default" role="listitem" data-aos="zoom-in" data-aos-delay="200">
+                    <h3 class="text-4xl lg:text-5xl font-black font-heading mb-2 group-hover:scale-110 transition-transform">1.2k</h3>
+                    <p class="text-[9px] font-black uppercase tracking-widest opacity-40">Impacted Lives</p>
+                </div>
             </div>
 
-            <!-- Contact & social -->
-            <div>
-                <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Connect</h3>
-                <div class="space-y-3 mb-6">
-                    <p class="text-gray-400 text-sm flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
-                        ISIMG, Gabès, Tunisia
-                    </p>
-                    <p class="text-gray-400 text-sm flex items-center gap-2">
-                        <i data-lucide="mail" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
-                        enactus.isimg@gmail.com
+            <!-- Enactor of the Month -->
+            <div class="bg-yellow p-8 rounded-[2.5rem] relative overflow-hidden group shadow-xl shadow-yellow/20" data-aos="fade-left">
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-5">
+                        <i data-lucide="crown" class="w-4 h-4" aria-hidden="true"></i>
+                        <span class="text-[9px] font-black uppercase tracking-[0.2em]">Enactor of the Month</span>
+                    </div>
+                    <div class="w-28 h-28 rounded-2xl overflow-hidden border-4 border-black/10 mb-5 group-hover:rotate-3 transition-transform duration-500">
+                        <img id="eom-img" src="enactuss/78151529-6349-4654-84ec-3240848135d5.jpg"
+                            class="w-full h-full object-cover" alt="Enactor of the Month" loading="lazy">
+                    </div>
+                    <h4 id="eom-name" class="text-xl font-black font-heading uppercase">Moetez Maraach</h4>
+                    <p  id="eom-desc" class="text-sm font-semibold opacity-70 mt-1.5 leading-snug">Outstanding leadership in the "Green Tech" event.</p>
+                </div>
+                <i data-lucide="award" class="absolute -bottom-8 -right-8 w-36 h-36 opacity-10 group-hover:rotate-12 transition-transform duration-700" aria-hidden="true"></i>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ PROJECTS ════════════════════════════════ -->
+    <section id="projects" class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+                <div data-aos="fade-right">
+                    <span class="section-label mb-3 block">What We Build</span>
+                    <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Our <span class="text-yellow">Innovation</span></h2>
+                </div>
+                <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest" data-aos="fade-left">Click a project to learn more</p>
+            </div>
+
+            <!-- Project cards -->
+            <div class="grid md:grid-cols-2 gap-8 text-left">
+
+                <article class="hover-lift group cursor-pointer" id="proj-fytrlance" role="button" tabindex="0"
+                        aria-label="View Fytrlance project details" data-aos="fade-up">
+                    <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                        <img src="enactuss/8439c2ad-e88c-4f3b-b6ef-c9282ffa9e41.jpg"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            alt="Fytrlance — tech and work project" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                            <div>
+                                <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Tech &amp; Work</span>
+                                <h3 class="text-3xl font-black font-heading text-white uppercase">Fytrlance</h3>
+                                <p class="text-white/60 text-sm mt-1 font-medium">Freelance platform for ISIMG students</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="hover-lift group cursor-pointer" id="proj-bioverto" role="button" tabindex="0"
+                        aria-label="View Bioverto project details" data-aos="fade-up" data-aos-delay="100">
+                    <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl shadow-black/5 bg-gray-100">
+                        <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            alt="Bioverto — eco-wellness project" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-10">
+                            <div>
+                                <span class="bg-yellow text-black px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-widest mb-3 inline-block">Eco-Wellness</span>
+                                <h3 class="text-3xl font-black font-heading text-white uppercase">Bioverto</h3>
+                                <p class="text-white/60 text-sm mt-1 font-medium">Organic household solutions from local resources</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ EVENTS TIMELINE ═════════════════════════ -->
+    <section id="events" class="py-32 bg-[#fafaf8] overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <div class="text-center mb-20" data-aos="fade-up">
+                <span class="section-label mb-3 block">What's Happening</span>
+                <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-2">Action <span class="text-yellow">Timeline</span></h2>
+            </div>
+
+            <div class="relative">
+                <div class="timeline-line hidden md:block" aria-hidden="true"></div>
+                <div id="events-container" class="space-y-14" role="list" aria-label="Events timeline">
+                    <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-12" aria-live="polite">
+                        Loading our next big moves...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ TEAM ════════════════════════════════════ -->
+    <section id="team" class="py-32 bg-black text-white">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-20 gap-6">
+                <div>
+                    <span class="section-label text-gray-600 mb-3 block">The People Behind It</span>
+                    <h2 class="text-5xl font-black font-heading uppercase tracking-tighter">Leadership</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="h-px w-24 bg-white/10 hidden md:block" aria-hidden="true"></div>
+                    <span class="text-yellow font-black uppercase tracking-[0.3em] text-[10px]">The Board 2025</span>
+                </div>
+            </div>
+
+            <div id="leadership-grid" class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-20" role="list" aria-label="Leadership team"></div>
+
+            <!-- Toggle enactors -->
+            <div class="text-center border-t border-white/10 pt-16">
+                <button id="toggleEnactorsBtn" onclick="toggleEnactors()"
+                        class="group inline-flex flex-col items-center gap-3 focus-visible:outline-yellow"
+                        aria-expanded="false" aria-controls="enactors-list">
+                    <div class="w-16 h-16 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-yellow group-hover:border-yellow transition-all duration-300">
+                        <i data-lucide="users" class="w-5 h-5 group-hover:text-black transition-colors" aria-hidden="true"></i>
+                    </div>
+                    <p class="text-[9px] font-black uppercase tracking-[0.5em] text-gray-500 group-hover:text-yellow transition-colors">Show All Enactors</p>
+                </button>
+            </div>
+
+            <div id="enactors-list" class="mt-16 grid grid-cols-2 md:grid-cols-6 gap-6" role="list" aria-label="All enactors"></div>
+        </div>
+    </section>
+
+
+    <!-- ══ JOIN US / REGISTRATION ══════════════════ -->
+    <section id="contact" class="py-32 bg-yellow">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+
+                <!-- Left copy -->
+                <div class="lg:w-2/5" data-aos="fade-right">
+                    <span class="section-label opacity-60 mb-4 block">Ready to Make an Impact?</span>
+                    <h2 class="text-6xl lg:text-7xl font-black font-heading uppercase leading-[0.9] mb-6">Join<br>The Fam.</h2>
+                    <p class="text-lg font-semibold opacity-75 mb-10 leading-relaxed">Be part of the innovation lab of ISIMG. Apply to join and start building solutions that matter.</p>
+
+                    <!-- What you get -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-semibold text-sm">Access to real entrepreneurship projects</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-semibold text-sm">Mentorship from industry professionals</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-semibold text-sm">National &amp; international competitions</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                            </div>
+                            <span class="font-semibold text-sm">A community driven by purpose</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="lg:w-3/5 w-full" data-aos="fade-left" data-aos-delay="100">
+                    <form id="registrationForm" class="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-black/10 space-y-6" novalidate>
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="regName" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Full Name *</label>
+                                <input type="text" id="regName" required autocomplete="name" placeholder="Your full name" class="form-input" aria-required="true">
+                            </div>
+                            <div>
+                                <label for="regEmail" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Email *</label>
+                                <input type="email" id="regEmail" required autocomplete="email" placeholder="you@example.com" class="form-input" aria-required="true">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="regPassword" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Portal Password * (min 6 chars)</label>
+                            <div class="relative">
+                                <input type="password" id="regPassword" required minlength="6" placeholder="Create a password" class="form-input pr-14" aria-required="true">
+                                <button type="button" id="togglePasswordBtn"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                                        aria-label="Toggle password visibility">
+                                    <i data-lucide="eye" id="pwEyeIcon" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Department -->
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3" id="dept-label">Choose Your Department *</p>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-labelledby="dept-label">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="dept" value="Projects" class="sr-only peer" checked>
+                                    <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Projects</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="dept" value="Media" class="sr-only peer">
+                                    <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Media</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="dept" value="HR" class="sr-only peer">
+                                    <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">HR</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="dept" value="Marketing" class="sr-only peer">
+                                    <div class="py-3.5 rounded-2xl bg-gray-50 text-center font-black text-[9px] peer-checked:bg-black peer-checked:text-white uppercase tracking-widest border-2 border-transparent peer-checked:border-black hover:border-gray-200 transition-all">Marketing</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="regMotivation" class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Why Enactus ISIMG? *</label>
+                            <textarea id="regMotivation" required placeholder="Tell us your motivation..." class="form-input h-32 resize-none" aria-required="true"></textarea>
+                        </div>
+
+                        <button type="submit" id="submitBtn"
+                                class="w-full py-5 bg-yellow text-black font-black rounded-2xl hover:bg-black hover:text-white transition-all duration-300 uppercase tracking-[0.2em] text-xs shadow-lg shadow-yellow/30 disabled:opacity-60 disabled:cursor-not-allowed">
+                            Submit Application →
+                        </button>
+
+                        <p class="text-center text-[10px] text-gray-400 font-semibold">Your application will be reviewed by our HR team. You'll receive a confirmation email.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ PARTNERS SCROLL BANNER ══════════════════ -->
+    <section class="py-16 bg-white overflow-hidden border-y border-gray-100" aria-label="Our partners">
+        <div class="mb-10 text-center">
+            <p class="section-label">Our Trusted Partners</p>
+        </div>
+        <div class="relative">
+            <div class="animate-marquee" aria-hidden="true">
+                <!-- Repeated twice for seamless loop -->
+                <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Enactus">
+                    <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Partner">
+                    <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="Sponsor">
+                    <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+                </div>
+                <div class="flex items-center gap-20 px-10 grayscale opacity-40 hover:opacity-70 transition-opacity" aria-hidden="true">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                    <span class="font-heading text-xl font-black tracking-widest">ISIMG GABES</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                    <span class="font-heading text-xl font-black tracking-widest">PARTNER NAME</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/11/Enactus_logo.svg" class="h-10 w-auto" alt="">
+                    <span class="font-heading text-xl font-black tracking-widest">SPONSOR LOGO</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ FOOTER ══════════════════════════════════ -->
+    <footer class="bg-black text-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
+
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-2.5 mb-5">
+                        <div class="w-9 h-9 rounded-xl overflow-hidden ring-2 ring-yellow/30">
+                            <img src="enactuss/557778581_122142310376674747_6015000820039650429_n.jpg"
+                                class="w-full h-full object-cover" alt="Enactus ISIMG" loading="lazy">
+                        </div>
+                        <span class="logo-text text-base">ENACTUS <span class="highlight">ISIMG</span></span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-xs">
+                        A student-powered entrepreneurship organization driving innovation and social impact in Gabès, Tunisia.
                     </p>
                 </div>
-                <div class="flex gap-3">
-                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Facebook">
+
+                <!-- Quick links -->
+                <div>
+                    <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Quick Links</h3>
+                    <nav aria-label="Footer navigation">
+                        <ul class="space-y-3">
+                            <li><a href="#about"    class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">About</a></li>
+                            <li><a href="#projects" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Projects</a></li>
+                            <li><a href="#events"   class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Events</a></li>
+                            <li><a href="#team"     class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Team</a></li>
+                            <li><a href="#contact"  class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Join Us</a></li>
+                            <li><a href="login.html" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Member Portal</a></li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Contact & social -->
+                <div>
+                    <h3 class="text-[9px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Connect</h3>
+                    <div class="space-y-3 mb-6">
+                        <p class="text-gray-400 text-sm flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                            ISIMG, Gabès, Tunisia
+                        </p>
+                        <p class="text-gray-400 text-sm flex items-center gap-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-yellow flex-shrink-0" aria-hidden="true"></i>
+                            enactus.isimg@gmail.com
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Facebook">
+                            <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Instagram">
+                            <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="LinkedIn">
+                            <i data-lucide="linkedin" class="w-4 h-4" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom bar -->
+            <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-[10px] font-black uppercase tracking-widest">
+                <p>© <span id="footer-year"></span> Enactus ISIMG. All Rights Reserved.</p>
+                <p>Made with <span class="text-yellow">♥</span> in Gabès, Tunisia</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ══ UNIFIED MODAL ═══════════════════════════ -->
+    <div id="unifiedModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content" onclick="event.stopPropagation()">
+
+            <!-- Project content -->
+            <div id="projectContent" class="hidden">
+                <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4"></div>
+                <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" id="modalTitle"></h3>
+                <div class="space-y-4 text-gray-500 text-sm leading-relaxed">
+                    <div class="flex gap-3 items-start">
+                        <div class="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
+                        </div>
+                        <p id="projProb"></p>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <div class="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-blue-400"></i>
+                        </div>
+                        <p id="projSol"></p>
+                    </div>
+                    <div class="bg-yellow/10 border border-yellow/20 p-5 rounded-2xl flex gap-3 items-start">
+                        <div class="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-yellow-600"></i>
+                        </div>
+                        <p id="projImpact" class="font-semibold text-gray-700"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member content -->
+            <div id="memberContent" class="hidden text-center">
+                <img id="mImg" src="" class="w-36 h-36 object-cover rounded-[2rem] mx-auto mb-5 border-4 border-yellow shadow-lg" alt="">
+                <h3 id="mName" class="text-3xl font-black font-heading uppercase mb-1"></h3>
+                <p  id="mRole" class="text-yellow font-black uppercase tracking-widest text-[9px] mb-6"></p>
+                <div class="flex justify-center gap-3">
+                    <a id="mFB" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Facebook profile">
                         <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="Instagram">
+                    <a id="mIG" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Instagram profile">
                         <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-yellow hover:text-black transition-all duration-300" aria-label="LinkedIn">
-                        <i data-lucide="linkedin" class="w-4 h-4" aria-hidden="true"></i>
-                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Bottom bar -->
-        <div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-[10px] font-black uppercase tracking-widest">
-            <p>© <span id="footer-year"></span> Enactus ISIMG. All Rights Reserved.</p>
-            <p>Made with <span class="text-yellow">♥</span> in Gabès, Tunisia</p>
+            <button onclick="closeModal()" class="mt-8 w-full py-4 border-2 border-gray-100 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 hover:border-gray-200 transition-all">
+                Close ✕
+            </button>
         </div>
     </div>
-</footer>
+
+    <!-- ── BACK TO TOP ──────────────────────────── -->
+    <button id="back-to-top" aria-label="Back to top">
+        <i data-lucide="arrow-up" class="w-5 h-5" aria-hidden="true"></i>
+    </button>
 
 
-<!-- ══ UNIFIED MODAL ═══════════════════════════ -->
-<div id="unifiedModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-content" onclick="event.stopPropagation()">
+    <!-- ══ SCRIPTS ═════════════════════════════════
+        Load order: AOS → Lucide → Firebase → Config → Toast → index.js
+    ═════════════════════════════════════════════ -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-        <!-- Project content -->
-        <div id="projectContent" class="hidden">
-            <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4"></div>
-            <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" id="modalTitle"></h3>
-            <div class="space-y-4 text-gray-500 text-sm leading-relaxed">
-                <div class="flex gap-3 items-start">
-                    <div class="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i>
-                    </div>
-                    <p id="projProb"></p>
-                </div>
-                <div class="flex gap-3 items-start">
-                    <div class="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <i data-lucide="lightbulb" class="w-4 h-4 text-blue-400"></i>
-                    </div>
-                    <p id="projSol"></p>
-                </div>
-                <div class="bg-yellow/10 border border-yellow/20 p-5 rounded-2xl flex gap-3 items-start">
-                    <div class="w-8 h-8 bg-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" aria-hidden="true">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-yellow-600"></i>
-                    </div>
-                    <p id="projImpact" class="font-semibold text-gray-700"></p>
-                </div>
-            </div>
-        </div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-        <!-- Member content -->
-        <div id="memberContent" class="hidden text-center">
-            <img id="mImg" src="" class="w-36 h-36 object-cover rounded-[2rem] mx-auto mb-5 border-4 border-yellow shadow-lg" alt="">
-            <h3 id="mName" class="text-3xl font-black font-heading uppercase mb-1"></h3>
-            <p  id="mRole" class="text-yellow font-black uppercase tracking-widest text-[9px] mb-6"></p>
-            <div class="flex justify-center gap-3">
-                <a id="mFB" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Facebook profile">
-                    <i data-lucide="facebook" class="w-4 h-4" aria-hidden="true"></i>
-                </a>
-                <a id="mIG" href="#" class="w-11 h-11 bg-gray-50 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all duration-200" aria-label="Instagram profile">
-                    <i data-lucide="instagram" class="w-4 h-4" aria-hidden="true"></i>
-                </a>
-            </div>
-        </div>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/toast.js"></script>
 
-        <button onclick="closeModal()" class="mt-8 w-full py-4 border-2 border-gray-100 rounded-2xl text-[9px] font-black uppercase tracking-widest text-gray-400 hover:bg-gray-50 hover:border-gray-200 transition-all">
-            Close ✕
-        </button>
-    </div>
-</div>
+    <!--
+        FIX: Removed the massive inline <script> block that duplicated all logic
+        from index.js and register.js. This caused double Firestore listeners,
+        double form submit handlers, and conflicting function definitions.
+        All logic now lives in the external JS files.
+    -->
+    <script src="js/index.js"></script>
 
-<!-- ── BACK TO TOP ──────────────────────────── -->
-<button id="back-to-top" aria-label="Back to top">
-    <i data-lucide="arrow-up" class="w-5 h-5" aria-hidden="true"></i>
-</button>
+    <script>
+    /* ═══════════════════════════════════════════════
+    PAGE-LEVEL WIRING
+    index.js handles DOMContentLoaded, AOS, team grids,
+    Firestore data, and the registration form.
+    We only wire up the few things that reference
+    inline HTML onclick attributes here.
+    ═══════════════════════════════════════════════ */
 
+    /* Password visibility toggle for the registration form.
+    Uses a unique ID (togglePasswordBtn) to avoid conflicts. */
+    document.addEventListener("DOMContentLoaded", function () {
 
-<!-- ══ SCRIPTS ═════════════════════════════════
-     Load order: AOS → Lucide → Firebase → Config → Toast → index.js
-═════════════════════════════════════════════ -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        /* Project card click / keyboard handlers */
+        var projFytrlance = document.getElementById("proj-fytrlance");
+        if (projFytrlance) {
+            projFytrlance.addEventListener("click", function () { openProject("fytrlance"); });
+            projFytrlance.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("fytrlance"); }
+            });
+        }
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+        var projBioverto = document.getElementById("proj-bioverto");
+        if (projBioverto) {
+            projBioverto.addEventListener("click", function () { openProject("bioverto"); });
+            projBioverto.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("bioverto"); }
+            });
+        }
 
-<script src="js/firebase-config.js"></script>
-<script src="js/toast.js"></script>
+        /* Password visibility toggle */
+        var toggleBtn = document.getElementById("togglePasswordBtn");
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
+                var pwField = document.getElementById("regPassword");
+                var eyeIcon = document.getElementById("pwEyeIcon");
+                if (!pwField) return;
+                var isText = pwField.type === "text";
+                pwField.type = isText ? "password" : "text";
+                if (eyeIcon) {
+                    eyeIcon.setAttribute("data-lucide", isText ? "eye" : "eye-off");
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                }
+            });
+        }
 
-<!--
-    FIX: Removed the massive inline <script> block that duplicated all logic
-    from index.js and register.js. This caused double Firestore listeners,
-    double form submit handlers, and conflicting function definitions.
-    All logic now lives in the external JS files.
--->
-<script src="js/index.js"></script>
-
-<script>
-/* ═══════════════════════════════════════════════
-   PAGE-LEVEL WIRING
-   index.js handles DOMContentLoaded, AOS, team grids,
-   Firestore data, and the registration form.
-   We only wire up the few things that reference
-   inline HTML onclick attributes here.
-═══════════════════════════════════════════════ */
-
-/* Password visibility toggle for the registration form.
-   Uses a unique ID (togglePasswordBtn) to avoid conflicts. */
-document.addEventListener("DOMContentLoaded", function () {
-
-    /* Project card click / keyboard handlers */
-    var projFytrlance = document.getElementById("proj-fytrlance");
-    if (projFytrlance) {
-        projFytrlance.addEventListener("click", function () { openProject("fytrlance"); });
-        projFytrlance.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("fytrlance"); }
+        /* Mobile menu nav links — close menu on click */
+        var mobileLinks = document.querySelectorAll("#mobileMenu a");
+        mobileLinks.forEach(function (link) {
+            link.addEventListener("click", function () {
+                /* toggleMobileMenu is defined in index.js */
+                var menu = document.getElementById("mobileMenu");
+                var btn  = document.getElementById("burgerBtn");
+                var icon = document.getElementById("menuIcon");
+                if (!menu) return;
+                menu.classList.remove("open");
+                if (btn) btn.setAttribute("aria-expanded", "false");
+                if (icon) {
+                    icon.setAttribute("data-lucide", "menu");
+                    if (typeof lucide !== "undefined") lucide.createIcons();
+                }
+            });
         });
-    }
 
-    var projBioverto = document.getElementById("proj-bioverto");
-    if (projBioverto) {
-        projBioverto.addEventListener("click", function () { openProject("bioverto"); });
-        projBioverto.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProject("bioverto"); }
-        });
-    }
-
-    /* Password visibility toggle */
-    var toggleBtn = document.getElementById("togglePasswordBtn");
-    if (toggleBtn) {
-        toggleBtn.addEventListener("click", function () {
-            var pwField = document.getElementById("regPassword");
-            var eyeIcon = document.getElementById("pwEyeIcon");
-            if (!pwField) return;
-            var isText = pwField.type === "text";
-            pwField.type = isText ? "password" : "text";
-            if (eyeIcon) {
-                eyeIcon.setAttribute("data-lucide", isText ? "eye" : "eye-off");
-                if (typeof lucide !== "undefined") lucide.createIcons();
-            }
-        });
-    }
-
-    /* Mobile menu nav links — close menu on click */
-    var mobileLinks = document.querySelectorAll("#mobileMenu a");
-    mobileLinks.forEach(function (link) {
-        link.addEventListener("click", function () {
-            /* toggleMobileMenu is defined in index.js */
-            var menu = document.getElementById("mobileMenu");
-            var btn  = document.getElementById("burgerBtn");
-            var icon = document.getElementById("menuIcon");
-            if (!menu) return;
-            menu.classList.remove("open");
-            if (btn) btn.setAttribute("aria-expanded", "false");
-            if (icon) {
-                icon.setAttribute("data-lucide", "menu");
-                if (typeof lucide !== "undefined") lucide.createIcons();
-            }
-        });
     });
+    </script>
 
-});
-</script>
-
-</body>
-</html>
+    </body>
+    </html>
