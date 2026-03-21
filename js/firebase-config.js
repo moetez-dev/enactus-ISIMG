@@ -29,7 +29,7 @@ const firebaseConfig = {
 
 /* Guard against duplicate initialization */
 if (!firebase.apps.length) {
-  firebase.initializeApp(FIREBASE_CONFIG);
+  firebase.initializeApp(firebaseConfig);
 }
 
 /* Auth */
