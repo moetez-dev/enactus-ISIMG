@@ -37,7 +37,7 @@ var PROJECTS = {
 
 /* ── Team data ──────────────────────────────────────────────────── */
 var LEADERSHIP = [
-  { name: "Ghofran Chergui",  role: "President",      img: "/enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg",  fb: "#", ig: "#" },
+  { name: "Ghofran Chergui",  role: "President",      img: "enactuss/d7f00337-ee47-41ce-bc40-55ed692e535f.jpg",  fb: "#", ig: "#" },
   { name: "Azmi Ben Hassine", role: "Vice President",  img: "enactuss/314f6417-cb4c-440a-9478-a02cb49d403e.jpg",  fb: "#", ig: "#" },
   { name: "Naceur Zidi",      role: "Media Coord",     img: "enactuss/9bd9521e-5ddf-413f-86f5-919e3a823d7d.jpg",  fb: "#", ig: "#" },
   { name: "Moetez Maraach",   role: "Media Board",     img: "enactuss/78151529-6349-4654-84ec-3240848135d5.jpg",  fb: "#", ig: "#" },
