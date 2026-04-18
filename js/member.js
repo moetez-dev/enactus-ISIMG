@@ -203,8 +203,8 @@ function _loadLeaderboard(currentUid) {
     );
 }
 
-/* ── Missions ───────────────────────────────────────────────────── */
-function loadMissions(containerId, limit) {
+/* ── Missions (internal) ────────────────────────────────────────── */
+function _loadMissions(containerId, limit) {
   if (!_user) return;
   var container = document.getElementById(containerId);
   if (!container) return;
@@ -291,6 +291,12 @@ function loadMissions(containerId, limit) {
   );
 }
 
+/* ── Missions (exported for tab switcher) ────────────────────────── */
+function loadMissions(containerId, limit) {
+  _loadMissions(containerId, limit);
+}
+window.loadMissions = loadMissions;
+
 /* ── Submit work ────────────────────────────────────────────────── */
 async function _submitWork(taskId, link) {
   if (!link || !/^https?:\/\//i.test(link)) {
@@ -339,6 +345,7 @@ function loadProjects() {
     function (err) { console.warn("[member] projects:", err.message); }
   );
 }
+window.loadProjects = loadProjects;
 
 /* ── Events ─────────────────────────────────────────────────────── */
 function loadEvents() {
@@ -371,6 +378,7 @@ function loadEvents() {
     function (err) { console.warn("[member] events:", err.message); }
   );
 }
+window.loadEvents = loadEvents;
 
 /* ── Feed (announcements) ───────────────────────────────────────── */
 function loadFeed() {
@@ -379,6 +387,7 @@ function loadFeed() {
   list.dataset.loaded = "1";
   _loadFeedInto("feed-list", 50);
 }
+window.loadFeed = loadFeed;
 
 function _loadFeedInto(containerId, limit) {
   var container = document.getElementById(containerId);
@@ -441,6 +450,7 @@ async function updateProfile() {
   }
 }
 window.updateProfile = updateProfile;
+window._updateProfile = updateProfile;
 
 /* ── Avatar preview ─────────────────────────────────────────────── */
 function previewAvatar(url) {

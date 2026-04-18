@@ -9,10 +9,15 @@
 
 "use strict";
 
+var _authGuardCalled = false;
+
 var AuthGuard = {
 
   /* ── Admin guard: blocks everyone except role==="admin" ── */
   requireAdmin: function (callback) {
+    if (_authGuardCalled) return; /* Prevent multiple guard calls */
+    _authGuardCalled = true;
+    
     auth.onAuthStateChanged(function (user) {
       if (!user) {
         window.location.href = "login.html";
@@ -33,6 +38,9 @@ var AuthGuard = {
 
   /* ── Member guard: blocks guests; redirects admins to admin.html ── */
   requireMember: function (callback) {
+    if (_authGuardCalled) return; /* Prevent multiple guard calls */
+    _authGuardCalled = true;
+    
     auth.onAuthStateChanged(function (user) {
       if (!user) {
         window.location.href = "login.html";
@@ -60,6 +68,9 @@ var AuthGuard = {
 
   /* ── Login guard: if already logged in, skip the form ── */
   redirectIfLoggedIn: function () {
+    if (_authGuardCalled) return; /* Prevent multiple guard calls */
+    _authGuardCalled = true;
+    
     auth.onAuthStateChanged(function (user) {
       if (!user) return;
       db.collection("users").doc(user.uid).get().then(function (doc) {
