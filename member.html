@@ -6,7 +6,6 @@
     <title>Enactus Hub | Member Space</title>
     <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -1087,7 +1086,7 @@
                     <div style="display:flex;flex-direction:column;gap:0.75rem;">
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
                             <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Status</span>
-                            <span style="font-size:0.72rem;font-weight:900;color:var(--green);text-transform:uppercase;background:rgba(34,197,94,0.1);padding:0.2rem 0.625rem;border-radius:999px;">Active</span>
+                            <span id="settings-status" style="font-size:0.72rem;font-weight:900;color:var(--green);text-transform:uppercase;background:rgba(34,197,94,0.1);padding:0.2rem 0.625rem;border-radius:999px;">Active</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:var(--bg);border-radius:0.75rem;">
                             <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Email</span>
@@ -1204,11 +1203,13 @@ function previewAvatar(url) {
     if (preview && /^https?:\/\//i.test(url)) preview.src = url;
 }
 
-/* updateProfile — delegated to member.js if available */
-function updateProfile() {
-    if (typeof window._updateProfile === "function") {
-        window._updateProfile();
-    }
+/* updateProfile — member.js exports this directly as window.updateProfile;
+   no delegation wrapper needed. Defined here as a no-op fallback only
+   in case member.js hasn't loaded yet (race condition guard). */
+if (typeof window.updateProfile !== "function") {
+    window.updateProfile = function () {
+        Toast.warning("Profile module not ready. Please try again.");
+    };
 }
 </script>
 

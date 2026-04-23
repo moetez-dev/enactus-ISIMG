@@ -53,7 +53,7 @@ function _boot(user, data) {
   _subscribeProfile(user); /* live updates */
   _loadEOM();
   _loadLeaderboard(user.uid);
-  _loadMissions("dash-missions-preview", 3);
+  loadMissions("dash-missions-preview", 3);
   _loadFeedInto("dash-feed-preview", 3);
   if (typeof lucide !== "undefined") lucide.createIcons();
 }
@@ -103,6 +103,24 @@ function _renderProfile(user, data) {
   _setText("settings-points", pts + " pts");
   _setText("settings-level", level.name);
   _setImg("settings-avatar-preview", pic, name);
+
+  /* Dynamic status badge */
+  var statusEl = document.getElementById("settings-status");
+  if (statusEl) {
+    var st = data.status || "unknown";
+    var stLabel = st.charAt(0).toUpperCase() + st.slice(1);
+    statusEl.textContent = stLabel;
+    if (st === "approved" || st === "interview") {
+      statusEl.style.color = "var(--green)";
+      statusEl.style.background = "rgba(34,197,94,0.1)";
+    } else if (st === "pending") {
+      statusEl.style.color = "#b45309";
+      statusEl.style.background = "rgba(255,194,34,0.15)";
+    } else if (st === "rejected") {
+      statusEl.style.color = "var(--red)";
+      statusEl.style.background = "rgba(239,68,68,0.1)";
+    }
+  }
 
   var editName = document.getElementById("editName");
   if (editName && !editName.dataset.dirty) editName.value = name;

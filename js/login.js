@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.setAttribute("data-lucide", isText ? "eye" : "eye-off");
         if (typeof lucide !== "undefined") lucide.createIcons();
       }
-      pwToggle.setAttribute("aria-label", isText ? "Show password" : "Hide password");
+      pwToggle.setAttribute("aria-label", isText ? "Hide password" : "Show password");
     });
   }
 });

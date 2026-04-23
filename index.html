@@ -13,7 +13,7 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: { yellow: "#FFC222" },
+          colors: { yellow: { DEFAULT: "#FFC222", dark: "#e6a800", 700: "#b45309" } },
           fontFamily: {
             heading: ["Montserrat", "sans-serif"],
             body:    ["Source Sans 3", "sans-serif"]
@@ -341,7 +341,7 @@
       </article>
       <article class="hover-lift group cursor-pointer" id="proj-bioverto" role="button" tabindex="0" aria-label="View Bioverto project details" data-aos="fade-up" data-aos-delay="100">
         <div class="rounded-[3rem] overflow-hidden relative h-[420px] shadow-xl bg-gray-100">
-          <img src="/enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
+          <img src="enactuss/f67a7f6d-ea98-4995-b4f4-49a903c03b98.jpg"
                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                alt="Bioverto project" loading="lazy"
                onerror="this.src='https://ui-avatars.com/api/?name=Bioverto&background=111&color=FFC222&size=800'">
@@ -538,7 +538,7 @@
   <div class="modal-content" onclick="event.stopPropagation()">
     <div id="projectContent" class="hidden">
       <div id="projTag" class="bg-yellow text-black inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest mb-4"></div>
-      <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" id="modalTitle"></h3>
+      <h3 id="projName" class="text-4xl font-black font-heading uppercase mb-6 leading-tight" aria-labelledby="modalTitle"></h3>
       <div class="space-y-4 text-gray-500 text-sm leading-relaxed">
         <div class="flex gap-3 items-start"><div class="w-8 h-8 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i></div><p id="projProb"></p></div>
         <div class="flex gap-3 items-start"><div class="w-8 h-8 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"><i data-lucide="lightbulb"    class="w-4 h-4 text-blue-400"></i></div><p id="projSol"></p></div>
