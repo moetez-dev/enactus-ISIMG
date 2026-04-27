@@ -104,9 +104,6 @@
     /* Grain texture on hero */
     .grain::after { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; }
 
-    /* Timeline */
-    .timeline-line { position:absolute; left:50%; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,#e5e7eb 10%,#e5e7eb 90%,transparent); transform:translateX(-50%); }
-
     /* Enactors list hidden by default */
     #enactors-list { display:none; }
 
@@ -146,7 +143,6 @@
     <div class="hidden md:flex items-center space-x-8 font-semibold text-sm uppercase tracking-widest">
       <a href="#about"    class="hover:text-yellow transition-colors duration-200">About</a>
       <a href="#projects" class="hover:text-yellow transition-colors duration-200">Projects</a>
-      <a href="#events"   class="hover:text-yellow transition-colors duration-200">Events</a>
       <a href="#team"     class="hover:text-yellow transition-colors duration-200">Team</a>
       <div class="flex items-center gap-3 ml-2">
         <a href="login.html"  class="border-2 border-black text-black px-5 py-2 rounded-full hover:bg-black hover:text-white transition-all duration-200 text-xs font-black tracking-widest">Log in</a>
@@ -165,7 +161,6 @@
     <div class="flex flex-col space-y-1">
       <a href="#about"    class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50">About</a>
       <a href="#projects" class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50">Projects</a>
-      <a href="#events"   class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50">Events</a>
       <a href="#team"     class="py-3 px-4 rounded-xl font-bold uppercase text-sm tracking-widest hover:bg-gray-50">Team</a>
       <div class="pt-3 flex flex-col gap-3">
         <a href="login.html" class="border-2 border-black text-black py-3 rounded-2xl text-center font-black uppercase text-xs tracking-widest hover:bg-black hover:text-white transition-all">Log in</a>
@@ -358,22 +353,6 @@
   </div>
 </section>
 
-<!-- ══ EVENTS ═══════════════════════════════════════════════════ -->
-<section id="events" class="py-32 bg-[#fafaf8] overflow-hidden">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-20" data-aos="fade-up">
-      <span class="section-label mb-3 block">What's Happening</span>
-      <h2 class="text-5xl font-black font-heading uppercase tracking-tighter mt-2">Action <span class="text-yellow">Timeline</span></h2>
-    </div>
-    <div class="relative">
-      <div class="timeline-line hidden md:block"></div>
-      <div id="events-container" class="space-y-14" role="list" aria-label="Events timeline">
-        <div class="text-center text-gray-400 uppercase tracking-widest text-xs py-12">Loading our next big moves…</div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ══ TEAM ════════════════════════════════════════════════════ -->
 <section id="team" class="py-32 bg-black text-white">
   <div class="max-w-7xl mx-auto px-6">
@@ -506,7 +485,6 @@
           <ul class="space-y-3">
             <li><a href="#about"    class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">About</a></li>
             <li><a href="#projects" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Projects</a></li>
-            <li><a href="#events"   class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Events</a></li>
             <li><a href="#team"     class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Team</a></li>
             <li><a href="#contact"  class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Join Us</a></li>
             <li><a href="login.html" class="text-gray-400 hover:text-yellow transition-colors text-sm font-semibold">Member Portal</a></li>
