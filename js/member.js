@@ -229,7 +229,7 @@ function loadMissions(containerId, limit) {
 
   var query = db.collection("tasks")
     .where("uid", "==", _user.uid)
-    .orderBy("createdAt", "desc");
+    .orderBy("date", "desc");
   if (limit) query = query.limit(limit);
 
   query.onSnapshot(
@@ -364,7 +364,7 @@ function loadEvents() {
   if (!list || list.dataset.loaded) return;
   list.dataset.loaded = "1";
 
-  db.collection("events").orderBy("createdAt", "desc").onSnapshot(
+  db.collection("events").orderBy("date", "desc").onSnapshot(
     function (snap) {
       list.innerHTML = "";
       if (snap.empty) {
@@ -402,7 +402,7 @@ function _loadFeedInto(containerId, limit) {
   var container = document.getElementById(containerId);
   if (!container) return;
 
-  var query = db.collection("news").orderBy("createdAt", "desc");
+  var query = db.collection("news").orderBy("date", "desc");
   if (limit) query = query.limit(limit);
 
   query.onSnapshot(
