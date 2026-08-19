@@ -1,0 +1,15 @@
+# Dependencies
+web/node_modules/
+web/.next/
+
+# Environment / secrets
+web/.env
+web/.env.local
+web/.env.*.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

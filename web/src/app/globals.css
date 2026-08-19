@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-yellow: #ffc222;
+  --brand-yellow-dark: #e6a800;
+  --brand-black: #0a0a0a;
+  --font-heading: "Arial Black", "Arial Rounded MT Bold", "Segoe UI", sans-serif;
+  --font-body: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  color: var(--brand-black);
+  background: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-heading {
+  font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--brand-yellow);
+  color: var(--brand-black);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-yellow);
+  outline-offset: 3px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-yellow);
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-black uppercase tracking-widest transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-yellow {
+    @apply btn bg-brand-yellow text-brand-black hover:bg-brand-black hover:text-white;
+  }
+  .btn-dark {
+    @apply btn border-2 border-brand-black text-brand-black hover:bg-brand-black hover:text-white;
+  }
+  .btn-ghost {
+    @apply btn border-2 border-gray-200 text-gray-600 hover:border-brand-black hover:text-brand-black;
+  }
+  .card {
+    @apply rounded-5xl bg-white shadow-sm;
+  }
+  .section-label {
+    @apply text-[10px] font-black uppercase tracking-[0.35em] text-gray-400;
+  }
+  .input {
+    @apply w-full rounded-2xl border-2 border-transparent bg-gray-100 px-5 py-4 text-sm font-medium outline-none transition focus:border-brand-yellow focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,194,34,0.15)];
+  }
+  .label {
+    @apply mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

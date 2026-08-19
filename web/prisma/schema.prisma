@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum MemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MissionStatus {
+  LIVE
+  PENDING_REVIEW
+  APPROVED
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  passwordHash String
+  fullName     String
+  role         Role             @default(MEMBER)
+  status       MemberStatus     @default(PENDING)
+  department   Department?      @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  motivation   String?
+  points       Int              @default(0)
+  level        String           @default("Junior")
+  profilePic   String?
+  tokenVersion Int              @default(0)
+  missions     Mission[]
+  contactMessages ContactMessage[]
+  passwordResetTokens PasswordResetToken[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([role])
+  @@index([status])
+  @@index([departmentId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model RateLimit {
+  id          String   @id @default(cuid())
+  key         String
+  windowStart Int
+  count       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([key, windowStart])
+  @@index([windowStart])
+}
+
+model Department {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  icon        String?
+  members     User[]
+  projects    Project[]
+  createdAt   DateTime   @default(now())
+}
+
+model Project {
+  id           String     @id @default(cuid())
+  name         String
+  slug         String     @unique
+  tag          String
+  problem      String
+  solution     String
+  impact       String
+  image        String?
+  progress     Int        @default(0)
+  order        Int        @default(0)
+  published    Boolean    @default(true)
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([published])
+  @@index([departmentId])
+}
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  image        String?
+  facebook     String?
+  instagram    String?
+  email        String?
+  isLeadership Boolean  @default(false)
+  order        Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([isLeadership])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  location    String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([published, date])
+  @@index([date])
+}
+
+model News {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([published])
+}
+
+model Mission {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text          String
+  points        Int           @default(50)
+  status        MissionStatus @default(LIVE)
+  workLink      String?
+  submitted     Boolean       @default(false)
+  completed     Boolean       @default(false)
+  pointsAwarded Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([read])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
