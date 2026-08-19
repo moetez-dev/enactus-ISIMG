@@ -141,6 +141,20 @@ export const profileUpdateSchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v ? v : null)),
+  phone: z
+    .string()
+    .trim()
+    .max(40)
+    .optional()
+    .nullable()
+    .transform((v) => (v ? v : null)),
+  bio: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((v) => (v ? v : null)),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

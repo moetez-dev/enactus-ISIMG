@@ -40,6 +40,8 @@ export async function PATCH(request: NextRequest) {
       data: {
         fullName: parsed.data.fullName,
         profilePic: parsed.data.profilePic,
+        phone: parsed.data.phone,
+        bio: parsed.data.bio,
       },
       include: { department: true },
     });

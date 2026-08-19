@@ -36,6 +36,8 @@ export type SafeUser = {
   points: number;
   level: string;
   profilePic: string | null;
+  phone: string | null;
+  bio: string | null;
   createdAt: Date;
 };
 
@@ -51,6 +53,8 @@ export function toSafeUser(user: User & { department?: SafeUser["department"] | 
     points: user.points,
     level: user.level,
     profilePic: user.profilePic,
+    phone: user.phone,
+    bio: user.bio,
     createdAt: user.createdAt,
   };
 }
