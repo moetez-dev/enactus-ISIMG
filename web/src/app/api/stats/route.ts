@@ -15,6 +15,13 @@ export async function GET() {
       events,
       team,
       messages,
+      achievements,
+      achievementsEarned,
+      certificates,
+      eventAttendance,
+      projectMemberships,
+      pendingProjectRequests,
+      unreadNotifications,
     ] = await Promise.all([
       prisma.user.count({ where: { role: "MEMBER" } }),
       prisma.user.count({ where: { status: "PENDING" } }),
@@ -23,6 +30,13 @@ export async function GET() {
       prisma.event.count({ where: { published: true, date: { gte: now } } }),
       prisma.teamMember.count(),
       prisma.contactMessage.count(),
+      prisma.achievement.count({ where: { active: true } }),
+      prisma.userAchievement.count(),
+      prisma.certificate.count({ where: { status: "ACTIVE" } }),
+      prisma.eventRegistration.count(),
+      prisma.projectMember.count({ where: { status: "APPROVED" } }),
+      prisma.projectMember.count({ where: { status: "PENDING" } }),
+      prisma.notification.count({ where: { read: false } }),
     ]);
 
     const leaderboard = await prisma.user.findMany({
@@ -52,7 +66,7 @@ export async function GET() {
       },
     });
 
-    return ok({
+return ok({
       members,
       pendingMembers,
       departments,
@@ -60,6 +74,13 @@ export async function GET() {
       events,
       team,
       messages,
+      achievements,
+      achievementsEarned,
+      certificates,
+      eventAttendance,
+      projectMemberships,
+      pendingProjectRequests,
+      unreadNotifications,
       leaderboard,
       recentMembers,
     });

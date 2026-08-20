@@ -16,6 +16,10 @@ import {
   MessageSquare,
   Settings,
   LogOut,
+  Medal,
+  BadgeCheck,
+  UserCheck,
+  UserPlus,
 } from "lucide-react";
 import { apiFetch } from "@/lib/client-api";
 import { Overview } from "@/components/admin/Overview";
@@ -24,16 +28,24 @@ import { ResourceManager, type ResourceField } from "@/components/admin/Resource
 import { MissionsManager } from "@/components/admin/MissionsManager";
 import { MessagesManager } from "@/components/admin/MessagesManager";
 import { SettingsManager } from "@/components/admin/SettingsManager";
+import { AchievementsManager } from "@/components/admin/AchievementsManager";
+import { CertificatesManager } from "@/components/admin/CertificatesManager";
+import { AttendanceManager } from "@/components/admin/AttendanceManager";
+import { ProjectMembersManager } from "@/components/admin/ProjectMembersManager";
 
 const TABS = [
   { id: "overview", label: "Overview", Icon: LayoutDashboard },
   { id: "users", label: "Members", Icon: Users },
   { id: "projects", label: "Projects", Icon: FolderKanban },
+  { id: "project-members", label: "Project members", Icon: UserPlus },
   { id: "departments", label: "Departments", Icon: Building2 },
   { id: "events", label: "Events", Icon: CalendarDays },
+  { id: "attendance", label: "Attendance", Icon: UserCheck },
   { id: "team", label: "Team", Icon: UserRound },
   { id: "news", label: "Announcements", Icon: Megaphone },
   { id: "missions", label: "Missions", Icon: Target },
+  { id: "achievements", label: "Achievements", Icon: Medal },
+  { id: "certificates", label: "Certificates", Icon: BadgeCheck },
   { id: "messages", label: "Messages", Icon: MessageSquare },
   { id: "settings", label: "Settings", Icon: Settings },
 ] as const;
@@ -126,6 +138,10 @@ export function AdminArea({ adminName }: { adminName: string }) {
             <ResourceManager resource="news" title="Announcements" fields={newsFields} />
           ) : null}
           {tab === "missions" ? <MissionsManager /> : null}
+          {tab === "achievements" ? <AchievementsManager /> : null}
+          {tab === "certificates" ? <CertificatesManager /> : null}
+          {tab === "project-members" ? <ProjectMembersManager /> : null}
+          {tab === "attendance" ? <AttendanceManager /> : null}
           {tab === "messages" ? <MessagesManager /> : null}
           {tab === "settings" ? <SettingsManager /> : null}
         </section>

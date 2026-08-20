@@ -2,13 +2,16 @@ import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { statusUpdateSchema } from "@/lib/validators";
+import { generateMemberId } from "@/lib/membership";
+import { createNotification } from "@/lib/notify";
+import { evaluateAchievements } from "@/lib/achievements";
 import { fail, ok, handleApiError } from "@/lib/api";
 
-// GET — admin lists all registered users
+// GET — admin lists all registered users with server-side search + pagination.
 export async function GET(request: NextRequest) {
   try {
     await requireAdmin();
-const searchParams = request.nextUrl.searchParams;
+    const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get("status");
     const validStatuses = ["PENDING", "APPROVED", "REJECTED"] as const;
 
@@ -16,28 +19,62 @@ const searchParams = request.nextUrl.searchParams;
       return fail("Invalid status filter. Use PENDING, APPROVED, REJECTED or ALL.", 400);
     }
 
-    const users = await prisma.user.findMany({
-      where:
-        status && status !== "ALL"
-          ? { status: status as "PENDING" | "APPROVED" | "REJECTED" }
-          : undefined,
-      orderBy: { createdAt: "asc" },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        role: true,
-        status: true,
-        points: true,
-        level: true,
-        motivation: true,
-        createdAt: true,
-        departmentId: true,
-        department: { select: { id: true, name: true } },
-        _count: { select: { missions: true } },
-      },
-    });
-    return ok(users);
+    const q = searchParams.get("q")?.trim() || "";
+    const page = Math.max(1, Number.parseInt(searchParams.get("page") ?? "1", 10) || 1);
+    const pageSize = Math.min(100, Math.max(1, Number.parseInt(searchParams.get("pageSize") ?? "20", 10) || 20));
+
+    const where: {
+      status?: "PENDING" | "APPROVED" | "REJECTED";
+      OR?: Array<{ fullName?: { contains: string; mode: "insensitive" }; email?: { contains: string; mode: "insensitive" }; memberId?: { contains: string; mode: "insensitive" } }>;
+    } = {};
+
+    if (status && status !== "ALL") {
+      where.status = status as "PENDING" | "APPROVED" | "REJECTED";
+    }
+    if (q) {
+      where.OR = [
+        { fullName: { contains: q, mode: "insensitive" } },
+        { email: { contains: q, mode: "insensitive" } },
+        { memberId: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        orderBy: { createdAt: "asc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          role: true,
+          status: true,
+          points: true,
+          level: true,
+          motivation: true,
+          memberId: true,
+          memberSince: true,
+          institution: true,
+          studyLevel: true,
+          fieldOfStudy: true,
+          skills: true,
+          interests: true,
+          availability: true,
+          linkedin: true,
+          github: true,
+          portfolioUrl: true,
+          createdAt: true,
+          departmentId: true,
+          department: { select: { id: true, name: true } },
+          _count: { select: { missions: true } },
+        },
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return ok({ users, total, page, pageSize });
   } catch (error) {
     return handleApiError(error);
   }
@@ -62,18 +99,81 @@ const user = await prisma.user.findUnique({ where: { id: userId } });
       if (adminCount <= 1) return fail("You cannot demote the last admin.", 400);
     }
 
-    const data: {
+const data: {
       status?: "PENDING" | "APPROVED" | "REJECTED";
       role?: "ADMIN" | "MEMBER";
       departmentId?: string | null;
       points?: { increment: number };
+      memberId?: string;
+      memberSince?: Date;
     } = {};
     if (status) data.status = status;
     if (role) data.role = role;
     if (departmentId !== undefined) data.departmentId = departmentId || null;
     if (points && points > 0) data.points = { increment: points };
 
-    const updated = await prisma.user.update({ where: { id: userId }, data });
+    // Approving an application activates the membership: allocate the unique
+    // member ID and record the start date. Re-approving an existing member
+    // keeps their original ID.
+    if (status === "APPROVED" && !user.memberId) {
+      const allocation = await prisma.$transaction(async (tx) => ({
+        memberId: await generateMemberId(tx),
+        memberSince: new Date(),
+      }));
+      data.memberId = allocation.memberId;
+      data.memberSince = allocation.memberSince;
+    }
+
+const updated = await prisma.user.update({
+      where: { id: userId },
+      data,
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        role: true,
+        status: true,
+        points: true,
+        level: true,
+        motivation: true,
+        memberId: true,
+        memberSince: true,
+        createdAt: true,
+      },
+    });
+
+    // Notify on application decisions.
+    if (status === "APPROVED") {
+      await createNotification({
+        userId,
+        type: "APPLICATION",
+        title: "Welcome to Enactus ISIMG!",
+        message: "Your membership application has been approved.",
+        link: "/member",
+      });
+      await evaluateAchievements(userId);
+    } else if (status === "REJECTED") {
+      await createNotification({
+        userId,
+        type: "APPLICATION",
+        title: "Application update",
+        message: "Your membership application was not approved this time.",
+        link: "/",
+      });
+    }
+
+    // Notify when points are awarded manually.
+    if (points && points > 0) {
+      await createNotification({
+        userId,
+        type: "XP",
+        title: `${points} XP awarded`,
+        message: "An administrator awarded you bonus XP.",
+        link: "/member",
+      });
+      await evaluateAchievements(userId);
+    }
+
     return ok(updated);
   } catch (error) {
     return handleApiError(error);

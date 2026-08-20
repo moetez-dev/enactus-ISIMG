@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { forgotPasswordSchema } from "@/lib/validators";
 import { fail, ok, handleApiError } from "@/lib/api";
-import { enforceRateLimit, AUTH_LIMITS } from "@/lib/rate-limit";
+import { enforceRateLimit, accountKey, AUTH_LIMITS } from "@/lib/rate-limit";
 import {
   generateResetToken,
   hashResetToken,
@@ -17,18 +17,26 @@ const GENERIC_MESSAGE =
 
 export async function POST(request: NextRequest) {
   try {
-    const limited = await enforceRateLimit(
-      request,
-      "forgotPassword",
-      AUTH_LIMITS.forgotPassword,
-    );
-    if (limited) return limited;
-
     const body = await request.json().catch(() => null);
     const parsed = forgotPasswordSchema.safeParse(body);
     if (!parsed.success) {
       return fail(parsed.error.issues[0]?.message ?? "Invalid input.", 400);
     }
+
+    const limitedIp = await enforceRateLimit(
+      request,
+      "forgotPassword:ip",
+      AUTH_LIMITS.forgotPassword,
+    );
+    if (limitedIp) return limitedIp;
+
+    const limitedAccount = await enforceRateLimit(
+      request,
+      "forgotPassword:acct",
+      AUTH_LIMITS.forgotPassword,
+      accountKey(parsed.data.email),
+    );
+    if (limitedAccount) return limitedAccount;
 
     const user = await prisma.user.findUnique({
       where: { email: parsed.data.email },

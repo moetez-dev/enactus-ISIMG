@@ -34,18 +34,36 @@ model User {
   department   Department?      @relation(fields: [departmentId], references: [id])
   departmentId String?
   motivation   String?
+  memberId     String?          @unique
+  memberSince  DateTime?
+  institution  String?
+  studyLevel   String?
+  fieldOfStudy String?
+  skills       String[]
+  interests    String[]
+  availability String?
+  linkedin     String?
+  github       String?
+  portfolioUrl String?
+  publicProfile Boolean         @default(true)
   points       Int              @default(0)
   level        String           @default("Junior")
   profilePic   String?
   phone        String?
   bio          String?
   tokenVersion Int              @default(0)
-  missions     Mission[]
-  activities   Activity[]
+  missions       Mission[]
+  activities     Activity[]
   contactMessages ContactMessage[]
   passwordResetTokens PasswordResetToken[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  achievements   UserAchievement[]
+  certificates   Certificate[]        @relation("ReceivedCertificates")
+  issuedCertificates Certificate[]    @relation("IssuedCertificates")
+  eventRegistrations EventRegistration[]
+  projectMemberships ProjectMember[]
+  notifications  Notification[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@index([role])
   @@index([status])
@@ -100,6 +118,7 @@ model Project {
   published    Boolean    @default(true)
   department   Department? @relation(fields: [departmentId], references: [id])
   departmentId String?
+  members      ProjectMember[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -130,6 +149,8 @@ model Event {
   date        DateTime
   location    String?
   published   Boolean  @default(true)
+  registrations EventRegistration[]
+  certificates Certificate[]
   createdAt   DateTime @default(now())
 
   @@index([published, date])
@@ -172,9 +193,12 @@ model Activity {
   title       String
   description String?
   points      Int      @default(0)
+  hours       Int      @default(0)
+  refId       String?
   createdAt   DateTime @default(now())
 
   @@index([userId, createdAt])
+  @@index([refId])
 }
 
 model ContactMessage {
@@ -196,4 +220,128 @@ model Setting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+enum AchievementCriteria {
+  MANUAL
+  MISSIONS_COMPLETED
+  XP_TOTAL
+  EVENTS_ATTENDED
+  PROJECTS_JOINED
+}
+
+model Achievement {
+  id          String                @id @default(cuid())
+  name        String
+  description String
+  icon        String                @default("trophy")
+  criteria    AchievementCriteria   @default(MANUAL)
+  threshold   Int                   @default(0)
+  xpReward    Int                   @default(0)
+  active      Boolean               @default(true)
+  earnedBy    UserAchievement[]
+  certificates Certificate[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([active])
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  earnedAt      DateTime    @default(now())
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId, earnedAt])
+}
+
+enum CertificateStatus {
+  ACTIVE
+  REVOKED
+}
+
+model Certificate {
+  id                String            @id @default(cuid())
+  certificateNumber String            @unique
+  title             String
+  description       String?
+  userId            String
+  issuedById        String
+  eventId           String?
+  achievementId     String?
+  status            CertificateStatus @default(ACTIVE)
+  issueDate         DateTime          @default(now())
+  createdAt         DateTime          @default(now())
+  user              User              @relation("ReceivedCertificates", fields: [userId], references: [id], onDelete: Cascade)
+  issuedBy          User              @relation("IssuedCertificates", fields: [issuedById], references: [id], onDelete: Restrict)
+  event             Event?            @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  achievement       Achievement?      @relation(fields: [achievementId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([eventId])
+  @@index([achievementId])
+}
+
+enum EventRegistrationStatus {
+  REGISTERED
+  ATTENDED
+}
+
+model EventRegistration {
+  id           String                @id @default(cuid())
+  eventId      String
+  userId       String
+  status       EventRegistrationStatus @default(REGISTERED)
+  hours        Int                   @default(0)
+  registeredAt DateTime              @default(now())
+  attendedAt   DateTime?
+  event        Event                 @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([userId])
+  @@index([status])
+  @@index([eventId])
+}
+
+enum ProjectMemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ProjectMember {
+  id          String              @id @default(cuid())
+  projectId   String
+  userId      String
+  role        String              @default("Member")
+  status      ProjectMemberStatus @default(PENDING)
+  requestedAt DateTime            @default(now())
+  respondedAt DateTime?
+  project     Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@index([status])
+  @@index([projectId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String?
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read, createdAt])
 }

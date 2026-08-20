@@ -1,7 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, UserCheck, Building2, FolderKanban, CalendarDays, UserRound, MessageSquare, Award } from "lucide-react";
+import {
+  Users,
+  UserCheck,
+  Building2,
+  FolderKanban,
+  CalendarDays,
+  UserRound,
+  MessageSquare,
+  Award,
+  Medal,
+  BadgeCheck,
+  Handshake,
+  UserPlus,
+  Bell,
+  Hourglass,
+} from "lucide-react";
 import { apiFetch, ApiError } from "@/lib/client-api";
 import { useToast } from "@/components/ui/use-toast";
 import { Spinner } from "@/components/ui";
@@ -15,6 +30,13 @@ type Stats = {
   events: number;
   team: number;
   messages: number;
+  achievements: number;
+  achievementsEarned: number;
+  certificates: number;
+  eventAttendance: number;
+  projectMemberships: number;
+  pendingProjectRequests: number;
+  unreadNotifications: number;
   leaderboard: {
     id: string;
     fullName: string;
@@ -59,7 +81,14 @@ export function Overview() {
     { label: "Projects", value: stats.projects, Icon: FolderKanban },
     { label: "Upcoming events", value: stats.events, Icon: CalendarDays },
     { label: "Team members", value: stats.team, Icon: UserRound },
+    { label: "Achievements", value: stats.achievements, Icon: Medal },
+    { label: "Badges earned", value: stats.achievementsEarned, Icon: Award },
+    { label: "Certificates issued", value: stats.certificates, Icon: BadgeCheck },
+    { label: "Event attendance", value: stats.eventAttendance, Icon: Handshake },
+    { label: "Project members", value: stats.projectMemberships, Icon: UserPlus },
+    { label: "Pending requests", value: stats.pendingProjectRequests, Icon: Hourglass },
     { label: "Messages", value: stats.messages, Icon: MessageSquare },
+    { label: "Unread notifications", value: stats.unreadNotifications, Icon: Bell },
   ];
 
   return (

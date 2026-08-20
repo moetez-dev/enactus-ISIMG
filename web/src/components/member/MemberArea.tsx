@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
   Target,
@@ -21,7 +21,11 @@ import { useToast } from "@/components/ui/use-toast";
 import { MemberDashboard } from "@/components/member/MemberDashboard";
 import { MemberMissions } from "@/components/member/MemberMissions";
 import { MemberProfile } from "@/components/member/MemberProfile";
-import { MemberUpcoming } from "@/components/member/MemberUpcoming";
+import { MemberAchievements } from "@/components/member/MemberAchievements";
+import { MemberCertificates } from "@/components/member/MemberCertificates";
+import { MemberEvents } from "@/components/member/MemberEvents";
+import { MemberProjects } from "@/components/member/MemberProjects";
+import { MemberNotifications } from "@/components/member/MemberNotifications";
 import type {
   MemberDashboardData,
   MemberMission,
@@ -42,11 +46,22 @@ type TabId = (typeof NAV)[number]["id"];
 
 export function MemberArea() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [tab, setTab] = useState<TabId>("dashboard");
   const [data, setData] = useState<MemberDashboardData | null>(null);
   const [missions, setMissions] = useState<MemberMission[] | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const selectTab = useCallback(
+    (id: TabId) => {
+      setTab(id);
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", id);
+      window.history.replaceState({}, "", url.toString());
+    },
+    [],
+  );
 
   const loadAll = useCallback(async () => {
     try {
@@ -65,8 +80,12 @@ export function MemberArea() {
   }, [router, toast]);
 
   useEffect(() => {
+    const requested = searchParams.get("tab");
+    if (requested && NAV.some((n) => n.id === requested)) {
+      setTab(requested as TabId);
+    }
     loadAll();
-  }, [loadAll]);
+  }, [searchParams, loadAll]);
 
   async function handleLogout() {
     try {
@@ -109,6 +128,19 @@ export function MemberArea() {
             </span>
           </Link>
           <div className="flex items-center gap-4">
+            {data.stats.unreadNotifications > 0 ? (
+              <button
+                type="button"
+                onClick={() => selectTab("notifications")}
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-brand-yellow hover:text-brand-yellow"
+                aria-label={`${data.stats.unreadNotifications} unread notifications`}
+              >
+                <Bell className="h-4 w-4" aria-hidden />
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-yellow px-1 text-[8px] font-black text-brand-black">
+                  {data.stats.unreadNotifications}
+                </span>
+              </button>
+            ) : null}
             <span className="hidden items-center gap-2 rounded-full border border-brand-yellow/30 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-brand-yellow lg:flex">
               <Award className="h-3.5 w-3.5" aria-hidden />
               {stats.points} XP
@@ -189,7 +221,7 @@ export function MemberArea() {
               <button
                 type="button"
                 key={id}
-                onClick={() => setTab(id)}
+                onClick={() => selectTab(id)}
                 className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-colors md:justify-start ${
                   tab === id
                     ? "bg-brand-black text-white"
@@ -211,7 +243,7 @@ export function MemberArea() {
               user={user}
               stats={stats}
               activity={data.activity}
-              onNavigate={(target) => setTab(target)}
+              onNavigate={selectTab}
             />
           ) : tab === "missions" ? (
             <MemberMissions
@@ -219,35 +251,15 @@ export function MemberArea() {
               onChanged={loadAll}
             />
           ) : tab === "projects" ? (
-            <MemberUpcoming
-              icon={<Rocket className="h-8 w-8 text-gray-300" aria-hidden />}
-              title="Your projects"
-              message="Projects you are part of will appear here."
-            />
+            <MemberProjects />
           ) : tab === "events" ? (
-            <MemberUpcoming
-              icon={<CalendarDays className="h-8 w-8 text-gray-300" aria-hidden />}
-              title="Your events"
-              message="Event registrations and attendance will appear here."
-            />
+            <MemberEvents />
           ) : tab === "achievements" ? (
-            <MemberUpcoming
-              icon={<Award className="h-8 w-8 text-gray-300" aria-hidden />}
-              title="Your achievements"
-              message="Badges and achievements you unlock will appear here."
-            />
+            <MemberAchievements />
           ) : tab === "certificates" ? (
-            <MemberUpcoming
-              icon={<BadgeCheck className="h-8 w-8 text-gray-300" aria-hidden />}
-              title="Your certificates"
-              message="Certificates issued to you will appear here."
-            />
+            <MemberCertificates />
           ) : tab === "notifications" ? (
-            <MemberUpcoming
-              icon={<Bell className="h-8 w-8 text-gray-300" aria-hidden />}
-              title="Notifications"
-              message="Updates about missions, events and your account will appear here."
-            />
+            <MemberNotifications />
           ) : (
             <MemberProfile
               user={user}

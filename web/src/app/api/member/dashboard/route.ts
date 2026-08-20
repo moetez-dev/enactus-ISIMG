@@ -2,12 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { fail, ok, handleApiError } from "@/lib/api";
 import { getLevelInfo } from "@/lib/constants";
+import { computeEngagement } from "@/lib/engagement";
 
 export async function GET() {
   try {
     const user = await requireUser();
 
-    const [dbUser, missionsCompleted, missionsActive, missionsReview, activity] =
+    const [dbUser, missionsCompleted, missionsActive, missionsReview, activity, achievementsCount, certificatesCount, eventsAttended, projectsCount, unreadNotifications, attendedHours, activityHours, engagement] =
       await Promise.all([
         prisma.user.findUnique({
           where: { id: user.id },
@@ -32,9 +33,32 @@ export async function GET() {
             title: true,
             description: true,
             points: true,
+            hours: true,
             createdAt: true,
           },
         }),
+        prisma.userAchievement.count({ where: { userId: user.id } }),
+        prisma.certificate.count({
+          where: { userId: user.id, status: "ACTIVE" },
+        }),
+        prisma.eventRegistration.count({
+          where: { userId: user.id, status: "ATTENDED" },
+        }),
+        prisma.projectMember.count({
+          where: { userId: user.id, status: "APPROVED" },
+        }),
+        prisma.notification.count({
+          where: { userId: user.id, read: false },
+        }),
+        prisma.eventRegistration.aggregate({
+          where: { userId: user.id, status: "ATTENDED" },
+          _sum: { hours: true },
+        }),
+        prisma.activity.aggregate({
+          where: { userId: user.id },
+          _sum: { hours: true },
+        }),
+        computeEngagement(user.id),
       ]);
 
     if (!dbUser || (dbUser.status !== "APPROVED" && dbUser.role !== "ADMIN")) {
@@ -50,6 +74,18 @@ export async function GET() {
         status: dbUser.status,
         department: dbUser.department,
         motivation: dbUser.motivation,
+        memberId: dbUser.memberId,
+        memberSince: dbUser.memberSince,
+        institution: dbUser.institution,
+        studyLevel: dbUser.studyLevel,
+        fieldOfStudy: dbUser.fieldOfStudy,
+        skills: dbUser.skills,
+        interests: dbUser.interests,
+        availability: dbUser.availability,
+        linkedin: dbUser.linkedin,
+        github: dbUser.github,
+        portfolioUrl: dbUser.portfolioUrl,
+        publicProfile: dbUser.publicProfile,
         points: dbUser.points,
         level: dbUser.level,
         profilePic: dbUser.profilePic,
@@ -61,10 +97,13 @@ export async function GET() {
         missionsCompleted,
         missionsPendingReview: missionsReview,
         missionsActive,
-        eventsAttended: 0,
-        projectsCount: 0,
-        achievementsCount: 0,
-        certificatesCount: 0,
+        eventsAttended,
+        projectsCount,
+        achievementsCount,
+        certificatesCount,
+        unreadNotifications,
+        totalHours: (attendedHours._sum.hours ?? 0) + (activityHours._sum.hours ?? 0),
+        engagement,
       },
       activity,
     });

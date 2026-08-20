@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin, requireUser } from "@/lib/auth";
 import { missionWorkSchema, missionReviewSchema } from "@/lib/validators";
+import { evaluateAchievements } from "@/lib/achievements";
 import { fail, ok, handleApiError } from "@/lib/api";
 
 type Params = { params: { id: string } };
@@ -29,13 +30,44 @@ export async function PATCH(request: NextRequest, { params }: Params) {
             where: { id: mission.userId },
             data: { points: { increment: mission.points } },
           });
-          return tx.mission.update({
+          await tx.activity.create({
+            data: {
+              userId: mission.userId,
+              type: "MISSION_COMPLETED",
+              title: "Mission completed",
+              description: mission.text,
+              points: mission.points,
+              refId: mission.id,
+            },
+          });
+          await tx.notification.create({
+            data: {
+              userId: mission.userId,
+              type: "MISSION",
+              title: "Mission approved",
+              message: `Your mission "${mission.text}" earned ${mission.points} XP.`,
+              link: "/member?tab=missions",
+            },
+          });
+          const updatedMission = await tx.mission.update({
             where: { id: mission.id },
             data: { status: "APPROVED", completed: true, pointsAwarded: true },
           });
+          return updatedMission;
         });
+        await evaluateAchievements(mission.userId);
         return ok(approved);
       }
+      // Reopened — let the member know the submission was sent back.
+      await prisma.notification.create({
+        data: {
+          userId: mission.userId,
+          type: "MISSION",
+          title: "Mission sent back for revision",
+          message: `"${mission.text}" was reopened. Please resubmit your work.`,
+          link: "/member?tab=missions",
+        },
+      });
       const reopened = await prisma.mission.update({
         where: { id: mission.id },
         data: { status: "LIVE", submitted: false, workLink: null },

@@ -21,6 +21,8 @@ export function RegistrationForm({
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  const [skillsText, setSkillsText] = useState("");
+  const [interestsText, setInterestsText] = useState("");
 
   const {
     register,
@@ -33,9 +35,20 @@ export function RegistrationForm({
   async function onSubmit(values: RegisterInput) {
     setServerMessage(null);
     try {
+      const payload = {
+        ...values,
+        skills: skillsText
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        interests: interestsText
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+      };
       await apiFetch<{ id: string }>("/api/auth/register", {
         method: "POST",
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       toast.success(
         "Application submitted! Check your email — you will be reviewed by our HR team.",
@@ -171,6 +184,190 @@ export function RegistrationForm({
             {errors.motivation.message}
           </p>
         ) : null}
+      </div>
+
+      <div>
+        <span className="label" id="about-label">
+          About You
+        </span>
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label htmlFor="institution" className="label">
+              Institution / University
+            </label>
+            <input
+              id="institution"
+              type="text"
+              autoComplete="organization"
+              className="input"
+              placeholder="e.g. Higher Institute of Management, ISIMG"
+              {...register("institution")}
+            />
+            {errors.institution ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.institution.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="fieldOfStudy" className="label">
+              Field of Study
+            </label>
+            <input
+              id="fieldOfStudy"
+              type="text"
+              autoComplete="off"
+              className="input"
+              placeholder="e.g. Management, IT, Marketing"
+              {...register("fieldOfStudy")}
+            />
+            {errors.fieldOfStudy ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.fieldOfStudy.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="studyLevel" className="label">
+              Study Level
+            </label>
+            <select id="studyLevel" className="input" {...register("studyLevel")}>
+              <option value="">Select…</option>
+              <option value="Licence 1">Licence 1</option>
+              <option value="Licence 2">Licence 2</option>
+              <option value="Licence 3">Licence 3</option>
+              <option value="Master 1">Master 1</option>
+              <option value="Master 2">Master 2</option>
+              <option value="Doctorate">Doctorate</option>
+            </select>
+            {errors.studyLevel ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.studyLevel.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="availability" className="label">
+              Weekly Availability
+            </label>
+            <select
+              id="availability"
+              className="input"
+              {...register("availability")}
+            >
+              <option value="">Select…</option>
+              <option value="1-3 hours">1-3 hours</option>
+              <option value="4-6 hours">4-6 hours</option>
+              <option value="7-10 hours">7-10 hours</option>
+              <option value="10+ hours">10+ hours</option>
+            </select>
+            {errors.availability ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.availability.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="skills" className="label">
+              Skills (comma separated)
+            </label>
+            <input
+              id="skills"
+              type="text"
+              autoComplete="off"
+              className="input"
+              placeholder="e.g. Design, Public Speaking, Coding"
+              value={skillsText}
+              onChange={(e) => setSkillsText(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="interests" className="label">
+              Interests (comma separated)
+            </label>
+            <input
+              id="interests"
+              type="text"
+              autoComplete="off"
+              className="input"
+              placeholder="e.g. Sustainability, Entrepreneurship"
+              value={interestsText}
+              onChange={(e) => setInterestsText(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="label">
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              autoComplete="tel"
+              className="input"
+              placeholder="+213 6…"
+              {...register("phone")}
+            />
+            {errors.phone ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.phone.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="linkedin" className="label">
+              LinkedIn Profile
+            </label>
+            <input
+              id="linkedin"
+              type="url"
+              autoComplete="off"
+              className="input"
+              placeholder="https://linkedin.com/in/…"
+              {...register("linkedin")}
+            />
+            {errors.linkedin ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.linkedin.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="github" className="label">
+              GitHub Profile
+            </label>
+            <input
+              id="github"
+              type="url"
+              autoComplete="off"
+              className="input"
+              placeholder="https://github.com/…"
+              {...register("github")}
+            />
+            {errors.github ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.github.message}
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <label htmlFor="portfolioUrl" className="label">
+              Portfolio URL
+            </label>
+            <input
+              id="portfolioUrl"
+              type="url"
+              autoComplete="off"
+              className="input"
+              placeholder="https://…"
+              {...register("portfolioUrl")}
+            />
+            {errors.portfolioUrl ? (
+              <p className="mt-1 text-xs font-semibold text-red-600" role="alert">
+                {errors.portfolioUrl.message}
+              </p>
+            ) : null}
+          </div>
+        </div>
       </div>
 
       {serverMessage ? (

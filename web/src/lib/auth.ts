@@ -33,6 +33,18 @@ export type SafeUser = {
   status: "PENDING" | "APPROVED" | "REJECTED";
   department: { id: string; name: string; slug: string } | null;
   motivation: string | null;
+  memberId: string | null;
+  memberSince: Date | null;
+  institution: string | null;
+  studyLevel: string | null;
+  fieldOfStudy: string | null;
+  skills: string[];
+  interests: string[];
+  availability: string | null;
+  linkedin: string | null;
+  github: string | null;
+  portfolioUrl: string | null;
+  publicProfile: boolean;
   points: number;
   level: string;
   profilePic: string | null;
@@ -50,6 +62,18 @@ export function toSafeUser(user: User & { department?: SafeUser["department"] | 
     status: user.status as SafeUser["status"],
     department: user.department ?? null,
     motivation: user.motivation,
+    memberId: user.memberId,
+    memberSince: user.memberSince,
+    institution: user.institution,
+    studyLevel: user.studyLevel,
+    fieldOfStudy: user.fieldOfStudy,
+    skills: user.skills,
+    interests: user.interests,
+    availability: user.availability,
+    linkedin: user.linkedin,
+    github: user.github,
+    portfolioUrl: user.portfolioUrl,
+    publicProfile: user.publicProfile,
     points: user.points,
     level: user.level,
     profilePic: user.profilePic,

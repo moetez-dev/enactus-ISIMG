@@ -63,6 +63,13 @@ export const getEvents = cache(async () => {
   });
 });
 
+export const getNews = cache(async () => {
+  return prisma.news.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "desc" },
+  });
+});
+
 export const getSetting = cache(async (key: string) => {
   const setting = await prisma.setting.findUnique({ where: { key } });
   return setting ? (setting.value as Record<string, unknown>) : null;

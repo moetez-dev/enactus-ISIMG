@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import type { NextRequest } from "next/server";
 import { fail } from "@/lib/api";
@@ -18,19 +19,38 @@ export const AUTH_LIMITS = {
 } satisfies Record<string, RateLimitRule>;
 
 /**
+ * Stable, non-reversible identifier for an account-scoped limit.
+ * Emails are normalized (lowercased) and hashed so the raw address
+ * is never stored in the rate-limit table.
+ */
+export function accountKey(value: string): string {
+  return createHash("sha256")
+    .update(value.trim().toLowerCase())
+    .digest("hex");
+}
+
+/**
  * DB-backed fixed-window rate limiter.
  *
  * Works across serverless instances (Vercel) because the counter lives in
  * PostgreSQL instead of process memory. The upsert increment is atomic, so
  * concurrent requests cannot exceed the limit by racing the read.
+ *
+ * When `scope` is provided the counter is scoped to that value (e.g. a
+ * hashed account id) instead of the client IP. IP-based limits are advisory
+ * on deployments without a proxy that strips/overwrites x-forwarded-for,
+ * so sensitive flows (login, password reset) are ALWAYS additionally limited
+ * per account.
  */
 export async function rateLimit(
   request: NextRequest,
   keyPrefix: string,
   rule: RateLimitRule,
+  scope?: string,
 ): Promise<null | { limited: boolean }> {
-  const ip = clientIp(request);
-  const key = `${keyPrefix}:${ip}`;
+  const key = scope
+    ? `${keyPrefix}:${scope}`
+    : `${keyPrefix}:${clientIp(request)}`;
   const windowStart = Math.floor(
     Date.now() / 1000 / rule.windowSeconds,
   ) * rule.windowSeconds;
@@ -61,8 +81,9 @@ export async function enforceRateLimit(
   request: NextRequest,
   keyPrefix: string,
   rule: RateLimitRule,
+  scope?: string,
 ): Promise<ReturnType<typeof fail> | null> {
-  const result = await rateLimit(request, keyPrefix, rule);
+  const result = await rateLimit(request, keyPrefix, rule, scope);
   if (result?.limited) {
     return fail(
       "Too many attempts. Please try again later.",

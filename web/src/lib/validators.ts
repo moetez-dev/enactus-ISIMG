@@ -12,6 +12,16 @@ export const registerSchema = z.object({
   password,
   departmentId: z.string().min(1, "Please select a department."),
   motivation: z.string().trim().min(10, "Please tell us why you want to join (at least 10 characters).").max(2000),
+  phone: z.string().trim().max(40).optional().nullable().or(z.literal("")),
+  institution: z.string().trim().max(120).optional().nullable().or(z.literal("")),
+  studyLevel: z.string().trim().max(60).optional().nullable().or(z.literal("")),
+  fieldOfStudy: z.string().trim().max(120).optional().nullable().or(z.literal("")),
+  skills: z.array(z.string().trim().min(1).max(40)).max(10).optional().default([]),
+  interests: z.array(z.string().trim().min(1).max(60)).max(10).optional().default([]),
+  availability: z.string().trim().max(60).optional().nullable().or(z.literal("")),
+  linkedin: z.string().trim().url("Enter a valid LinkedIn URL.").optional().nullable().or(z.literal("")),
+  github: z.string().trim().url("Enter a valid GitHub URL.").optional().nullable().or(z.literal("")),
+  portfolioUrl: z.string().trim().url("Enter a valid portfolio URL.").optional().nullable().or(z.literal("")),
 });
 
 export const loginSchema = z.object({
@@ -155,9 +165,65 @@ export const profileUpdateSchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v ? v : null)),
+  institution: z.string().trim().max(120).optional().nullable().transform((v) => (v ? v : null)),
+  studyLevel: z.string().trim().max(60).optional().nullable().transform((v) => (v ? v : null)),
+  fieldOfStudy: z.string().trim().max(120).optional().nullable().transform((v) => (v ? v : null)),
+  availability: z.string().trim().max(60).optional().nullable().transform((v) => (v ? v : null)),
+  linkedin: z.string().trim().url("Enter a valid LinkedIn URL.").optional().nullable().transform((v) => (v ? v : null)),
+  github: z.string().trim().url("Enter a valid GitHub URL.").optional().nullable().transform((v) => (v ? v : null)),
+  portfolioUrl: z.string().trim().url("Enter a valid portfolio URL.").optional().nullable().transform((v) => (v ? v : null)),
+  skills: z.array(z.string().trim().min(1).max(40)).max(10).optional().default([]),
+  interests: z.array(z.string().trim().min(1).max(60)).max(10).optional().default([]),
+  publicProfile: z.boolean().optional(),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+const achievementCriteria = z.enum(
+  ["MANUAL", "MISSIONS_COMPLETED", "XP_TOTAL", "EVENTS_ATTENDED", "PROJECTS_JOINED"],
+  { errorMap: () => ({ message: "Invalid achievement criteria." }) },
+);
+
+export const achievementSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters.").max(120),
+  description: z.string().trim().min(3, "Please describe this achievement.").max(1000),
+  icon: z.string().trim().min(1).max(60).default("trophy"),
+  criteria: achievementCriteria.default("MANUAL"),
+  threshold: z.coerce.number().int().min(0).default(0),
+  xpReward: z.coerce.number().int().min(0).max(5000).default(0),
+});
+
+export const certificateIssueSchema = z.object({
+  userId: z.string().min(1, "Please select a member."),
+  title: z.string().trim().min(3).max(200),
+  description: z.string().trim().max(1000).optional().nullable(),
+  eventId: z.string().optional().nullable(),
+  achievementId: z.string().optional().nullable(),
+});
+
+export const eventRegisterSchema = z.object({});
+
+export const attendanceMarkSchema = z.object({
+  status: z.enum(["ATTENDED", "REGISTERED"], {
+    errorMap: () => ({ message: "Invalid attendance status." }),
+  }),
+  hours: z.coerce.number().int().min(0).max(500).optional(),
+});
+
+export const projectRequestSchema = z.object({});
+
+export const projectMemberUpdateSchema = z.object({
+  status: z.enum(["APPROVED", "REJECTED"], {
+    errorMap: () => ({ message: "Invalid status." }),
+  }),
+  role: z.string().trim().min(1).max(60).optional(),
+});
+
+export const announcementSchema = z.object({
+  title: z.string().trim().min(2).max(160),
+  message: z.string().trim().max(2000).optional(),
+  link: z.string().trim().max(500).optional().nullable(),
+});

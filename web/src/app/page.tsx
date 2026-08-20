@@ -87,7 +87,7 @@ export default async function HomePage() {
             { value: STATS.projects, label: "Projects launched" },
             { value: STATS.enactors, label: "Active enactors" },
             { value: STATS.livesImpacted, label: "Lives impacted" },
-            { value: STATS.activeEnactors, label: "Active enactors" },
+            { value: STATS.activeEnactors, label: "Core team" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="font-heading text-5xl font-black text-brand-black">

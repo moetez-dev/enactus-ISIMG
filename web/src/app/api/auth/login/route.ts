@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/validators";
 import { fail, ok, handleApiError } from "@/lib/api";
-import { enforceRateLimit, AUTH_LIMITS } from "@/lib/rate-limit";
+import { enforceRateLimit, accountKey, AUTH_LIMITS } from "@/lib/rate-limit";
 import {
   createSessionToken,
   sessionCookieName,
@@ -12,9 +12,6 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    const limited = await enforceRateLimit(request, "login", AUTH_LIMITS.login);
-    if (limited) return limited;
-
     const body = await request.json().catch(() => null);
     const parsed = loginSchema.safeParse(body);
 
@@ -23,6 +20,17 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = parsed.data;
+
+    const limitedIp = await enforceRateLimit(request, "login:ip", AUTH_LIMITS.login);
+    if (limitedIp) return limitedIp;
+
+    const limitedAccount = await enforceRateLimit(
+      request,
+      "login:acct",
+      AUTH_LIMITS.login,
+      accountKey(email),
+    );
+    if (limitedAccount) return limitedAccount;
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {

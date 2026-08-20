@@ -31,10 +31,20 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/api/departments") ||
     pathname.startsWith("/api/team") ||
     pathname.startsWith("/api/settings") ||
-    pathname.startsWith("/api/stats");
+    pathname.startsWith("/api/stats") ||
+    pathname.startsWith("/api/achievements") ||
+    pathname.startsWith("/api/certificates") ||
+    pathname.startsWith("/api/notifications/announce") ||
+    pathname.endsWith("/attendance") ||
+    pathname.includes("/members/") ||
+    pathname.endsWith("/members");
   // GETs are public reads; route handlers enforce admin on sensitive ones
   // (e.g. /api/settings, /api/stats, /api/team?all=1). Writes are admin-only.
   const isAdminWrite = request.method !== "GET" && isAdminApi;
+
+  // Admin-only resources even for GET (rosters).
+  const isAdminOnlyResource = pathname.endsWith("/attendance");
+  const isAdminOnlyGet = isAdminOnlyResource && request.method === "GET";
 
   // Protected pages: redirect to /login when unauthenticated.
   if (isProtectedPage && !session) {
@@ -52,7 +62,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Admin-only REST endpoints (writes).
-  if (isAdminWrite) {
+  if (isAdminWrite || isAdminOnlyGet) {
     if (session?.role !== "ADMIN") {
       const status = session ? 403 : 401;
       return NextResponse.json(
@@ -80,5 +90,10 @@ export const config = {
     "/api/team/:path*",
     "/api/settings/:path*",
     "/api/stats",
+    "/api/achievements/:path*",
+    "/api/certificates/:path*",
+    "/api/notifications/announce",
+    "/api/events/:path*/attendance",
+    "/api/projects/:path*/members/:path*",
   ],
 };

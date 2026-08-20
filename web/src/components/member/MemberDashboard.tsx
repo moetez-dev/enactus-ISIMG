@@ -9,6 +9,9 @@ import {
   BadgeCheck,
   Sparkles,
   ArrowRight,
+  Bell,
+  Trophy,
+  CreditCard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button, EmptyState } from "@/components/ui";
@@ -77,7 +80,7 @@ export function MemberDashboard({
   user: MemberUser;
   stats: MemberStats;
   activity: MemberActivity[];
-  onNavigate: (tab: "missions" | "profile") => void;
+  onNavigate: (tab: "dashboard" | "missions" | "projects" | "events" | "achievements" | "certificates" | "notifications" | "profile") => void;
 }) {
   const level = stats.level;
   const first = user.fullName.split(" ")[0];
@@ -87,11 +90,13 @@ export function MemberDashboard({
   });
   const cards: { label: string; value: number; Icon: LucideIcon }[] = [
     { label: "Missions completed", value: stats.missionsCompleted, Icon: Target },
-    { label: "Active missions", value: stats.missionsActive, Icon: Flag },
-    { label: "Under review", value: stats.missionsPendingReview, Icon: Clock },
     { label: "Events attended", value: stats.eventsAttended, Icon: CalendarDays },
-    { label: "Projects", value: stats.projectsCount, Icon: Rocket },
     { label: "Certificates", value: stats.certificatesCount, Icon: BadgeCheck },
+    { label: "Volunteer hours", value: stats.totalHours, Icon: Clock },
+    { label: "Badges earned", value: stats.achievementsCount, Icon: Trophy },
+    { label: "Projects", value: stats.projectsCount, Icon: Rocket },
+    { label: "Under review", value: stats.missionsPendingReview, Icon: Flag },
+    { label: "Unread updates", value: stats.unreadNotifications, Icon: Bell },
   ];
 
   return (
@@ -107,6 +112,11 @@ export function MemberDashboard({
               : "No department assigned yet"}
             {user.role === "ADMIN" ? " | Admin" : " | Member"} | Member since {joined}
           </p>
+          {user.memberId ? (
+            <p className="mt-2 inline-flex rounded-full bg-brand-yellow/15 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-brand-yellow-dark">
+              {user.memberId}
+            </p>
+          ) : null}
         </div>
         <Button variant="dark" onClick={() => onNavigate("missions")}>
           Browse missions
@@ -149,6 +159,35 @@ export function MemberDashboard({
             ? `${level.remaining} XP to reach ${level.next.name}`
             : "Maximum level reached - outstanding work!"}
         </p>
+        <div className="mt-6 border-t border-white/10 pt-5">
+          <div className="flex items-end justify-between gap-4">
+            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
+              Engagement
+            </p>
+            <p className="font-heading text-2xl font-black text-brand-yellow">
+              {stats.engagement.score}
+              <span className="ml-1 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                %
+              </span>
+            </p>
+          </div>
+          <div
+            className="mt-3 h-3 w-full overflow-hidden rounded-full bg-white/10"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={stats.engagement.score}
+            aria-label="Engagement score based on real participation"
+          >
+            <div
+              className="h-full rounded-full bg-brand-yellow transition-all duration-500"
+              style={{ width: `${stats.engagement.score}%` }}
+            />
+          </div>
+          <p className="mt-3 text-[10px] font-black uppercase tracking-widest text-gray-400">
+            Based on missions, events, projects, hours, certificates and badges
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -203,10 +242,32 @@ export function MemberDashboard({
           <h2 className="mb-4 font-heading text-lg font-black uppercase">
             Quick actions
           </h2>
+          <a
+            href="/member/card"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-green px-4 py-2.5 text-sm font-black uppercase tracking-wide text-white transition-colors hover:bg-brand-green-dark"
+          >
+            <CreditCard className="h-4 w-4" aria-hidden />
+            View member card
+          </a>
           <Button variant="ghost" className="w-full" onClick={() => onNavigate("missions")}>
             <Target className="h-4 w-4" aria-hidden />
             Go to missions
           </Button>
+          <Button variant="ghost" className="w-full" onClick={() => onNavigate("achievements")}>
+            <Trophy className="h-4 w-4" aria-hidden />
+            View achievements
+          </Button>
+          <Button variant="ghost" className="w-full" onClick={() => onNavigate("events")}>
+            <CalendarDays className="h-4 w-4" aria-hidden />
+            Upcoming events
+          </Button>
+          {stats.unreadNotifications > 0 ? (
+            <Button variant="ghost" className="w-full" onClick={() => onNavigate("notifications")}>
+              <Bell className="h-4 w-4" aria-hidden />
+              {stats.unreadNotifications} unread notification
+              {stats.unreadNotifications > 1 ? "s" : ""}
+            </Button>
+          ) : null}
           <Button variant="ghost" className="w-full" onClick={() => onNavigate("profile")}>
             <BadgeCheck className="h-4 w-4" aria-hidden />
             Edit profile
